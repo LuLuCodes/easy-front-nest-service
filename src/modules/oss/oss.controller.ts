@@ -9,7 +9,7 @@ import {
 import { Express } from 'express';
 // import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { ConfigService } from '@nestjs/config';
-import { ApiTags, ApiOperation, ApiConsumes } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiConsumes, ApiHeader } from '@nestjs/swagger';
 import { CatchError } from '@decorator/catch.decorator';
 import { CacheService } from '@service/cache.service';
 import { ApiMultiFile } from '@decorator/api.multi.file.decorator';
@@ -19,6 +19,15 @@ import { resolve } from 'path';
 import { length } from 'class-validator';
 
 @ApiTags('后台商品API')
+@ApiHeader({
+  name: 'x-from-swagger',
+  description: '如果是swagger发送的请求，会跳过token和sign验证',
+  example: 'swagger',
+  schema: {
+    type: 'string',
+    example: 'swagger',
+  },
+})
 @Controller('oss')
 export class OssController {
   private domain = '';

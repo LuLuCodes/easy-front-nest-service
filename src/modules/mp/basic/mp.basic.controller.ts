@@ -8,7 +8,13 @@ import {
   UsePipes,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { ApiTags, ApiBody, ApiOperation, ApiQuery } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiBody,
+  ApiOperation,
+  ApiQuery,
+  ApiHeader,
+} from '@nestjs/swagger';
 import { ValidationPipe } from '@pipe/validation.pipe';
 
 import { CacheService } from '@service/cache.service';
@@ -22,6 +28,15 @@ import {
   UnQrlimitCodeDTO,
 } from './mp.basic.dto';
 @ApiTags('小程序基础API')
+@ApiHeader({
+  name: 'x-from-swagger',
+  description: '如果是swagger发送的请求，会跳过token和sign验证',
+  example: 'swagger',
+  schema: {
+    type: 'string',
+    example: 'swagger',
+  },
+})
 @Controller('mp/basic')
 export class MpBasicController {
   constructor(

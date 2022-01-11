@@ -24,8 +24,6 @@ export class AppIdDTO extends BaseDTO {
   @ApiPropertyOptional({
     description: '微信公众号appId',
     type: String,
-    maxLength: 1,
-    minLength: 20,
   })
   @IsOptional()
   @IsNotEmpty({ message: 'appId不能为空' })

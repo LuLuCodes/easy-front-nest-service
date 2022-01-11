@@ -11,7 +11,13 @@ import {
 import { Express } from 'express';
 import { FilesInterceptor, FileInterceptor } from '@nestjs/platform-express';
 import { ConfigService } from '@nestjs/config';
-import { ApiTags, ApiBody, ApiOperation, ApiConsumes } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiBody,
+  ApiOperation,
+  ApiConsumes,
+  ApiHeader,
+} from '@nestjs/swagger';
 import { ValidationPipe } from '@pipe/validation.pipe';
 import { CatchError } from '@decorator/catch.decorator';
 import { CacheService } from '@service/cache.service';
@@ -30,6 +36,15 @@ import { ensureDir, outputFile, remove } from 'fs-extra';
 import { resolve } from 'path';
 
 @ApiTags('微信公众号素材API')
+@ApiHeader({
+  name: 'x-from-swagger',
+  description: '如果是swagger发送的请求，会跳过token和sign验证',
+  example: 'swagger',
+  schema: {
+    type: 'string',
+    example: 'swagger',
+  },
+})
 @Controller('wx/media')
 export class WxMediaController {
   constructor(
