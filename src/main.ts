@@ -44,7 +44,9 @@ async function bootstrap() {
       },
     }),
   );
-  app.use(helmet());
+  if (config.get('app.node_env') === 'production') {
+    app.use(helmet());
+  }
   app.enableCors({
     origin: true,
     allowedHeaders:
