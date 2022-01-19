@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { HttpModule } from '@nestjs/axios';
 import { BullModule } from '@nestjs/bull';
 import { ConfigModule } from '@nestjs/config';
 import { DBModule } from '../../db.module';
@@ -11,6 +12,7 @@ import { MqClientService } from '@service/mq.client.service';
   imports: [
     DBModule,
     ConfigModule,
+    HttpModule,
     BullModule.registerQueue({
       name: 'order-timeout-close-queue',
       prefix: 'ef',

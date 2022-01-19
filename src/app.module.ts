@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { BullModule } from '@nestjs/bull';
 import { APP_GUARD } from '@nestjs/core';
+import { HttpModule } from '@nestjs/axios';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ServeStaticModule } from '@nestjs/serve-static';
@@ -13,6 +14,7 @@ import { AuthGuard } from '@guard/auth.guard';
 import { CacheService } from '@service/cache.service';
 import { CronTaskService } from '@service/cron-task.service';
 import { MqClientService } from '@service/mq.client.service';
+import { HttpService } from '@service/http.service';
 
 import { InitModule } from './init.module';
 import { WxModule } from './modules/wx/wx.module';
@@ -48,6 +50,9 @@ import while_list from '@config/white-list';
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'www'),
       exclude: ['/api*'],
+    }),
+    HttpModule.registerAsync({
+      useClass: HttpService,
     }),
     RedisModule.forRootAsync({
       imports: [ConfigModule],

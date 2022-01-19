@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { HttpService } from '@nestjs/axios';
 import { Queue } from 'bull';
 import { InjectQueue } from '@nestjs/bull';
 import { InjectModel } from '@nestjs/sequelize';
@@ -51,6 +52,7 @@ export class OrderService {
   constructor(
     private sequelize: Sequelize,
     private cacheService: CacheService,
+    private httpService: HttpService,
     @InjectQueue('order-timeout-close-queue') private orderTOCloseQueue: Queue,
     @InjectModel(TOrder)
     private readonly tOrder: typeof TOrder,
