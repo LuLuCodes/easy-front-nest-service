@@ -10,7 +10,7 @@ import { HttpExceptionFilter } from '@filter/http-exception.filter';
 import { AllExceptionsFilter } from '@filter/any-exception.filter';
 import { ValidationExceptionFilter } from '@filter/validation-exception-filter';
 import { RedisLock } from '@libs/redlock';
-import * as rateLimit from 'express-rate-limit';
+import rateLimit from 'express-rate-limit';
 import * as helmet from 'helmet';
 import * as cookieParser from 'cookie-parser';
 import * as bodyParser from 'body-parser';
@@ -45,7 +45,21 @@ async function bootstrap() {
     }),
   );
   if (config.get('app.node_env') === 'production') {
-    app.use(helmet());
+    app.use(helmet.contentSecurityPolicy());
+    app.use(helmet.crossOriginEmbedderPolicy());
+    app.use(helmet.crossOriginOpenerPolicy());
+    app.use(helmet.crossOriginResourcePolicy());
+    app.use(helmet.dnsPrefetchControl());
+    app.use(helmet.expectCt());
+    app.use(helmet.frameguard());
+    app.use(helmet.hidePoweredBy());
+    app.use(helmet.hsts());
+    app.use(helmet.ieNoOpen());
+    app.use(helmet.noSniff());
+    app.use(helmet.originAgentCluster());
+    app.use(helmet.permittedCrossDomainPolicies());
+    app.use(helmet.referrerPolicy());
+    app.use(helmet.xssFilter());
   }
   app.enableCors({
     origin: true,
@@ -70,9 +84,11 @@ async function bootstrap() {
     session({
       store: new RedisStore({
         client: createClient({
-          host: config.get('redis.host'),
-          port: config.get('redis.port'),
-          db: config.get('redis.cookie_db_index'),
+          socket: {
+            host: config.get('redis.host'),
+            port: config.get('redis.port'),
+          },
+          database: config.get('redis.cookie_db_index'),
         }),
       }),
       secret: config.get('session.secret'),

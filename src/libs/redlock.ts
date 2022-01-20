@@ -1,4 +1,4 @@
-import * as redlock from 'redlock';
+import redlock from 'redlock';
 import * as redis from 'redis';
 
 export class RedisLock {
