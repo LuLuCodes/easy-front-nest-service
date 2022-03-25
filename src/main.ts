@@ -80,16 +80,19 @@ async function bootstrap() {
   // 使用拦截器打印出参
   app.useGlobalInterceptors(new TransformInterceptor());
   app.use(cookieParser());
+  const sessionRedis = createClient({
+    socket: {
+      host: config.get('redis.host'),
+      port: config.get('redis.port'),
+    },
+    database: config.get('redis.cookie_db_index'),
+    legacyMode: true,
+  });
+  await sessionRedis.connect();
   app.use(
     session({
       store: new RedisStore({
-        client: createClient({
-          socket: {
-            host: config.get('redis.host'),
-            port: config.get('redis.port'),
-          },
-          database: config.get('redis.cookie_db_index'),
-        }),
+        client: sessionRedis,
       }),
       secret: config.get('session.secret'),
       key: config.get('session.key'),

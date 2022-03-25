@@ -5,9 +5,9 @@ export class RedisLock {
   private static redisClient = null;
   private static redisLock = null;
 
-  public static init(config) {
-    this.redisClient = redis.createClient(config);
-
+  public static async init(config) {
+    this.redisClient = redis.createClient({ ...config, legacyMode: true });
+    this.redisClient.connect();
     this.redisLock = new redlock([this.redisClient], {
       // the expected clock drift; for more details
       // see http://redis.io/topics/distlock
