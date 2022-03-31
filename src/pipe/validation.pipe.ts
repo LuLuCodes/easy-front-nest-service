@@ -5,7 +5,7 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { validate } from 'class-validator';
-import { plainToClassFromExist } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import { LoggerFactory } from '@libs/log4js';
 const logger = LoggerFactory.getInstance();
 
@@ -23,7 +23,7 @@ export class ValidationPipe implements PipeTransform {
         ? this.transformPrimitive(value, metadata)
         : value;
     }
-    const object = plainToClassFromExist(metatype, value);
+    const object = plainToInstance(metatype, value);
     const errors = await validate(object);
     if (errors.length > 0) {
       const constraints = this.getConstraints(errors[0]);
