@@ -8,6 +8,7 @@ import {
   UsePipes,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { inspect } from 'util';
 import {
   ApiTags,
   ApiBody,
@@ -26,6 +27,7 @@ import {
   QrCodeDTO,
   LimitQrCodeDTO,
   UnQrlimitCodeDTO,
+  WxMessageXmlDataDTO,
 } from './mp.basic.dto';
 @ApiTags('小程序基础API')
 @ApiHeader({
@@ -139,5 +141,20 @@ export class MpBasicController {
   async createUnLimitQrCode(@Query() query: UnQrlimitCodeDTO): Promise<any> {
     const data = await this.mpBasicService.createUnLimitQrCode(query);
     return data;
+  }
+
+  @ApiOperation({
+    summary: '测试XML请求',
+    description: '测试XML请求',
+  })
+  @ApiBody({
+    description: '请求参数',
+    type: WxMessageXmlDataDTO,
+  })
+  @UsePipes(new ValidationPipe({ transform: true }))
+  @Post('wxhandler')
+  async wxhandler(@Body('xml') xmlData: WxMessageXmlDataDTO): Promise<any> {
+    console.log(`xml data got: ${inspect(xmlData)}`);
+    return '';
   }
 }

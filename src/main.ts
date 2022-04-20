@@ -14,11 +14,14 @@ import rateLimit from 'express-rate-limit';
 import * as helmet from 'helmet';
 import * as cookieParser from 'cookie-parser';
 import * as bodyParser from 'body-parser';
+import * as bodyParserXml from 'body-parser-xml';
 import * as compression from 'compression';
 import * as ConnectRedis from 'connect-redis';
 import * as session from 'express-session';
 import { createClient } from 'redis';
 import * as multer from 'multer';
+
+bodyParserXml(bodyParser);
 
 const RedisStore = ConnectRedis(session);
 async function bootstrap() {
@@ -77,6 +80,13 @@ async function bootstrap() {
       extended: false,
     }),
   ); // For parsing application/x-www-form-urlencoded
+  app.use(
+    bodyParser.xml({
+      xmlParseOptions: {
+        explicitArray: false, // 始终返回数组。默认情况下只有数组元素数量大于 1 是才返回数组。
+      },
+    }),
+  );
   // 使用拦截器打印出参
   app.useGlobalInterceptors(new TransformInterceptor());
   app.use(cookieParser());

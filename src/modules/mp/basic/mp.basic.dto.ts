@@ -171,3 +171,18 @@ export class UnQrlimitCodeDTO extends LimitQrCodeDTO {
   @Length(1, 32, { message: 'scene长度1~32' })
   readonly scene: string;
 }
+
+export class WxMessageXmlDataDTO {
+  /** 开发者微信号 e.g. `gh_019087f88815`*/
+  ToUserName: string;
+  /** 发送方帐号（一个OpenID）e.g.: `o5w5awUl***5pIJKY`*/
+  FromUserName: string;
+  /** 消息创建时间 （整型）e.g.`1595855711` */
+  CreateTime: string;
+  /** 消息类型，此处为 `event` */
+  MsgType: string;
+  /** 事件类型，subscribe(订阅)、unsubscribe(取消订阅) */
+  Event: 'subscribe' | 'unsubscribe';
+  /** 事件KEY值，目前无用 */
+  EventKey: string;
+}
