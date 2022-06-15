@@ -27,7 +27,7 @@ import { OrderModule } from './modules/order/order.module';
 import { BasicModule } from './modules/basic/basic.module';
 
 import app_config from '@config/app';
-import databse_config from '@config/databse';
+import databse_config from '@config/mysql';
 import mq_config from '@config/mq';
 import oss_config from '@config/oss';
 import redis_config from '@config/redis';
@@ -76,11 +76,11 @@ import while_list from '@config/white-list';
       useFactory: async (configService: ConfigService) => {
         return {
           dialect: 'mysql',
-          host: configService.get('database.host'),
-          port: configService.get('database.port'),
-          username: configService.get('database.username'),
-          password: configService.get('database.password'),
-          database: configService.get('database.database'),
+          host: configService.get('mysql.host'),
+          port: configService.get('mysql.port'),
+          username: configService.get('mysql.username'),
+          password: configService.get('mysql.password'),
+          database: configService.get('mysql.database'),
           timezone: '+08:00',
           pool: {
             max: 20,
