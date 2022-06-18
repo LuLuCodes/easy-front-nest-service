@@ -169,6 +169,9 @@ import while_list from '@config/white-list';
         },
       }),
     }),
+    BullModule.registerQueue({
+      name: 'api-log',
+    }),
     WxModule,
     MpModule,
     WxPayModule,
