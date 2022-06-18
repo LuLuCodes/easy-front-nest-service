@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { BullModule } from '@nestjs/bull';
 import { APP_GUARD } from '@nestjs/core';
 import { HttpModule } from '@nestjs/axios';
@@ -9,6 +9,7 @@ import { RedisModule, RedisModuleOptions } from '@liaoliaots/nestjs-redis';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { join, resolve } from 'path';
 
+import { LoggerMiddleware } from './middleware/logger.middleware';
 import { SignGuard } from '@guard/sign.guard';
 import { AuthGuard } from '@guard/auth.guard';
 import { CacheService } from '@service/cache.service';
@@ -194,4 +195,8 @@ import while_list from '@config/white-list';
     MqClientService,
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(LoggerMiddleware).forRoutes('*');
+  }
+}

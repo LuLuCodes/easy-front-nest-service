@@ -4,8 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
-import { LoggerFunMiddleware } from '@middleware/logger.middleware';
-import { TransformInterceptor } from '@interceptor/transform.interceptor';
+// import { TransformInterceptor } from '@interceptor/transform.interceptor';
 import { HttpExceptionFilter } from '@filter/http-exception.filter';
 import { AllExceptionsFilter } from '@filter/any-exception.filter';
 import { ValidationExceptionFilter } from '@filter/validation-exception-filter';
@@ -88,7 +87,7 @@ async function bootstrap() {
     }),
   );
   // 使用拦截器打印出参
-  app.useGlobalInterceptors(new TransformInterceptor());
+  // app.useGlobalInterceptors(new TransformInterceptor());
   app.use(cookieParser());
   const sessionRedis = createClient({
     socket: {
@@ -117,8 +116,6 @@ async function bootstrap() {
     port: config.get('redis.port'),
     db: config.get('cache.redis_db'),
   });
-  // 监听所有的请求路由，并打印日志
-  app.use(LoggerFunMiddleware);
   app.useGlobalFilters(new AllExceptionsFilter());
   app.useGlobalFilters(new HttpExceptionFilter());
   app.useGlobalFilters(new ValidationExceptionFilter());
