@@ -94,6 +94,7 @@ async function bootstrap() {
       host: config.get('redis.host'),
       port: config.get('redis.port'),
     },
+    password: config.get('redis.password'),
     database: config.get('redis.cookie_db_index'),
     legacyMode: true,
   });
@@ -114,6 +115,7 @@ async function bootstrap() {
   RedisLock.init({
     host: config.get('redis.host'),
     port: config.get('redis.port'),
+    password: config.get('redis.password'),
     db: config.get('cache.redis_db'),
   });
   app.useGlobalFilters(new AllExceptionsFilter());

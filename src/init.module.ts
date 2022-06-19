@@ -53,6 +53,7 @@ export class InitModule implements OnModuleInit {
         {
           host: this.configService.get('redis.host'),
           port: this.configService.get('redis.port'),
+          password: this.configService.get('redis.password'),
           db: this.configService.get('cache.redis_db'),
         },
       );
@@ -83,6 +84,7 @@ export class InitModule implements OnModuleInit {
         {
           host: this.configService.get('redis.host'),
           port: this.configService.get('redis.port'),
+          password: this.configService.get('redis.password'),
           db: this.configService.get('cache.redis_db'),
         },
       );
