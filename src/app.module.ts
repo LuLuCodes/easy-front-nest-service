@@ -116,6 +116,8 @@ import while_list from '@config/white-list';
                 ) {
                   attributes.dataValues.update_time = now;
                 }
+                // 注入app_id
+                // attributes.dataValues.app_id = configService.get('app.app_id');
               },
               beforeBulkCreate(instances: any, options: any) {
                 const { fields } = options;
@@ -133,6 +135,8 @@ import while_list from '@config/white-list';
                   ) {
                     instance.dataValues.update_time = now;
                   }
+                  // 注入app_id
+                  // instance.dataValues.app_id = configService.get('app.app_id');
                 }
               },
               beforeUpdate(instance: any, options: any) {
@@ -154,7 +158,16 @@ import while_list from '@config/white-list';
           },
           dialectOptions: {
             decimalNumbers: true,
+            maxPreparedStatements: 100,
             multipleStatements: true,
+            dateStrings: true,
+            typeCast: function (field, next) {
+              // for reading from database
+              if (field.type === 'DATETIME') {
+                return field.string();
+              }
+              return next();
+            },
           },
         };
       },
