@@ -34,11 +34,6 @@ export class LoggerMiddleware implements NestMiddleware {
       if (this.use_log_queue) {
         await this.logQueue.add(
           {
-            app_key:
-              req.body.app_key ||
-              req.params.app_key ||
-              req.query.app_key ||
-              'default',
             from_ip:
               req.headers['x-forwarded-for'] ||
               req.connection.remoteAddress ||
@@ -51,10 +46,10 @@ export class LoggerMiddleware implements NestMiddleware {
             request_query: req.query,
             request_body: req.body,
             referer: req.headers.referer || '',
-            ua: req.headers.referer || '',
+            ua: req.headers['user-agent'] || '',
             response_status_code: res.statusCode,
             response_data: data,
-            time: Date.now(),
+            request_time: Date.now(),
           },
           {
             attempts: 3,
