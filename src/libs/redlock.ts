@@ -1,4 +1,14 @@
-import redlock from 'redlock';
+/*
+ * @Author: leyi leyi@myun.info
+ * @Date: 2021-09-22 21:55:56
+ * @LastEditors: leyi leyi@myun.info
+ * @LastEditTime: 2022-07-14 11:53:15
+ * @FilePath: /easy-front-nest-service/src/libs/redlock.ts
+ * @Description:
+ *
+ * Copyright (c) 2022 by leyi leyi@myun.info, All Rights Reserved.
+ */
+import * as redlock from 'redlock';
 import * as redis from 'redis';
 
 export class RedisLock {
@@ -7,7 +17,7 @@ export class RedisLock {
 
   public static async init(config) {
     this.redisClient = redis.createClient({ ...config, legacyMode: true });
-    this.redisClient.connect();
+    await this.redisClient.connect();
     this.redisLock = new redlock([this.redisClient], {
       // the expected clock drift; for more details
       // see http://redis.io/topics/distlock

@@ -73,7 +73,7 @@
     "mysql2": "^2.3.0",
     "nestjs-ali-oss": "^1.0.0",
     "redis": "^4.0.2",
-    "redlock": "^5.0.0-beta.1",
+    "redlock": "4.2.0",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0",
