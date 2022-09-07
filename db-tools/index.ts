@@ -5,6 +5,7 @@ import {
 } from 'sequelize-typescript-generator';
 import { resolve } from 'path';
 import * as dotenv from 'dotenv';
+import { CodeConversion } from './CodeConversion';
 
 dotenv.config({ path: resolve(__dirname, '../src/.env') });
 
@@ -13,7 +14,7 @@ dotenv.config({ path: resolve(__dirname, '../src/.env') });
     connection: {
       dialect: 'mysql',
       host: process.env.DB_HOST,
-      port: parseInt(process.env.DB_PORT),
+      port: parseInt(process.env.DB_PORT as string),
       database: process.env.DB_NAME,
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
@@ -38,6 +39,7 @@ dotenv.config({ path: resolve(__dirname, '../src/.env') });
 
   try {
     await builder.build();
+    CodeConversion.run();
   } catch (err) {
     console.error(err);
     process.exit(1);

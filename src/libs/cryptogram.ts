@@ -5,8 +5,9 @@ import { v4 as uuidv4 } from 'uuid';
 /**
  * Make uuid
  */
-export function uuid(): string {
-  return uuidv4();
+export function uuid(replace = true): string {
+  const uuid = uuidv4();
+  return replace ? uuid.replace(/-/gi, '') : uuid;
 }
 
 /**
