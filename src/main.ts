@@ -4,7 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
-// import { TransformInterceptor } from '@interceptor/transform.interceptor';
+import { TransformInterceptor } from '@interceptor/transform.interceptor';
 import { HttpExceptionFilter } from '@filter/http-exception.filter';
 import { AllExceptionsFilter } from '@filter/any-exception.filter';
 import { ValidationExceptionFilter } from '@filter/validation-exception-filter';
@@ -87,7 +87,7 @@ async function bootstrap() {
     }),
   );
   // 使用拦截器打印出参
-  // app.useGlobalInterceptors(new TransformInterceptor());
+  app.useGlobalInterceptors(new TransformInterceptor());
   app.use(cookieParser());
   const sessionRedis = createClient({
     socket: {
