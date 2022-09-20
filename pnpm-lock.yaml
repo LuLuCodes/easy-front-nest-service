@@ -3,10 +3,10 @@ lockfileVersion: 5.3
 specifiers:
   '@commitlint/cli': ^16.0.3
   '@commitlint/config-conventional': ^16.0.0
-  '@easy-front-core-sdk/kits': ^1.2.14
-  '@easy-front-core-sdk/miniprogram': ^1.2.14
-  '@easy-front-core-sdk/wx': ^1.2.14
-  '@easy-front-core-sdk/wxpay': ^1.2.14
+  '@easy-front-core-sdk/kits': ^1.3.6
+  '@easy-front-core-sdk/miniprogram': ^1.3.6
+  '@easy-front-core-sdk/wx': ^1.3.6
+  '@easy-front-core-sdk/wxpay': ^1.3.6
   '@liaoliaots/nestjs-redis': ^5.2.0
   '@nestjs/axios': ^0.0.4
   '@nestjs/bull': ^0.4.2
@@ -61,7 +61,7 @@ specifiers:
   cz-customizable: ^6.3.0
   dayjs: ^1.10.7
   dotenv: ^14.2.0
-  easy-front-core-sdk: ^1.2.14
+  easy-front-core-sdk: ^1.3.6
   eslint: ^8.7.0
   eslint-config-prettier: ^8.3.0
   eslint-plugin-prettier: ^4.0.0
@@ -76,6 +76,7 @@ specifiers:
   lint-staged: ^12.2.0
   lodash: ^4.17.21
   log4js: ^6.3.0
+  minimist: ^1.2.6
   multer: ^1.4.4
   mysql2: ^2.3.0
   nestjs-ali-oss: ^1.0.0
@@ -101,10 +102,10 @@ specifiers:
   uuid: ^8.3.2
 
 dependencies:
-  '@easy-front-core-sdk/kits': 1.2.14
-  '@easy-front-core-sdk/miniprogram': 1.2.14
-  '@easy-front-core-sdk/wx': 1.2.14
-  '@easy-front-core-sdk/wxpay': 1.2.14
+  '@easy-front-core-sdk/kits': 1.3.9
+  '@easy-front-core-sdk/miniprogram': 1.3.9
+  '@easy-front-core-sdk/wx': 1.3.9
+  '@easy-front-core-sdk/wxpay': 1.3.9
   '@liaoliaots/nestjs-redis': 5.2.0_8d2a4e35b1c32d1e274f100841249964
   '@nestjs/axios': 0.0.4_ce2dbd18b4ee2be595d9f713d2208a61
   '@nestjs/bull': 0.4.2_68dbc4cddf74c3a86336644b6a040325
@@ -134,7 +135,7 @@ dependencies:
   crypto-js: 4.1.1
   dayjs: 1.11.3
   dotenv: 14.3.2
-  easy-front-core-sdk: 1.2.14
+  easy-front-core-sdk: 1.3.9
   express-rate-limit: 6.4.0
   express-session: 1.17.3
   fast-xml-parser: 4.0.9
@@ -143,6 +144,7 @@ dependencies:
   ioredis: 4.28.5
   lodash: 4.17.21
   log4js: 6.6.0
+  minimist: 1.2.6
   multer: 1.4.4
   mysql2: 2.3.3
   nestjs-ali-oss: 1.0.0_acb629273c3ad9e6d559a943bd2f2634
@@ -863,11 +865,11 @@ packages:
       '@jridgewell/trace-mapping': 0.3.9
     dev: true
 
-  /@easy-front-core-sdk/alipay/1.2.14:
-    resolution: {integrity: sha512-w7u5ySdibj9DxsKX1p1pu1jZvsDwAq0soowptTLwA+FXDOwPwin0ULGlsQHOtJvye4THgI2q2/6ix2mAWBToew==}
+  /@easy-front-core-sdk/alipay/1.3.9:
+    resolution: {integrity: sha512-VkpbLa+WT7G9WRB/WDDXmvejREVuKrzUGiTlYOGxAhS2mSUkVBxMexxQMjbePiJZDsOtIgPRaLQomPTVF3l7Ww==}
     dependencies:
-      '@easy-front-core-sdk/cache': 1.2.14
-      '@easy-front-core-sdk/kits': 1.2.14
+      '@easy-front-core-sdk/cache': 1.3.9
+      '@easy-front-core-sdk/kits': 1.3.9
       moment: 2.29.4
       urlencode: 1.1.0
     transitivePeerDependencies:
@@ -875,27 +877,27 @@ packages:
       - supports-color
     dev: false
 
-  /@easy-front-core-sdk/cache/1.2.14:
-    resolution: {integrity: sha512-p8pkqv1PzJMYZxr+5aUEpgw8Pm1fwOyy4WdjL9Iy3eiB7NKDJuqTfLMAKeBYH9TXTnCRD3Xj6mYm+f+3aqcSjQ==}
+  /@easy-front-core-sdk/cache/1.3.9:
+    resolution: {integrity: sha512-6BNsVDvRk57BHKSev3SgKpW/U2GbjHe7zkyGuLGh3IFUXlYm928dftfWEgeFS/P82LVTgOIK4yGJZua26CnS6A==}
     dependencies:
       ioredis: 4.28.5
     transitivePeerDependencies:
       - supports-color
     dev: false
 
-  /@easy-front-core-sdk/cpwx/1.2.14:
-    resolution: {integrity: sha512-kYcVA2u3H/m/qsLQ4g0UbP0b7fT4IWTEeI3n7isJdXcR9BR6bnuVx+ehbX/k3Rh/YpZU8zX+J9r7s/RxF8HYlA==}
+  /@easy-front-core-sdk/cpwx/1.3.9:
+    resolution: {integrity: sha512-k9ArjR5Uwx2JIk4A8SCenTaURmAUB7g+FvwkkogedLdJYWakbytqAFug74URVaF03kinOT/lFXlUjVlWHD9G9g==}
     dependencies:
-      '@easy-front-core-sdk/cache': 1.2.14
-      '@easy-front-core-sdk/kits': 1.2.14
+      '@easy-front-core-sdk/cache': 1.3.9
+      '@easy-front-core-sdk/kits': 1.3.9
       urlencode: 1.1.0
     transitivePeerDependencies:
       - debug
       - supports-color
     dev: false
 
-  /@easy-front-core-sdk/kits/1.2.14:
-    resolution: {integrity: sha512-CL5aAKDFAZ8yGM6i5ihrYOhgSDkWlRlSPanzrB02TZzinlkkWtIwQlDjqdDlFBIYUBXwQll1AZ/owZcX+3A4PQ==}
+  /@easy-front-core-sdk/kits/1.3.9:
+    resolution: {integrity: sha512-H7D90tL7oVns2ysCWB9PC13Qatld4EJOWRKbJUVffAhwnBQ0uNkQe8S7fRLWpBCv+luk2FS6sCznDpQtZT7IMA==}
     dependencies:
       '@fidm/x509': 1.2.1
       axios: 0.21.4
@@ -908,42 +910,42 @@ packages:
       - debug
     dev: false
 
-  /@easy-front-core-sdk/miniprogram/1.2.14:
-    resolution: {integrity: sha512-zEUFBHs42IYjVEJAwqKCXIOJxNC+whIvIFJ17zqFNf8pDh4Bid/UiKe56A/EYZxQGt1Ykf8/8ogxkklU6i1IbA==}
+  /@easy-front-core-sdk/miniprogram/1.3.9:
+    resolution: {integrity: sha512-b9OZf7Q7b1rWA1uK3nOGq1KJdHJIJJBTU5Ckq2zKXwiCSCsh+7wl63XwRWO8Gg6BrmN7J/jJTv7bYKhal+5sxg==}
     dependencies:
-      '@easy-front-core-sdk/cache': 1.2.14
-      '@easy-front-core-sdk/kits': 1.2.14
+      '@easy-front-core-sdk/cache': 1.3.9
+      '@easy-front-core-sdk/kits': 1.3.9
     transitivePeerDependencies:
       - debug
       - supports-color
     dev: false
 
-  /@easy-front-core-sdk/opencpwx/1.2.14:
-    resolution: {integrity: sha512-MaUEFGm4NzOTh7h6IMLmaCnF9u2/sHUCUcp5tgnBEtuEsEBJcnMgZbd3ZrYt5MmVWtrCb85Gt6Mga6NbGVQQpg==}
+  /@easy-front-core-sdk/opencpwx/1.3.9:
+    resolution: {integrity: sha512-GV5LPNrvGYBd19Rj8FizKi+vRLu0ehuawQv3djp2LtJXo60PDqMIa+R7QnUHZu0xxNBH+kdSBFV9sxpmUN0okA==}
     dependencies:
-      '@easy-front-core-sdk/cache': 1.2.14
-      '@easy-front-core-sdk/kits': 1.2.14
+      '@easy-front-core-sdk/cache': 1.3.9
+      '@easy-front-core-sdk/kits': 1.3.9
       urlencode: 1.1.0
     transitivePeerDependencies:
       - debug
       - supports-color
     dev: false
 
-  /@easy-front-core-sdk/wx/1.2.14:
-    resolution: {integrity: sha512-N1QAaven5Zdj9j/IuMG6APd8jbCG4pKgR8z8OpPDmaxyYVsGhOTnGAKWhPzqi39QEjvevcTvy2qZ7eQvb6bSwA==}
+  /@easy-front-core-sdk/wx/1.3.9:
+    resolution: {integrity: sha512-nAa/RTV2mGR7lU/+q/TwOc82qYv9+eALMDXLjtuwmlTM5ycCaSEaBtWfnzPNSfWM1k/lkQW/EWqBllODL2Ro7A==}
     dependencies:
-      '@easy-front-core-sdk/cache': 1.2.14
-      '@easy-front-core-sdk/kits': 1.2.14
+      '@easy-front-core-sdk/cache': 1.3.9
+      '@easy-front-core-sdk/kits': 1.3.9
     transitivePeerDependencies:
       - debug
       - supports-color
     dev: false
 
-  /@easy-front-core-sdk/wxpay/1.2.14:
-    resolution: {integrity: sha512-tILMPVYJL4gqq8jjY86hNsJLaAy3lEIMloecVkBoBYXQH2RioOTICoNndY0zQXbZTEmZBUa8fsvo1YMQekWFbA==}
+  /@easy-front-core-sdk/wxpay/1.3.9:
+    resolution: {integrity: sha512-3RrRNIkb1yaYW+pTO7rUt2Xf2UJmbXIasw5gKXFlddbYNMElTeEQSQqWu8AkPKaprEDm5FfrYCszuowSQChgWw==}
     dependencies:
-      '@easy-front-core-sdk/cache': 1.2.14
-      '@easy-front-core-sdk/kits': 1.2.14
+      '@easy-front-core-sdk/cache': 1.3.9
+      '@easy-front-core-sdk/kits': 1.3.9
       urlencode: 1.1.0
     transitivePeerDependencies:
       - debug
@@ -3737,17 +3739,17 @@ packages:
     resolution: {integrity: sha512-I88TYZWc9XiYHRQ4/3c5rjjfgkjhLyW2luGIheGERbNQ6OY7yTybanSpDXZa8y7VUP9YmDcYa+eyq4ca7iLqWA==}
     dev: true
 
-  /easy-front-core-sdk/1.2.14:
-    resolution: {integrity: sha512-PoNwokWAIo5QSBH/4iJKi+Sc9KDijr33o9CA1Sl3U+BIHicytsnZSM85hSZzutB7gItT3+Z5lAsWan5ayd5QEw==}
+  /easy-front-core-sdk/1.3.9:
+    resolution: {integrity: sha512-4USCOR3fRL/absSO/g3oqqlQxWqJ8UEKQd5dxoDTzUimOYZW6qkzdAnn27+j7KnwqDaqqzgcM/kAaZIoHWxaTA==}
     dependencies:
-      '@easy-front-core-sdk/alipay': 1.2.14
-      '@easy-front-core-sdk/cache': 1.2.14
-      '@easy-front-core-sdk/cpwx': 1.2.14
-      '@easy-front-core-sdk/kits': 1.2.14
-      '@easy-front-core-sdk/miniprogram': 1.2.14
-      '@easy-front-core-sdk/opencpwx': 1.2.14
-      '@easy-front-core-sdk/wx': 1.2.14
-      '@easy-front-core-sdk/wxpay': 1.2.14
+      '@easy-front-core-sdk/alipay': 1.3.9
+      '@easy-front-core-sdk/cache': 1.3.9
+      '@easy-front-core-sdk/cpwx': 1.3.9
+      '@easy-front-core-sdk/kits': 1.3.9
+      '@easy-front-core-sdk/miniprogram': 1.3.9
+      '@easy-front-core-sdk/opencpwx': 1.3.9
+      '@easy-front-core-sdk/wx': 1.3.9
+      '@easy-front-core-sdk/wxpay': 1.3.9
     transitivePeerDependencies:
       - debug
       - supports-color
