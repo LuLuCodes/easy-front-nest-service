@@ -11,14 +11,14 @@ import {
 @Table({
   tableName: 't_bank_transfer',
   timestamps: false,
-  comment: '\u5E97\u94FA\u53D8\u52A8\u6210\u672C',
+  comment: '店铺变动成本',
 })
 export class TBankTransfer extends Model {
   @Column({
     primaryKey: true,
     autoIncrement: true,
     type: DataType.BIGINT,
-    comment: '\u7CFB\u7EDF\u7F16\u7801',
+    comment: '系统编码',
   })
   @Index({ name: 'PRIMARY', using: 'BTREE', order: 'ASC', unique: true })
   id?: number;
@@ -26,16 +26,16 @@ export class TBankTransfer extends Model {
   @Column({
     allowNull: true,
     type: DataType.INTEGER,
-    comment: '\u5E94\u7528id',
+    comment: '应用id',
     defaultValue: '10000',
   })
   app_id?: number;
 
-  @Column({ type: DataType.BIGINT, comment: '\u5E97\u94FA\u7F16\u7801' })
+  @Column({ type: DataType.BIGINT, comment: '店铺编码' })
   @Index({ name: 'idx_shop_id', using: 'BTREE', order: 'ASC', unique: false })
   shop_id!: number;
 
-  @Column({ type: DataType.DATE, comment: '\u63D0\u4EA4\u65F6\u95F4' })
+  @Column({ type: DataType.DATE, comment: '提交时间' })
   @Index({
     name: 'idx_transfer_time',
     using: 'BTREE',
@@ -47,7 +47,7 @@ export class TBankTransfer extends Model {
   @Column({
     type: DataType.INTEGER,
     comment:
-      '\u662F\u5426\u4ECE\u7F51\u5546\u8F6C\u5230\u652F\u4ED8\u5B9Da\uFF080\u65E0\u4E8C\u7EF4\u7801 1\u4E8C\u7EF4\u7801\u751F\u6210\u4E2D 2\u4E8C\u7EF4\u7801\u751F\u6210\u6210\u529F 3\u81EA\u52A8\u6253\u6B3E\u6210\u529F 4\u81EA\u52A8\u6253\u6B3E\u5931\u8D25\uFF09',
+      '是否从网商转到支付宝a（0无二维码 1二维码生成中 2二维码生成成功 3自动打款成功 4自动打款失败）',
     defaultValue: '0',
   })
   set_account_a?: number;
@@ -55,19 +55,14 @@ export class TBankTransfer extends Model {
   @Column({
     allowNull: true,
     type: DataType.STRING(200),
-    comment:
-      '\u662F\u5426\u4ECE\u7F51\u5546\u8F6C\u5230\u652F\u4ED8\u5B9Da\u5907\u6CE8',
+    comment: '是否从网商转到支付宝a备注',
   })
   set_account_a_remark?: string;
 
-  @Column({
-    allowNull: true,
-    type: DataType.DATE,
-    comment: '\u5230\u8D26\u65F6\u95F4',
-  })
+  @Column({ allowNull: true, type: DataType.DATE, comment: '到账时间' })
   finish_time?: Date;
 
-  @Column({ type: DataType.STRING(100), comment: '\u5355\u636E\u53F7' })
+  @Column({ type: DataType.STRING(100), comment: '单据号' })
   @Index({
     name: 'idx_transfer_sn',
     using: 'BTREE',
@@ -76,64 +71,52 @@ export class TBankTransfer extends Model {
   })
   transfer_sn!: string;
 
-  @Column({
-    type: DataType.STRING(100),
-    comment: '\u4ED8\u6B3E\u8D26\u6237\u516C\u53F8\u540D\u79F0',
-  })
+  @Column({ type: DataType.STRING(100), comment: '付款账户公司名称' })
   pay_account_com!: string;
 
-  @Column({ type: DataType.STRING(100), comment: '\u4ED8\u6B3E\u8D26\u6237' })
+  @Column({ type: DataType.STRING(100), comment: '付款账户' })
   pay_account!: string;
 
-  @Column({
-    type: DataType.STRING(100),
-    comment: '\u6536\u6B3E\u8D26\u6237\u516C\u53F8\u540D\u79F0',
-  })
+  @Column({ type: DataType.STRING(100), comment: '收款账户公司名称' })
   to_account_com!: string;
 
-  @Column({ type: DataType.STRING(100), comment: '\u6536\u6B3E\u8D26\u6237' })
+  @Column({ type: DataType.STRING(100), comment: '收款账户' })
   to_account!: string;
 
-  @Column({
-    type: DataType.STRING(100),
-    comment: '\u6536\u6B3E\u8D26\u6237\u94F6\u884C',
-  })
+  @Column({ type: DataType.STRING(100), comment: '收款账户银行' })
   to_account_bank!: string;
 
   @Column({
     type: DataType.DECIMAL(10, 2),
-    comment: '\u4ED8\u6B3E\u603B\u989D',
+    comment: '付款总额',
     defaultValue: '0.00',
   })
   amount?: string;
 
   @Column({
     type: DataType.DECIMAL(10, 2),
-    comment: '\u8F6C\u8D26\u91D1\u989D',
+    comment: '转账金额',
     defaultValue: '0.00',
   })
   success_amount?: string;
 
   @Column({
     type: DataType.INTEGER,
-    comment:
-      '\u5230\u8D26\u72B6\u6001\uFF080\u8FDB\u884C\u4E2D 1\u5230\u8D26 2\u5230\u8D26\u5931\u8D25\uFF09',
+    comment: '到账状态（0进行中 1到账 2到账失败）',
     defaultValue: '0',
   })
   finish_status?: number;
 
   @Column({
     type: DataType.INTEGER,
-    comment:
-      '\u652F\u4ED8\u5B9D\u8F6C\u8D26\uFF08\u4EE3\u8D2D\u3001\u6295\u8D44\u4EBA\u662F\u5426\u8F6C\u8D26\uFF09(1\u5DF2\u6253\u6B3E 2\u5DF2\u5230\u8D26 3\u5230\u8D26\u5931\u8D25)',
+    comment: '支付宝转账（代购、投资人是否转账）(1已打款 2已到账 3到账失败)',
     defaultValue: '0',
   })
   set_account_b?: number;
 
   @Column({
     type: DataType.INTEGER,
-    comment:
-      '\u652F\u4ED8\u5B9D\u8F6C\u8D26\uFF08\u6295\u8D44\u4EBA\u3001\u4EE3\u7406\u662F\u5426\u8F6C\u8D26\uFF09(1\u5DF2\u6253\u6B3E 2\u5DF2\u5230\u8D26 3\u5230\u8D26\u5931\u8D25)',
+    comment: '支付宝转账（投资人、代理是否转账）(1已打款 2已到账 3到账失败)',
     defaultValue: '0',
   })
   set_account_c?: number;
@@ -141,8 +124,7 @@ export class TBankTransfer extends Model {
   @Column({
     allowNull: true,
     type: DataType.STRING(100),
-    comment:
-      '\u652F\u4ED8\u5B9D\u8F6C\u8D26\u6D41\u6C34\uFF08\u4EE3\u8D2D\u3001\u6295\u8D44\u4EBA\u662F\u5426\u8F6C\u8D26\uFF09',
+    comment: '支付宝转账流水（代购、投资人是否转账）',
   })
   @Index({
     name: 'idx_account_b_ali_sn',
@@ -155,16 +137,14 @@ export class TBankTransfer extends Model {
   @Column({
     allowNull: true,
     type: DataType.DECIMAL(18, 2),
-    comment:
-      '\u652F\u4ED8\u5B9D\u8F6C\u8D26\u91D1\u989D\uFF08\u4EE3\u8D2D\u3001\u6295\u8D44\u4EBA\u662F\u5426\u8F6C\u8D26\uFF09',
+    comment: '支付宝转账金额（代购、投资人是否转账）',
   })
   account_b_ali_amount?: string;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(100),
-    comment:
-      '\u652F\u4ED8\u5B9D\u8F6C\u8D26\u6D41\u6C34\uFF08\u6295\u8D44\u4EBA\u3001\u4EE3\u7406\u662F\u5426\u8F6C\u8D26\uFF09',
+    comment: '支付宝转账流水（投资人、代理是否转账）',
   })
   @Index({
     name: 'idx_account_c_ali_sn',
@@ -177,31 +157,27 @@ export class TBankTransfer extends Model {
   @Column({
     allowNull: true,
     type: DataType.DECIMAL(18, 2),
-    comment:
-      '\u652F\u4ED8\u5B9D\u8F6C\u8D26\u91D1\u989D\uFF08\u6295\u8D44\u4EBA\u3001\u4EE3\u7406\u662F\u5426\u8F6C\u8D26\uFF09',
+    comment: '支付宝转账金额（投资人、代理是否转账）',
   })
   account_c_ali_amount?: string;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(500),
-    comment:
-      '\u652F\u4ED8\u5B9D\u8F6C\u8D26\u5904\u7406\u7ED3\u679C\uFF08\u4EE3\u8D2D\u3001\u6295\u8D44\u4EBA\u662F\u5426\u8F6C\u8D26\uFF09',
+    comment: '支付宝转账处理结果（代购、投资人是否转账）',
   })
   account_b_ali_remark?: string;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(500),
-    comment:
-      '\u652F\u4ED8\u5B9D\u8F6C\u8D26\u5904\u7406\u7ED3\u679C\uFF08\u6295\u8D44\u4EBA\u3001\u4EE3\u7406\u662F\u5426\u8F6C\u8D26\uFF09',
+    comment: '支付宝转账处理结果（投资人、代理是否转账）',
   })
   account_c_ali_remark?: string;
 
   @Column({
     type: DataType.INTEGER,
-    comment:
-      '\u652F\u4ED8\u5B9D\u8F6C\u8D26\uFF08\u5237\u5355\u662F\u5426\u8F6C\u8D26\uFF09(1\u5DF2\u6253\u6B3E 2\u5DF2\u5230\u8D26 3\u5230\u8D26\u5931\u8D25)',
+    comment: '支付宝转账（刷单是否转账）(1已打款 2已到账 3到账失败)',
     defaultValue: '0',
   })
   set_account_d?: number;
@@ -209,8 +185,7 @@ export class TBankTransfer extends Model {
   @Column({
     allowNull: true,
     type: DataType.STRING(100),
-    comment:
-      '\u652F\u4ED8\u5B9D\u8F6C\u8D26\u6D41\u6C34\uFF08\u5237\u5355\u662F\u5426\u8F6C\u8D26\uFF09',
+    comment: '支付宝转账流水（刷单是否转账）',
   })
   @Index({
     name: 'idx_account_d_ali_sn',
@@ -223,42 +198,36 @@ export class TBankTransfer extends Model {
   @Column({
     allowNull: true,
     type: DataType.DECIMAL(18, 2),
-    comment:
-      '\u652F\u4ED8\u5B9D\u8F6C\u8D26\u91D1\u989D\uFF08\u5237\u5355\u662F\u5426\u8F6C\u8D26\uFF09',
+    comment: '支付宝转账金额（刷单是否转账）',
   })
   account_d_ali_amount?: string;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(500),
-    comment:
-      '\u652F\u4ED8\u5B9D\u8F6C\u8D26\u5904\u7406\u7ED3\u679C\uFF08\u5237\u5355\u662F\u5426\u8F6C\u8D26\uFF09',
+    comment: '支付宝转账处理结果（刷单是否转账）',
   })
   account_d_ali_remark?: string;
 
-  @Column({
-    allowNull: true,
-    type: DataType.DATE,
-    comment: '\u5237\u5355\u8BA2\u5355\u8F6C\u8D26\u65F6\u95F4',
-  })
+  @Column({ allowNull: true, type: DataType.DATE, comment: '刷单订单转账时间' })
   swipe_to_ali_time?: Date;
 
-  @Column({ type: DataType.DATE, comment: '\u521B\u5EFA\u65F6\u95F4' })
+  @Column({ type: DataType.DATE, comment: '创建时间' })
   create_time!: Date;
 
-  @Column({ type: DataType.DATE, comment: '\u66F4\u65B0\u65F6\u95F4' })
+  @Column({ type: DataType.DATE, comment: '更新时间' })
   update_time!: Date;
 
   @Column({
     type: DataType.TINYINT,
-    comment: '\u662F\u5426\u903B\u8F91\u5220\u9664 1:\u5DF2\u5220\u9664',
+    comment: '是否逻辑删除 1:已删除',
     defaultValue: '0',
   })
   deleted?: number;
 
-  @Column({ type: DataType.BIGINT, comment: '\u521B\u5EFA\u4EBA' })
+  @Column({ type: DataType.BIGINT, comment: '创建人' })
   creator_id!: number;
 
-  @Column({ type: DataType.BIGINT, comment: '\u4FEE\u6539\u4EBA' })
+  @Column({ type: DataType.BIGINT, comment: '修改人' })
   modifier_id!: number;
 }

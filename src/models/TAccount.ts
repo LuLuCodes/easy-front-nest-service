@@ -8,17 +8,13 @@ import {
   ForeignKey,
 } from 'sequelize-typescript';
 
-@Table({
-  tableName: 't_account',
-  timestamps: false,
-  comment: '\u8D26\u6237\u8868',
-})
+@Table({ tableName: 't_account', timestamps: false, comment: '账户表' })
 export class TAccount extends Model {
   @Column({
     primaryKey: true,
     autoIncrement: true,
     type: DataType.BIGINT,
-    comment: '\u8D26\u6237\u4E3B\u952E',
+    comment: '账户主键',
   })
   @Index({ name: 'PRIMARY', using: 'BTREE', order: 'ASC', unique: true })
   id?: number;
@@ -26,12 +22,12 @@ export class TAccount extends Model {
   @Column({
     allowNull: true,
     type: DataType.INTEGER,
-    comment: '\u5E94\u7528id',
+    comment: '应用id',
     defaultValue: '10000',
   })
   app_id?: number;
 
-  @Column({ type: DataType.STRING(36), comment: '\u8D26\u6237code' })
+  @Column({ type: DataType.STRING(36), comment: '账户code' })
   @Index({
     name: 'idx_account_code',
     using: 'BTREE',
@@ -40,70 +36,50 @@ export class TAccount extends Model {
   })
   account_code!: string;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING(30),
-    comment: '\u90AE\u7BB1',
-  })
+  @Column({ allowNull: true, type: DataType.STRING(30), comment: '邮箱' })
   @Index({ name: 'idx_email', using: 'BTREE', order: 'ASC', unique: false })
   email?: string;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING(15),
-    comment: '\u624B\u673A\u53F7',
-  })
+  @Column({ allowNull: true, type: DataType.STRING(15), comment: '手机号' })
   @Index({ name: 'idx_phone', using: 'BTREE', order: 'ASC', unique: false })
   phone?: string;
 
-  @Column({ type: DataType.STRING(30), comment: '\u7528\u6237\u540D' })
+  @Column({ type: DataType.STRING(30), comment: '用户名' })
   @Index({ name: 'idx_username', using: 'BTREE', order: 'ASC', unique: false })
   username!: string;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING(32),
-    comment: '\u5BC6\u7801',
-  })
+  @Column({ allowNull: true, type: DataType.STRING(32), comment: '密码' })
   password?: string;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING(32),
-    comment: '\u5BC6\u7801\u76D0',
-  })
+  @Column({ allowNull: true, type: DataType.STRING(32), comment: '密码盐' })
   password_salt?: string;
 
   @Column({
     type: DataType.INTEGER,
-    comment:
-      '\u8D26\u53F7\u6765\u6E90\uFF080\u666E\u901A\u5BA2\u6237 1\u4EE3\u8D2D\u4EBA  2\u4EE3\u7406\u5546  3\u770B\u677F\u7BA1\u7406\u8005\uFF09',
+    comment: '账号来源（0普通客户 1代购人  2代理商  3看板管理者）',
     defaultValue: '0',
   })
   source_type?: number;
 
-  @Column({
-    type: DataType.TINYINT,
-    comment: '0 \u7981\u7528,1 \u53EF\u7528, 2 \u6CE8\u9500',
-  })
+  @Column({ type: DataType.TINYINT, comment: '0 禁用,1 可用, 2 注销' })
   status!: number;
 
   @Column({
     type: DataType.TINYINT,
-    comment: '\u662F\u5426\u903B\u8F91\u5220\u9664 1:\u5DF2\u5220\u9664',
+    comment: '是否逻辑删除 1:已删除',
     defaultValue: '0',
   })
   deleted?: number;
 
-  @Column({ type: DataType.DATE, comment: '\u521B\u5EFA\u65F6\u95F4' })
+  @Column({ type: DataType.DATE, comment: '创建时间' })
   create_time!: Date;
 
-  @Column({ type: DataType.DATE, comment: '\u66F4\u65B0\u65F6\u95F4' })
+  @Column({ type: DataType.DATE, comment: '更新时间' })
   update_time!: Date;
 
-  @Column({ type: DataType.BIGINT, comment: '\u521B\u5EFA\u4EBA' })
+  @Column({ type: DataType.BIGINT, comment: '创建人' })
   creator_id!: number;
 
-  @Column({ type: DataType.BIGINT, comment: '\u4FEE\u6539\u4EBA' })
+  @Column({ type: DataType.BIGINT, comment: '修改人' })
   modifier_id!: number;
 }

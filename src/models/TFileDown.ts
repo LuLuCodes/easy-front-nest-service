@@ -8,17 +8,13 @@ import {
   ForeignKey,
 } from 'sequelize-typescript';
 
-@Table({
-  tableName: 't_file_down',
-  timestamps: false,
-  comment: '\u6587\u4EF6\u8868',
-})
+@Table({ tableName: 't_file_down', timestamps: false, comment: '文件表' })
 export class TFileDown extends Model {
   @Column({
     primaryKey: true,
     autoIncrement: true,
     type: DataType.BIGINT,
-    comment: '\u5546\u54C1\u4E3B\u952E',
+    comment: '商品主键',
   })
   @Index({ name: 'PRIMARY', using: 'BTREE', order: 'ASC', unique: true })
   id?: number;
@@ -26,108 +22,85 @@ export class TFileDown extends Model {
   @Column({
     allowNull: true,
     type: DataType.INTEGER,
-    comment: '\u5E94\u7528id',
+    comment: '应用id',
     defaultValue: '10000',
   })
   app_id?: number;
 
   @Column({
     type: DataType.INTEGER,
-    comment:
-      '\u5F52\u5C5E\uFF080\u5E73\u53F0\u540E\u53F0 1\u5546\u5BB6\u540E\u53F0\uFF09',
+    comment: '归属（0平台后台 1商家后台）',
     defaultValue: '0',
   })
   own_type?: number;
 
-  @Column({
-    type: DataType.BIGINT,
-    comment: '\u5F52\u5C5E\u7F16\u7801',
-    defaultValue: '0',
-  })
+  @Column({ type: DataType.BIGINT, comment: '归属编码', defaultValue: '0' })
   @Index({ name: 'idx_own_id', using: 'BTREE', order: 'ASC', unique: false })
   own_id?: number;
 
-  @Column({ type: DataType.STRING(100), comment: '\u6587\u4EF6\u540D\u79F0' })
+  @Column({ type: DataType.STRING(100), comment: '文件名称' })
   file_name!: string;
 
-  @Column({ type: DataType.STRING(500), comment: '\u6587\u4EF6\u8DEF\u5F84' })
+  @Column({ type: DataType.STRING(500), comment: '文件路径' })
   file_path!: string;
 
   @Column({
     type: DataType.INTEGER,
-    comment:
-      '\u6587\u4EF6\u72B6\u6001\uFF080\u751F\u6210\u4E2D 10\u5DF2\u751F\u6210 11\u751F\u6210\u5931\u8D25\uFF09',
+    comment: '文件状态（0生成中 10已生成 11生成失败）',
     defaultValue: '0',
   })
   file_status?: number;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING(500),
-    comment: '\u5907\u6CE8',
-  })
+  @Column({ allowNull: true, type: DataType.STRING(500), comment: '备注' })
   remark?: string;
 
-  @Column({
-    type: DataType.INTEGER,
-    comment: '\u4E0B\u8F7D\u6B21\u6570',
-    defaultValue: '0',
-  })
+  @Column({ type: DataType.INTEGER, comment: '下载次数', defaultValue: '0' })
   down_count?: number;
 
-  @Column({
-    type: DataType.STRING(50),
-    comment: '\u521B\u5EFA\u4EBA\u59D3\u540D',
-  })
+  @Column({ type: DataType.STRING(50), comment: '创建人姓名' })
   username!: string;
 
-  @Column({
-    allowNull: true,
-    type: DataType.DATE,
-    comment: '\u6700\u540E\u4E0B\u8F7D\u65F6\u95F4',
-  })
+  @Column({ allowNull: true, type: DataType.DATE, comment: '最后下载时间' })
   last_down_time?: Date;
 
   @Column({
     type: DataType.INTEGER,
     comment:
-      '\u6765\u6E90\uFF081spu 2t_order 3obj_wallet_log 4\u53D1\u8D27\u51BB\u7ED3 5upc\u5BFC\u51FA 6\u53D1\u8D27\u5355 7\u8FD0\u8425\u62A5\u8868 8\u7269\u6D41\u8FD0\u8D39\u62A5\u8868 9\u8679\u8FD0\u652F\u4ED8\u5B9DC\u8D44\u91D1 10\u8679\u8FD0\u652F\u4ED8\u5B9DB\u8D44\u91D1 11\u8679\u8FD0\u652F\u4ED8\u5B9DA\u8D44\u91D1 12\u8679\u8FD0\u4E0D\u53D1\u8D27\u533A\u57DF 13\u5E97\u94FA\u6388\u6743\u7C7B\u76EE 14\u5237\u5355\u5546\u54C1 15\u5237\u5355\u4EFB\u52A1\u660E\u7EC6 16\u5237\u5355\u8BA2\u5355\u8868 17\u5237\u5355\u5F02\u5E38\u8BA2\u5355 18\u8D22\u52A1\u62A5\u8868\u603B\u8868 19\u8D22\u52A1\u62A5\u8868\u65E5\u8868 25t_bill_info\u53D1\u7968\u8868 26\u9152\u5E97\u8BA2\u5355 27\u7A7A\u6295\u6743\u76CA 28\u79F0\u91CD\u8BA2\u5355\uFF09',
+      '来源（1spu 2t_order 3obj_wallet_log 4发货冻结 5upc导出 6发货单 7运营报表 8物流运费报表 9虹运支付宝C资金 10虹运支付宝B资金 11虹运支付宝A资金 12虹运不发货区域 13店铺授权类目 14刷单商品 15刷单任务明细 16刷单订单表 17刷单异常订单 18财务报表总表 19财务报表日表 25t_bill_info发票表 26酒店订单 27空投权益 28称重订单）',
     defaultValue: '0',
   })
   source_type?: number;
 
   @Column({
     type: DataType.BIGINT,
-    comment:
-      '\u6765\u6E90\u7F16\u7801(1spu\u7F16\u7801 2\u8BA2\u5355\u7F16\u7801)',
+    comment: '来源编码(1spu编码 2订单编码)',
     defaultValue: '0',
   })
   source_id?: number;
 
   @Column({
     type: DataType.BIGINT,
-    comment:
-      '\u6765\u6E90\u7C7B\u522B(0\u666E\u901A 1\u4E9A\u9A6C\u900A\u5BFC\u5165\u6587\u4EF6)',
+    comment: '来源类别(0普通 1亚马逊导入文件)',
     defaultValue: '0',
   })
   source_class?: number;
 
-  @Column({ type: DataType.DATE, comment: '\u521B\u5EFA\u65F6\u95F4' })
+  @Column({ type: DataType.DATE, comment: '创建时间' })
   create_time!: Date;
 
-  @Column({ type: DataType.DATE, comment: '\u66F4\u65B0\u65F6\u95F4' })
+  @Column({ type: DataType.DATE, comment: '更新时间' })
   update_time!: Date;
 
   @Column({
     type: DataType.TINYINT,
-    comment: '\u662F\u5426\u903B\u8F91\u5220\u9664 1:\u5DF2\u5220\u9664',
+    comment: '是否逻辑删除 1:已删除',
     defaultValue: '0',
   })
   deleted?: number;
 
-  @Column({ type: DataType.BIGINT, comment: '\u521B\u5EFA\u4EBA' })
+  @Column({ type: DataType.BIGINT, comment: '创建人' })
   creator_id!: number;
 
-  @Column({ type: DataType.BIGINT, comment: '\u4FEE\u6539\u4EBA' })
+  @Column({ type: DataType.BIGINT, comment: '修改人' })
   modifier_id!: number;
 }

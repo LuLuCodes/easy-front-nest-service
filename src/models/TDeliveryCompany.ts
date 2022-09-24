@@ -14,7 +14,7 @@ export class TDeliveryCompany extends Model {
     primaryKey: true,
     autoIncrement: true,
     type: DataType.BIGINT,
-    comment: '\u7269\u6D41\u516C\u53F8\u4E3B\u952E',
+    comment: '物流公司主键',
   })
   @Index({ name: 'PRIMARY', using: 'BTREE', order: 'ASC', unique: true })
   id?: number;
@@ -22,7 +22,7 @@ export class TDeliveryCompany extends Model {
   @Column({
     allowNull: true,
     type: DataType.INTEGER,
-    comment: '\u5E94\u7528id',
+    comment: '应用id',
     defaultValue: '10000',
   })
   app_id?: number;
@@ -30,44 +30,44 @@ export class TDeliveryCompany extends Model {
   @Column({
     allowNull: true,
     type: DataType.STRING(255),
-    comment: '\u7269\u6D41\u516C\u53F8\u540D\u79F0',
+    comment: '物流公司名称',
   })
   company_name?: string;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(50),
-    comment: '\u7269\u6D41\u516C\u53F8\u7F16\u7801',
+    comment: '物流公司编码',
   })
   company_code?: string;
 
-  @Column({ allowNull: true, type: DataType.INTEGER, comment: '\u6392\u5E8F' })
+  @Column({ allowNull: true, type: DataType.INTEGER, comment: '排序' })
   sort?: number;
 
   @Column({
     allowNull: true,
     type: DataType.TINYINT,
-    comment: '\u662F\u5426\u542F\u7528 1:\u542F\u7528',
+    comment: '是否启用 1:启用',
     defaultValue: '0',
   })
   enabled?: number;
 
-  @Column({ type: DataType.DATE, comment: '\u521B\u5EFA\u65F6\u95F4' })
+  @Column({ type: DataType.DATE, comment: '创建时间' })
   create_time!: Date;
 
-  @Column({ type: DataType.DATE, comment: '\u66F4\u65B0\u65F6\u95F4' })
+  @Column({ type: DataType.DATE, comment: '更新时间' })
   update_time!: Date;
 
   @Column({
     type: DataType.TINYINT,
-    comment: '\u662F\u5426\u903B\u8F91\u5220\u9664 1:\u5DF2\u5220\u9664',
+    comment: '是否逻辑删除 1:已删除',
     defaultValue: '0',
   })
   deleted?: number;
 
-  @Column({ type: DataType.TINYINT, comment: '\u521B\u5EFA\u4EBA' })
+  @Column({ type: DataType.TINYINT, comment: '创建人' })
   creator_id!: number;
 
-  @Column({ type: DataType.BIGINT, comment: '\u4FEE\u6539\u4EBA' })
+  @Column({ type: DataType.BIGINT, comment: '修改人' })
   modifier_id!: number;
 }

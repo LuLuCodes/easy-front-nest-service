@@ -11,7 +11,7 @@ import {
 @Table({
   tableName: 't_order_item',
   timestamps: false,
-  comment: '\u8BA2\u5355\u4E2D\u6240\u5305\u542B\u7684\u5546\u54C1',
+  comment: '订单中所包含的商品',
 })
 export class TOrderItem extends Model {
   @Column({ primaryKey: true, autoIncrement: true, type: DataType.BIGINT })
@@ -21,16 +21,16 @@ export class TOrderItem extends Model {
   @Column({
     allowNull: true,
     type: DataType.INTEGER,
-    comment: '\u5E94\u7528id',
+    comment: '应用id',
     defaultValue: '10000',
   })
   app_id?: number;
 
-  @Column({ type: DataType.BIGINT, comment: '\u8BA2\u5355\u7F16\u53F7' })
+  @Column({ type: DataType.BIGINT, comment: '订单编号' })
   @Index({ name: 'idx_order_id', using: 'BTREE', order: 'ASC', unique: false })
   order_id!: number;
 
-  @Column({ type: DataType.BIGINT, comment: '\u5546\u54C1\u4E3B\u952E' })
+  @Column({ type: DataType.BIGINT, comment: '商品主键' })
   @Index({
     name: 'idx_product_id',
     using: 'BTREE',
@@ -39,46 +39,34 @@ export class TOrderItem extends Model {
   })
   product_id!: number;
 
-  @Column({ type: DataType.BIGINT, comment: '\u5546\u54C1SKU\u4E3B\u952E' })
+  @Column({ type: DataType.BIGINT, comment: '商品SKU主键' })
   @Index({ name: 'idx_sku_id', using: 'BTREE', order: 'ASC', unique: false })
   sku_id!: number;
 
-  @Column({ allowNull: true, type: DataType.STRING(64), comment: 'sku\u53F7' })
+  @Column({ allowNull: true, type: DataType.STRING(64), comment: 'sku号' })
   sku_sn?: string;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING(64),
-    comment: 'sku\u7F16\u7801',
-  })
+  @Column({ allowNull: true, type: DataType.STRING(64), comment: 'sku编码' })
   sku_code?: string;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING(64),
-    comment: '\u4E09\u65B9upc',
-  })
+  @Column({ allowNull: true, type: DataType.STRING(64), comment: '三方upc' })
   to_cps_upc?: string;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(1000),
-    comment: '\u4E09\u65B9\u5546\u54C1\u6765\u6E90\u7F51\u5740',
+    comment: '三方商品来源网址',
   })
   from_cps_url?: string;
 
   @Column({
     allowNull: true,
     type: DataType.INTEGER,
-    comment:
-      '\u4E09\u65B9\u5546\u54C1\u6765\u6E90\uFF081:\u6DD8\u5B9D 2:\u5929\u732B 3:1688\uFF09',
+    comment: '三方商品来源（1:淘宝 2:天猫 3:1688）',
   })
   from_cps_type?: number;
 
-  @Column({
-    type: DataType.STRING(100),
-    comment: '\u4E09\u65B9\u5546\u54C1\u6765\u6E90\u5B50\u5355\u53F7',
-  })
+  @Column({ type: DataType.STRING(100), comment: '三方商品来源子单号' })
   @Index({
     name: 'idx_from_cps_oid',
     using: 'BTREE',
@@ -90,7 +78,7 @@ export class TOrderItem extends Model {
   @Column({
     type: DataType.INTEGER,
     comment:
-      '\u4E09\u65B9\u91C7\u8D2D\u72B6\u6001\uFF080\u5F85\u91C7\u8D2D 1\u91C7\u8D2D\u4E2D 2\u5DF2\u91C7\u8D2D 11\u91C7\u8D2D\u5931\u8D25 12\u4EBA\u4E3A\u5E72\u9884\u5173\u95ED 13\u4EFB\u52A1\u6682\u505C\uFF09',
+      '三方采购状态（0待采购 1采购中 2已采购 11采购失败 12人为干预关闭 13任务暂停）',
     defaultValue: '0',
   })
   from_cps_sync_purchase?: number;
@@ -98,13 +86,13 @@ export class TOrderItem extends Model {
   @Column({
     allowNull: true,
     type: DataType.DATE,
-    comment: '\u4E09\u65B9\u91C7\u8D2D\u722C\u866B\u9886\u53D6\u65F6\u95F4',
+    comment: '三方采购爬虫领取时间',
   })
   from_cps_sync_purchase_time?: Date;
 
   @Column({
     type: DataType.BIGINT,
-    comment: '\u4E09\u65B9\u91C7\u8D2D\u64CD\u4F5C\u4EBA',
+    comment: '三方采购操作人',
     defaultValue: '0',
   })
   @Index({
@@ -118,99 +106,116 @@ export class TOrderItem extends Model {
   @Column({
     allowNull: true,
     type: DataType.STRING,
-    comment: '\u4E09\u65B9\u91C7\u8D2D\u72B6\u6001\u7ED3\u679C\u5907\u6CE8',
+    comment: '三方采购状态结果备注',
   })
   from_cps_sync_purchase_remark?: string;
 
   @Column({
+    type: DataType.INTEGER,
+    comment: '三方发货时间超时是否强制采购',
+    defaultValue: '0',
+  })
+  ignore_over_time?: number;
+
+  @Column({
     allowNull: true,
     type: DataType.STRING(100),
-    comment: '\u4E34\u65F6\u4E09\u65B9\u652F\u4ED8\u5355\u53F7',
+    comment: '处理采购人',
+  })
+  deal_purchase_user?: string;
+
+  @Column({ allowNull: true, type: DataType.BIGINT, comment: '处理采购人' })
+  deal_purchase_user_id?: number;
+
+  @Column({
+    allowNull: true,
+    type: DataType.STRING(100),
+    comment: '临时三方支付单号',
+  })
+  @Index({
+    name: 'idx_temp_to_cps_tid',
+    using: 'BTREE',
+    order: 'ASC',
+    unique: false,
   })
   temp_to_cps_tid?: string;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(100),
-    comment:
-      '\u4E34\u65F6\u4E09\u65B9\u652F\u4ED8\u5355\u53F7\u5931\u8D25\u5907\u6CE8',
+    comment: '临时三方支付单号失败备注',
   })
   temp_to_cps_tid_remark?: string;
 
-  @Column({
-    allowNull: true,
-    type: DataType.INTEGER,
-    comment: '\u91C7\u8D2D\u6570\u91CF',
-  })
+  @Column({ allowNull: true, type: DataType.INTEGER, comment: '采购数量' })
   purchase_quantity?: number;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(128),
-    comment: '\u91C7\u8D2D\u5546\u54C1\u540D\u79F0',
+    comment: '采购商品名称',
   })
   purchase_spu_name?: string;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(500),
-    comment: '\u91C7\u8D2D\u5546\u54C1sku',
+    comment: '采购商品sku',
   })
   purchase_sku_properties_name?: string;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING,
-    comment: '\u91C7\u8D2D\u5730\u5740',
-  })
+  @Column({ allowNull: true, type: DataType.STRING, comment: '采购地址' })
   purchase_cps_url?: string;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING,
-    comment: '\u91C7\u8D2D\u4E0A\u6E38\u56FE\u7247',
-  })
+  @Column({ allowNull: true, type: DataType.STRING, comment: '采购上游图片' })
   purchase_album_pics?: string;
 
   @Column({
     allowNull: true,
     type: DataType.DECIMAL(18, 2),
-    comment: '\u91C7\u8D2D\u4E0A\u6E38\u5355\u4EF7',
+    comment: '采购上游单价',
   })
   purchase_const?: string;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(50),
-    comment: '\u4E09\u65B9\u6765\u6E90\u5E97\u94FA\u7C7B\u578B',
+    comment: '三方来源店铺类型',
   })
   purchase_from_shop_type?: string;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(100),
-    comment: '\u4E09\u65B9\u6765\u6E90\u5E97\u94FA\u540D\u79F0',
+    comment: '三方来源店铺名称',
   })
   purchase_from_shop_name?: string;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(64),
-    comment: '\u4E09\u65B9\u6765\u6E90\u5546\u54C1\u7F16\u7801',
+    comment: '三方来源商品编码',
   })
   purchase_from_product_sn?: string;
 
   @Column({
     allowNull: true,
     type: DataType.STRING,
-    comment: '\u4E09\u65B9\u5546\u54C1\u8DF3\u8F6C\u5730\u5740',
+    comment: '三方商品跳转地址',
   })
   to_cps_url?: string;
 
   @Column({
+    type: DataType.INTEGER,
+    comment: '上游商品来源（1:淘系 3:拼多多）',
+    defaultValue: '1',
+  })
+  father_from_cps_type?: number;
+
+  @Column({
     allowNull: true,
     type: DataType.STRING(100),
-    comment: '\u4E09\u65B9\u91C7\u8D2D\u5355\u53F7',
+    comment: '三方采购单号',
   })
   @Index({
     name: 'idx_to_cps_tid',
@@ -223,7 +228,7 @@ export class TOrderItem extends Model {
   @Column({
     allowNull: true,
     type: DataType.STRING(100),
-    comment: '\u4E09\u65B9\u652F\u4ED8\u5355\u53F7',
+    comment: '三方支付单号',
   })
   @Index({
     name: 'idx_to_cps_ali_sn',
@@ -236,13 +241,13 @@ export class TOrderItem extends Model {
   @Column({
     allowNull: true,
     type: DataType.STRING(100),
-    comment: '\u4E09\u65B9\u652F\u4ED8\u5355\u53F7\u5931\u8D25\u5907\u6CE8',
+    comment: '三方支付单号失败备注',
   })
   to_cps_ali_remark?: string;
 
   @Column({
     type: DataType.DECIMAL(18, 2),
-    comment: '\u4E09\u65B9\u91C7\u8D2D\u5355\u603B\u91D1\u989D',
+    comment: '三方采购单总金额',
     defaultValue: '0.00',
   })
   to_cps_total_amount?: string;
@@ -250,87 +255,68 @@ export class TOrderItem extends Model {
   @Column({
     type: DataType.INTEGER,
     comment:
-      '\u6DD8\u5B9D\u5904\u7406\u4E09\u65B9\u6765\u6E90\u8BA2\u5355\u53D1\u8D27\u72B6\u6001\uFF080\u5F85\u5904\u7406 1\u6DD8\u5B9D\u5904\u7406\u6210\u529F 11\u6DD8\u5B9D\u5904\u7406\u5931\u8D25\uFF09',
+      '淘宝处理三方来源订单发货状态（0待处理 1淘宝处理成功 11淘宝处理失败）',
     defaultValue: '0',
   })
   tb_cps_status?: number;
 
   @Column({
     type: DataType.INTEGER,
-    comment:
-      '\u91C7\u8D2D\u652F\u4ED8\u65B9\u5F0F(1\u82B1\u5457 2\u4FE1\u7528\u5361 3\u4F59\u989D 4\u50A8\u84C4\u5361)',
+    comment: '采购支付方式(1花呗 2信用卡 3余额 4储蓄卡)',
     defaultValue: '0',
   })
   tb_cps_paytype?: number;
 
-  @Column({
-    allowNull: true,
-    type: DataType.DATE,
-    comment: '\u91C7\u8D2D\u652F\u4ED8\u65F6\u95F4',
-  })
+  @Column({ allowNull: true, type: DataType.DATE, comment: '采购支付时间' })
   tb_cps_paytime?: Date;
 
   @Column({
     allowNull: true,
-    type: DataType.STRING(100),
-    comment:
-      '\u6DD8\u5B9D\u5904\u7406\u4E09\u65B9\u6765\u6E90\u8BA2\u5355\u53D1\u8D27\u5907\u6CE8',
+    type: DataType.STRING,
+    comment: '淘宝处理三方来源订单发货备注',
   })
   tb_cps_remark?: string;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(255),
-    comment:
-      '\u5546\u54C1\u4E3B\u56FE, \u53EF\u4EE5\u662Fspu\u4E3B\u56FE\uFF0C\u6216\u8005sku\u4E3B\u56FE',
+    comment: '商品主图, 可以是spu主图，或者sku主图',
   })
   product_pic_url?: string;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING(400),
-    comment: '\u5546\u54C1\u540D\u79F0',
-  })
+  @Column({ allowNull: true, type: DataType.STRING(400), comment: '商品名称' })
   product_name?: string;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING(255),
-    comment: '\u4E3B\u56FEurl',
-  })
+  @Column({ allowNull: true, type: DataType.STRING(255), comment: '主图url' })
   sku_pic_url?: string;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(1000),
-    comment: 'sku\u5C5E\u6027\uFF0Cjson\u683C\u5F0F',
+    comment: 'sku属性，json格式',
   })
   sku_sp_data?: string;
 
-  @Column({
-    type: DataType.STRING(500),
-    comment: 'SKU\u5C5E\u6027\u63CF\u8FF0\uFF08\u6587\u672C\uFF09',
-  })
+  @Column({ type: DataType.STRING(500), comment: 'SKU属性描述（文本）' })
   sku_properties_name!: string;
 
   @Column({
     allowNull: true,
     type: DataType.DECIMAL(10, 2),
-    comment:
-      '\u4E0B\u5355\u65F6\u7684\u4EF7\u683C\uFF08\u5982\u679C\u4F7F\u7528\u4F18\u60E0\u5238\uFF0C\u9700\u6263\u9664\u4F18\u60E0\u5238\u7684\u91D1\u989D\uFF09',
+    comment: '下单时的价格（如果使用优惠券，需扣除优惠券的金额）',
   })
   price?: string;
 
   @Column({
     type: DataType.STRING(50),
-    comment: '\u8D27\u5E01\u7C7B\u578B',
-    defaultValue: '\u4EBA\u6C11\u5E01',
+    comment: '货币类型',
+    defaultValue: '人民币',
   })
   currency_type?: string;
 
   @Column({
     type: DataType.STRING(50),
-    comment: '\u8D27\u5E01\u7B26\u53F7',
+    comment: '货币符号',
     defaultValue: 'CNY',
   })
   currency_code?: string;
@@ -338,43 +324,33 @@ export class TOrderItem extends Model {
   @Column({
     allowNull: true,
     type: DataType.DECIMAL(10, 2),
-    comment: '\u5173\u8054\u79F0\u91CD\u5546\u54C1x\u5143/\u514B',
+    comment: '关联称重商品x元/克',
   })
   weight_unit_price?: string;
 
   @Column({
     allowNull: true,
     type: DataType.DECIMAL(10, 2),
-    comment:
-      '\u79F0\u91CD\u5546\u54C1\u4E0B\u5355\u521D\u59CBsku\u603B\u91CD\u91CF\uFF08\u514B\uFF09',
+    comment: '称重商品下单初始sku总重量（克）',
   })
   ini_sku_weight?: string;
 
   @Column({
     allowNull: true,
     type: DataType.DECIMAL(10, 2),
-    comment:
-      '\u79F0\u91CD\u5546\u54C1\u6700\u7EC8\u53D1\u8D27sku\u603B\u91CD\u91CF\uFF08\u514B\uFF09',
+    comment: '称重商品最终发货sku总重量（克）',
   })
   del_sku_weight?: string;
 
-  @Column({
-    allowNull: true,
-    type: DataType.DECIMAL(10, 2),
-    comment: '\u52A0\u5DE5\u8D39',
-  })
+  @Column({ allowNull: true, type: DataType.DECIMAL(10, 2), comment: '加工费' })
   machining_price?: string;
 
-  @Column({
-    allowNull: true,
-    type: DataType.INTEGER,
-    comment: '\u8D2D\u4E70\u6570\u91CF',
-  })
+  @Column({ allowNull: true, type: DataType.INTEGER, comment: '购买数量' })
   quantity?: number;
 
   @Column({
     type: DataType.INTEGER,
-    comment: '\u5DF2\u53D1\u8D27\u6570\u91CF\uFF08\u5197\u4F59\uFF09',
+    comment: '已发货数量（冗余）',
     defaultValue: '0',
   })
   delivery_quantity?: number;
@@ -382,43 +358,42 @@ export class TOrderItem extends Model {
   @Column({
     allowNull: true,
     type: DataType.STRING(200),
-    comment: '\u5546\u54C1\u4FC3\u9500\u540D\u79F0',
+    comment: '商品促销名称',
   })
   promotion_name?: string;
 
   @Column({
     allowNull: true,
     type: DataType.DECIMAL(10, 2),
-    comment: '\u5546\u54C1\u4FC3\u9500\u5206\u89E3\u91D1\u989D',
+    comment: '商品促销分解金额',
   })
   promotion_amount?: string;
 
   @Column({
     allowNull: true,
     type: DataType.DECIMAL(10, 2),
-    comment: '\u4F18\u60E0\u5238\u4F18\u60E0\u5206\u89E3\u91D1\u989D',
+    comment: '优惠券优惠分解金额',
   })
   coupon_amount?: string;
 
   @Column({
     allowNull: true,
     type: DataType.DECIMAL(10, 2),
-    comment: '\u79EF\u5206\u4F18\u60E0\u5206\u89E3\u91D1\u989D',
+    comment: '积分优惠分解金额',
   })
   integration_amount?: string;
 
   @Column({
     allowNull: true,
     type: DataType.DECIMAL(10, 2),
-    comment:
-      '\u8BE5\u5546\u54C1\u7ECF\u8FC7\u4F18\u60E0\u540E\u7684\u5206\u89E3\u91D1\u989D',
+    comment: '该商品经过优惠后的分解金额',
   })
   real_amount?: string;
 
   @Column({
     allowNull: true,
     type: DataType.INTEGER,
-    comment: '\u8D60\u9001\u7684\u79EF\u5206',
+    comment: '赠送的积分',
     defaultValue: '0',
   })
   gift_integration?: number;
@@ -426,7 +401,7 @@ export class TOrderItem extends Model {
   @Column({
     allowNull: true,
     type: DataType.INTEGER,
-    comment: '\u8D60\u9001\u7684\u6210\u957F\u503C',
+    comment: '赠送的成长值',
     defaultValue: '0',
   })
   gift_growth?: number;
@@ -435,44 +410,42 @@ export class TOrderItem extends Model {
     allowNull: true,
     type: DataType.STRING(1000),
     comment:
-      '\u5546\u54C1\u9500\u552E\u5C5E\u6027:[{"key":"\u989C\u8272","value":"\u989C\u8272"},{"key":"\u5BB9\u91CF","value":"4G"}]',
+      '商品销售属性:[{"key":"颜色","value":"颜色"},{"key":"容量","value":"4G"}]',
   })
   product_attr?: string;
 
   @Column({
     allowNull: true,
     type: DataType.DECIMAL(10, 2),
-    comment:
-      '\u7EA7\u5DEE\u5956\u52B1\uFF08\u597D\u7269\u4F53\u9A8C\u5B98\uFF09',
+    comment: '级差奖励（好物体验官）',
   })
   reward_hw?: string;
 
   @Column({
     allowNull: true,
     type: DataType.DECIMAL(10, 2),
-    comment:
-      '\u7EA7\u5DEE\u5956\u52B1\uFF08\u9996\u5E2D\u5206\u4EAB\u5B98\uFF09',
+    comment: '级差奖励（首席分享官）',
   })
   reward_sx?: string;
 
   @Column({
     allowNull: true,
     type: DataType.DECIMAL(10, 2),
-    comment: '\u7206\u5355\u5956\u52B1\uFF08\u4E00\u7EA7\uFF09',
+    comment: '爆单奖励（一级）',
   })
   reward_bd1?: string;
 
   @Column({
     allowNull: true,
     type: DataType.DECIMAL(10, 2),
-    comment: '\u7206\u5355\u5956\u52B1\uFF08\u4E8C\u7EA7\uFF09',
+    comment: '爆单奖励（二级）',
   })
   reward_bd2?: string;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(128),
-    comment: '\u4E09\u65B9\u771F\u5B9E\u5546\u54C1\u540D\u79F0',
+    comment: '三方真实商品名称',
   })
   cps_spu_name?: string;
 
@@ -480,28 +453,23 @@ export class TOrderItem extends Model {
     allowNull: true,
     type: DataType.STRING,
     comment:
-      '\u5C5E\u6027\u522B\u540Djson[{"key":"\u989C\u8272\u5206\u7C7B","values":[{"display":"\u6CB9\u4EAE\u70AB\u9ED1\u8272","real":"\u9ED1\u8272"}]}]',
+      '属性别名json[{"key":"颜色分类","values":[{"display":"油亮炫黑色","real":"黑色"}]}]',
   })
   properties?: string;
 
   @Column({
     allowNull: true,
     type: DataType.INTEGER,
-    comment: '\u4E09\u65B9\u91C7\u8D2D\u6570\u91CF\u500D\u6570',
+    comment: '三方采购数量倍数',
   })
   multiple?: number;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING(100),
-    comment: 'ioss\u7F16\u7801',
-  })
+  @Column({ allowNull: true, type: DataType.STRING(100), comment: 'ioss编码' })
   ioss_code?: string;
 
   @Column({
     type: DataType.INTEGER,
-    comment:
-      '\u662F\u5426\u9700\u8981\u8D85\u7EA7\u91C7\u8D2D\u8D26\u53F7\u91C7\u8D2D',
+    comment: '是否需要超级采购账号采购',
     defaultValue: '0',
   })
   if_supper_buy?: number;
@@ -509,15 +477,14 @@ export class TOrderItem extends Model {
   @Column({
     type: DataType.INTEGER,
     comment:
-      '\u662F\u5426\u8D54\u4ED8\u91C7\u8D2D\u8BEF\u91C7\u7684\u5237\u5355\u6210\u672C\uFF080\u65E0\u5904\u7406 1\u4ECE\u652F\u4ED8\u5B9Da\u6253\u6B3E\u5230\u652F\u4ED8\u5B9Db\uFF08\u8FDB\u884C\u4E2D\uFF09 2\u4ECE\u652F\u4ED8\u5B9Da\u6253\u6B3E\u5230\u652F\u4ED8\u5B9Db\uFF08\u5DF2\u5B8C\u6210\uFF09 3\u4ECE\u652F\u4ED8\u5B9Db\u6253\u6B3E\u5230\u91C7\u8D2D\uFF08\u8FDB\u884C\u4E2D\uFF094\u4ECE\u652F\u4ED8\u5B9Db\u6253\u6B3E\u5230\u91C7\u8D2D\uFF08\u5DF2\u7ECF\u5B8C\u6210\uFF095\u652F\u4ED8\u5B9Da->b\u5931\u8D25 6\u652F\u4ED8\u5B9Db->\u91C7\u8D2D\u5931\u8D25\uFF09',
+      '是否赔付采购误采的刷单成本（0无处理 1从支付宝a打款到支付宝b（进行中） 2从支付宝a打款到支付宝b（已完成） 3从支付宝b打款到采购（进行中）4从支付宝b打款到采购（已经完成）5支付宝a->b失败 6支付宝b->采购失败）',
     defaultValue: '0',
   })
   error_purchase?: number;
 
   @Column({
     type: DataType.DECIMAL(18, 2),
-    comment:
-      '\u8D54\u4ED8\u91C7\u8D2D\u8BEF\u91C7\u7684\u5237\u5355\u6210\u672C',
+    comment: '赔付采购误采的刷单成本',
     defaultValue: '0.00',
   })
   error_purchase_amount?: string;
@@ -525,43 +492,41 @@ export class TOrderItem extends Model {
   @Column({
     allowNull: true,
     type: DataType.STRING(100),
-    comment: '\u652F\u4ED8\u5B9Da->\u652F\u4ED8\u5B9Db\u6D41\u6C34\u53F7',
+    comment: '支付宝a->支付宝b流水号',
   })
   error_purchase_ali_sn_a?: string;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(200),
-    comment: '\u652F\u4ED8\u5B9Da->\u652F\u4ED8\u5B9Db\u5907\u6CE8',
+    comment: '支付宝a->支付宝b备注',
   })
   error_purchase_ali_sn_aremark?: string;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(100),
-    comment: '\u652F\u4ED8\u5B9Db->\u91C7\u8D2D\u6D41\u6C34\u53F7',
+    comment: '支付宝b->采购流水号',
   })
   error_purchase_ali_sn_b?: string;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(200),
-    comment: '\u652F\u4ED8\u5B9Db->\u91C7\u8D2D\u6D41\u6C34\u53F7',
+    comment: '支付宝b->采购流水号',
   })
   error_purchase_ali_sn_bremark?: string;
 
   @Column({
     allowNull: true,
     type: DataType.DATE,
-    comment:
-      '\u8D54\u4ED8\u91C7\u8D2D\u8BEF\u91C7\u7684\u4E0A\u6E38\u9000\u6B3E\u65F6\u95F4',
+    comment: '赔付采购误采的上游退款时间',
   })
   error_purchase_const_time?: Date;
 
   @Column({
     type: DataType.DECIMAL(18, 2),
-    comment:
-      '\u8D54\u4ED8\u91C7\u8D2D\u8BEF\u91C7\u7684\u4E0A\u6E38\u9000\u6B3E\u91D1\u989D',
+    comment: '赔付采购误采的上游退款金额',
     defaultValue: '0.00',
   })
   error_purchase_const_rma?: string;
@@ -569,12 +534,12 @@ export class TOrderItem extends Model {
   @Column({
     allowNull: true,
     type: DataType.TINYINT,
-    comment: '\u662F\u5426\u542F\u7528 1:\u542F\u7528',
+    comment: '是否启用 1:启用',
     defaultValue: '0',
   })
   enabled?: number;
 
-  @Column({ type: DataType.DATE, comment: '\u521B\u5EFA\u65F6\u95F4' })
+  @Column({ type: DataType.DATE, comment: '创建时间' })
   @Index({
     name: 'idx_create_time',
     using: 'BTREE',
@@ -583,19 +548,19 @@ export class TOrderItem extends Model {
   })
   create_time!: Date;
 
-  @Column({ type: DataType.DATE, comment: '\u66F4\u65B0\u65F6\u95F4' })
+  @Column({ type: DataType.DATE, comment: '更新时间' })
   update_time!: Date;
 
   @Column({
     type: DataType.TINYINT,
-    comment: '\u662F\u5426\u903B\u8F91\u5220\u9664 1:\u5DF2\u5220\u9664',
+    comment: '是否逻辑删除 1:已删除',
     defaultValue: '0',
   })
   deleted?: number;
 
-  @Column({ type: DataType.BIGINT, comment: '\u521B\u5EFA\u4EBA' })
+  @Column({ type: DataType.BIGINT, comment: '创建人' })
   creator_id!: number;
 
-  @Column({ type: DataType.BIGINT, comment: '\u4FEE\u6539\u4EBA' })
+  @Column({ type: DataType.BIGINT, comment: '修改人' })
   modifier_id!: number;
 }

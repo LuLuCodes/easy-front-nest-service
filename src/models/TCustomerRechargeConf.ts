@@ -11,70 +11,65 @@ import {
 @Table({
   tableName: 't_customer_recharge_conf',
   timestamps: false,
-  comment: '\u5BA2\u6237\u5145\u503C\u914D\u7F6E',
+  comment: '客户充值配置',
 })
 export class TCustomerRechargeConf extends Model {
   @Column({
     primaryKey: true,
     autoIncrement: true,
     type: DataType.BIGINT,
-    comment: '\u7CFB\u7EDF\u7F16\u7801',
+    comment: '系统编码',
   })
   @Index({ name: 'PRIMARY', using: 'BTREE', order: 'ASC', unique: true })
   id?: number;
 
-  @Column({ type: DataType.INTEGER, comment: '\u5E94\u7528id' })
+  @Column({ type: DataType.INTEGER, comment: '应用id' })
   app_id!: number;
 
-  @Column({ type: DataType.STRING(50), comment: '\u5145\u503C\u540D\u79F0' })
+  @Column({ type: DataType.STRING(50), comment: '充值名称' })
   recharge_name!: string;
 
-  @Column({ type: DataType.STRING(255), comment: '\u5145\u503C\u56FE\u7247' })
+  @Column({ type: DataType.STRING(255), comment: '充值图片' })
   recharge_url!: string;
 
   @Column({
     type: DataType.INTEGER,
-    comment:
-      '\u5145\u503C\u7C7B\u578B\uFF081vip\u5145\u503C\u8BA2\u5355  2\u5145\u503C\u8C46\u8C46\u5E01 3\u5BF9\u8C61\u94B1\u5305t_object_wallet\uFF09',
+    comment: '充值类型（1vip充值订单  2充值豆豆币 3对象钱包t_object_wallet）',
   })
   recharge_type!: number;
 
   @Column({
     type: DataType.INTEGER,
-    comment:
-      '\u5145\u503C\u65F6\u6548\uFF0810 10\u5929\uFF0C30 \u4E00\u4E2A\u6708\uFF0C90\u4E09\u4E2A\u6708 180 \u516D\u4E2A\u6708 \uFF09',
+    comment: '充值时效（10 10天，30 一个月，90三个月 180 六个月 ）',
   })
   useful_type!: number;
 
-  @Column({
-    type: DataType.DECIMAL(10, 2),
-    comment: '\u5145\u503C\u91D1\u989D',
-  })
+  @Column({ type: DataType.DECIMAL(10, 2), comment: '充值金额' })
   amount!: string;
 
   @Column({
     type: DataType.DECIMAL(10, 2),
-    comment: '\u539F\u4EF7',
+    comment: '原价',
     defaultValue: '0.00',
   })
   market_amount?: string;
 
   @Column({
     type: DataType.TINYINT,
-    comment: '\u662F\u5426\u903B\u8F91\u5220\u9664 1:\u5DF2\u5220\u9664',
+    comment: '是否逻辑删除 1:已删除',
     defaultValue: '0',
   })
   deleted?: number;
 
-  @Column({ type: DataType.DATE, comment: '\u521B\u5EFA\u65F6\u95F4' })
+  @Column({ type: DataType.DATE, comment: '创建时间' })
   create_time!: Date;
 
-  @Column({ type: DataType.DATE, comment: '\u66F4\u65B0\u65F6\u95F4' })
+  @Column({ type: DataType.DATE, comment: '更新时间' })
   update_time!: Date;
 
-  @Column({ type: DataType.BIGINT, comment: '\u521B\u5EFA\u4EBA' })
+  @Column({ type: DataType.BIGINT, comment: '创建人' })
   creator_id!: number;
 
-  @Column({ type: DataType.BIGINT, comment: '\u4FEE\u6539\u4EBA' })
+  @Column({ type: DataType.BIGINT, comment: '修改人' })
   modifier_id!: number;
 }

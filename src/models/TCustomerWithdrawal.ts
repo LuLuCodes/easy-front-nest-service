@@ -11,14 +11,14 @@ import {
 @Table({
   tableName: 't_customer_withdrawal',
   timestamps: false,
-  comment: '\u5E97\u94FA\u89D2\u8272\u63D0\u73B0\u8868',
+  comment: '店铺角色提现表',
 })
 export class TCustomerWithdrawal extends Model {
   @Column({
     primaryKey: true,
     autoIncrement: true,
     type: DataType.BIGINT,
-    comment: '\u7CFB\u7EDF\u7F16\u7801',
+    comment: '系统编码',
   })
   @Index({ name: 'PRIMARY', using: 'BTREE', order: 'ASC', unique: true })
   id?: number;
@@ -26,12 +26,12 @@ export class TCustomerWithdrawal extends Model {
   @Column({
     allowNull: true,
     type: DataType.INTEGER,
-    comment: '\u5E94\u7528id',
+    comment: '应用id',
     defaultValue: '10000',
   })
   app_id?: number;
 
-  @Column({ type: DataType.BIGINT, comment: '\u4EBA\u5458\u7F16\u7801' })
+  @Column({ type: DataType.BIGINT, comment: '人员编码' })
   @Index({
     name: 'idx_customer_id',
     using: 'BTREE',
@@ -40,34 +40,23 @@ export class TCustomerWithdrawal extends Model {
   })
   customer_id!: number;
 
-  @Column({ type: DataType.DATE, comment: '\u63D0\u73B0\u65F6\u95F4' })
+  @Column({ type: DataType.DATE, comment: '提现时间' })
   draw_time!: Date;
 
   @Column({
     type: DataType.INTEGER,
-    comment:
-      '\u63D0\u73B0\u7C7B\u578B(1\u4EE3\u8D2D\u63D0\u73B0 2\u4EE3\u7406\u5546\u63D0\u73B0 3\u6295\u8D44\u4EBA\u63D0\u73B0)',
+    comment: '提现类型(1代购提现 2代理商提现 3投资人提现)',
   })
   draw_type!: number;
 
-  @Column({
-    allowNull: true,
-    type: DataType.DATE,
-    comment: '\u5230\u8D26\u65F6\u95F4',
-  })
+  @Column({ allowNull: true, type: DataType.DATE, comment: '到账时间' })
   finish_time?: Date;
 
-  @Column({
-    type: DataType.STRING(100),
-    comment: '\u4E1A\u52A1\u5355\u636E\u53F7',
-  })
+  @Column({ type: DataType.STRING(100), comment: '业务单据号' })
   @Index({ name: 'idx_draw_sn', using: 'BTREE', order: 'ASC', unique: false })
   draw_sn!: string;
 
-  @Column({
-    type: DataType.STRING(100),
-    comment: '\u652F\u4ED8\u5B9D\u5355\u636E\u53F7',
-  })
+  @Column({ type: DataType.STRING(100), comment: '支付宝单据号' })
   @Index({
     name: 'idx_ali_pay_sn',
     using: 'BTREE',
@@ -76,76 +65,70 @@ export class TCustomerWithdrawal extends Model {
   })
   ali_pay_sn!: string;
 
-  @Column({
-    type: DataType.BIGINT,
-    comment: '\u652F\u4ED8\u5B9D\u5E73\u53F0\u914D\u7F6E',
-  })
+  @Column({ type: DataType.BIGINT, comment: '支付宝平台配置' })
   platform_config_id!: number;
 
   @Column({
     type: DataType.DECIMAL(10, 2),
-    comment: '\u63D0\u73B0\u91D1\u989D',
+    comment: '提现金额',
     defaultValue: '0.00',
   })
   amount?: string;
 
   @Column({
     type: DataType.DECIMAL(10, 2),
-    comment: '\u5230\u8D26\u91D1\u989D',
+    comment: '到账金额',
     defaultValue: '0.00',
   })
   success_amount?: string;
 
-  @Column({
-    type: DataType.STRING(100),
-    comment: '\u652F\u4ED8\u5B9D\u8D26\u53F7',
-  })
+  @Column({ type: DataType.STRING(100), comment: '支付宝账号' })
   draw_ali!: string;
 
   @Column({
     type: DataType.INTEGER,
-    comment:
-      '\u5230\u8D26\u72B6\u6001\uFF080\u8FDB\u884C\u4E2D 1\u5230\u8D26 2\u5230\u8D26\u5931\u8D25\uFF09',
+    comment: '到账状态（0进行中 1到账 2到账失败）',
   })
   draw_status!: number;
+
+  @Column({ allowNull: true, type: DataType.STRING(100), comment: '银行卡' })
+  bank_card?: string;
+
+  @Column({ allowNull: true, type: DataType.STRING(100), comment: '银行名称' })
+  bank_name?: string;
+
+  @Column({ allowNull: true, type: DataType.STRING(100), comment: '支行名称' })
+  bank_name_ext?: string;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(500),
-    comment: '\u652F\u4ED8\u5B9D\u8FD4\u56DE\u5907\u6CE8',
+    comment: '支付宝返回备注',
   })
   ali_remark?: string;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING(50),
-    comment: '\u63D0\u73B0\u4EBA\u59D3\u540D',
-  })
+  @Column({ allowNull: true, type: DataType.STRING(50), comment: '提现人姓名' })
   real_name?: string;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING(100),
-    comment: '\u63D0\u73B0\u5907\u6CE8',
-  })
+  @Column({ allowNull: true, type: DataType.STRING(100), comment: '提现备注' })
   title?: string;
 
-  @Column({ type: DataType.DATE, comment: '\u521B\u5EFA\u65F6\u95F4' })
+  @Column({ type: DataType.DATE, comment: '创建时间' })
   create_time!: Date;
 
-  @Column({ type: DataType.DATE, comment: '\u66F4\u65B0\u65F6\u95F4' })
+  @Column({ type: DataType.DATE, comment: '更新时间' })
   update_time!: Date;
 
   @Column({
     type: DataType.TINYINT,
-    comment: '\u662F\u5426\u903B\u8F91\u5220\u9664 1:\u5DF2\u5220\u9664',
+    comment: '是否逻辑删除 1:已删除',
     defaultValue: '0',
   })
   deleted?: number;
 
-  @Column({ type: DataType.BIGINT, comment: '\u521B\u5EFA\u4EBA' })
+  @Column({ type: DataType.BIGINT, comment: '创建人' })
   creator_id!: number;
 
-  @Column({ type: DataType.BIGINT, comment: '\u4FEE\u6539\u4EBA' })
+  @Column({ type: DataType.BIGINT, comment: '修改人' })
   modifier_id!: number;
 }

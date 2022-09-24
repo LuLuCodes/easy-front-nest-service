@@ -11,14 +11,14 @@ import {
 @Table({
   tableName: 't_sys_warning',
   timestamps: false,
-  comment: '\u7CFB\u7EDF\u5F02\u5E38\u8B66\u544A\u8868',
+  comment: '系统异常警告表',
 })
 export class TSysWarning extends Model {
   @Column({
     primaryKey: true,
     autoIncrement: true,
     type: DataType.BIGINT,
-    comment: '\u7CFB\u7EDF\u7F16\u7801',
+    comment: '系统编码',
   })
   @Index({ name: 'PRIMARY', using: 'BTREE', order: 'ASC', unique: true })
   id?: number;
@@ -26,59 +26,45 @@ export class TSysWarning extends Model {
   @Column({
     allowNull: true,
     type: DataType.INTEGER,
-    comment: '\u5E94\u7528id',
+    comment: '应用id',
     defaultValue: '10000',
   })
   app_id?: number;
 
-  @Column({
-    type: DataType.INTEGER,
-    comment: '\u8B66\u544A\u7C7B\u578B\uFF081\u91CD\u590D\u91C7\u8D2D\uFF09',
-  })
+  @Column({ type: DataType.INTEGER, comment: '警告类型（1重复采购）' })
   warning_type!: number;
 
-  @Column({ type: DataType.BIGINT, comment: '\u6765\u6E90\u7F16\u7801' })
+  @Column({ type: DataType.BIGINT, comment: '来源编码' })
   source_id!: number;
 
-  @Column({
-    type: DataType.INTEGER,
-    comment: '\u6765\u6E90\u8868\uFF081\u8BA2\u5355\u660E\u7EC6\u8868\uFF09',
-  })
+  @Column({ type: DataType.INTEGER, comment: '来源表（1订单明细表）' })
   source_type!: number;
 
-  @Column({ type: DataType.STRING(100), comment: '\u8B66\u544A\u6807\u9898' })
+  @Column({ type: DataType.STRING(100), comment: '警告标题' })
   warning_title!: string;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING(500),
-    comment: '\u8B66\u544A\u5907\u6CE8',
-  })
+  @Column({ allowNull: true, type: DataType.STRING(500), comment: '警告备注' })
   remark?: string;
 
-  @Column({
-    type: DataType.INTEGER,
-    comment:
-      '\u5904\u7406\u72B6\u6001\uFF080\u5F85\u5904\u7406 1\u5DF2\u5904\u7406\uFF09',
-  })
+  @Column({ type: DataType.INTEGER, comment: '处理状态（0待处理 1已处理）' })
   deal_status!: number;
 
-  @Column({ type: DataType.DATE, comment: '\u521B\u5EFA\u65F6\u95F4' })
+  @Column({ type: DataType.DATE, comment: '创建时间' })
   create_time!: Date;
 
-  @Column({ type: DataType.DATE, comment: '\u66F4\u65B0\u65F6\u95F4' })
+  @Column({ type: DataType.DATE, comment: '更新时间' })
   update_time!: Date;
 
   @Column({
     type: DataType.TINYINT,
-    comment: '\u662F\u5426\u903B\u8F91\u5220\u9664 1:\u5DF2\u5220\u9664',
+    comment: '是否逻辑删除 1:已删除',
     defaultValue: '0',
   })
   deleted?: number;
 
-  @Column({ type: DataType.BIGINT, comment: '\u521B\u5EFA\u4EBA' })
+  @Column({ type: DataType.BIGINT, comment: '创建人' })
   creator_id!: number;
 
-  @Column({ type: DataType.BIGINT, comment: '\u4FEE\u6539\u4EBA' })
+  @Column({ type: DataType.BIGINT, comment: '修改人' })
   modifier_id!: number;
 }

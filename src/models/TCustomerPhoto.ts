@@ -11,7 +11,7 @@ import {
 @Table({
   tableName: 't_customer_photo',
   timestamps: false,
-  comment: '\u7528\u6237\u76F8\u518C',
+  comment: '用户相册',
 })
 export class TCustomerPhoto extends Model {
   @Column({ primaryKey: true, autoIncrement: true, type: DataType.BIGINT })
@@ -21,7 +21,7 @@ export class TCustomerPhoto extends Model {
   @Column({
     allowNull: true,
     type: DataType.INTEGER,
-    comment: '\u5E94\u7528id',
+    comment: '应用id',
     defaultValue: '10000',
   })
   app_id?: number;
@@ -34,69 +34,56 @@ export class TCustomerPhoto extends Model {
     allowNull: true,
     type: DataType.TINYINT,
     comment:
-      '\u76F8\u518C\u7C7B\u578B:0:\u666E\u901A 1:\u771F\u4EBA2:\u5973\u795E,3\u9605\u540E\u5373\u711A,4:\u4ED8\u8D39,\u5982\u679C\u662F1\u5220\u9664\u89E6\u53D1\u5220\u51FA\u8BA4\u8BC1',
+      '相册类型:0:普通 1:真人2:女神,3阅后即焚,4:付费,如果是1删除触发删出认证',
   })
   photo_type?: number;
 
   @Column({
-    type: DataType.TINYINT,
-    comment: '\u6587\u4EF6\u7C7B\u578B\uFF1A1:\u56FE\u72472:\u89C6\u9891',
+    type: DataType.INTEGER,
+    comment: '原始相册类型',
+    defaultValue: '0',
   })
+  origin_photo_type?: number;
+
+  @Column({ type: DataType.TINYINT, comment: '文件类型：1:图片2:视频' })
   file_type!: number;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING(255),
-    comment: '\u5730\u5740',
-  })
+  @Column({ allowNull: true, type: DataType.STRING(255), comment: '地址' })
   pic_url?: string;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING(255),
-    comment: '\u9644\u52A0\u5730\u5740',
-  })
+  @Column({ allowNull: true, type: DataType.STRING(255), comment: '附加地址' })
   pic_url_ext?: string;
 
   @Column({
     allowNull: true,
     type: DataType.TINYINT,
-    comment:
-      '\u5BA1\u6838\u6807\u8BB0 1\u5BA1\u6838 0\u672A\u5BA1\u6838 11\u5BA1\u6838\u5931\u8D25 12\u9700\u8981\u4EBA\u5DE5\u5BA1\u6838',
+    comment: '审核标记 1审核 0未审核 11审核失败 12需要人工审核',
   })
   audit_status?: number;
 
-  @Column({
-    allowNull: true,
-    type: DataType.DATE,
-    comment: '\u5BA1\u6838\u65F6\u95F4',
-  })
+  @Column({ allowNull: true, type: DataType.DATE, comment: '审核时间' })
   audit_time?: Date;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING(2000),
-    comment: '\u5BA1\u6838\u539F\u56E0',
-  })
+  @Column({ allowNull: true, type: DataType.STRING(2000), comment: '审核原因' })
   audit_reason?: string;
 
   @Column({
     type: DataType.TINYINT,
-    comment: '\u662F\u5426\u903B\u8F91\u5220\u9664 1:\u5DF2\u5220\u9664',
+    comment: '是否逻辑删除 1:已删除',
     defaultValue: '0',
   })
   @Index({ name: 'idx_customer', using: 'BTREE', order: 'ASC', unique: false })
   deleted?: number;
 
-  @Column({ type: DataType.DATE, comment: '\u521B\u5EFA\u65F6\u95F4' })
+  @Column({ type: DataType.DATE, comment: '创建时间' })
   create_time!: Date;
 
-  @Column({ type: DataType.DATE, comment: '\u66F4\u65B0\u65F6\u95F4' })
+  @Column({ type: DataType.DATE, comment: '更新时间' })
   update_time!: Date;
 
-  @Column({ type: DataType.BIGINT, comment: '\u521B\u5EFA\u4EBA' })
+  @Column({ type: DataType.BIGINT, comment: '创建人' })
   creator_id!: number;
 
-  @Column({ type: DataType.BIGINT, comment: '\u4FEE\u6539\u4EBA' })
+  @Column({ type: DataType.BIGINT, comment: '修改人' })
   modifier_id!: number;
 }

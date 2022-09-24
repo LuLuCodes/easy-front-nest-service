@@ -11,14 +11,14 @@ import {
 @Table({
   tableName: 't_shop_swipe_task_item',
   timestamps: false,
-  comment: '\u5E97\u94FA\u5237\u5355-\u4EFB\u52A1\u8868-\u660E\u7EC6',
+  comment: '店铺刷单-任务表-明细',
 })
 export class TShopSwipeTaskItem extends Model {
   @Column({
     primaryKey: true,
     autoIncrement: true,
     type: DataType.BIGINT,
-    comment: '\u7CFB\u7EDF\u7F16\u7801',
+    comment: '系统编码',
   })
   @Index({ name: 'PRIMARY', using: 'BTREE', order: 'ASC', unique: true })
   id?: number;
@@ -26,43 +26,32 @@ export class TShopSwipeTaskItem extends Model {
   @Column({
     allowNull: true,
     type: DataType.INTEGER,
-    comment: '\u5E94\u7528id',
+    comment: '应用id',
     defaultValue: '10000',
   })
   app_id?: number;
 
-  @Column({
-    type: DataType.BIGINT,
-    comment: '\u5E97\u94FA\u4E3B\u952E\uFF08\u5197\u4F59\uFF09',
-  })
+  @Column({ type: DataType.BIGINT, comment: '店铺主键（冗余）' })
   @Index({ name: 'idx_shop_id', using: 'BTREE', order: 'ASC', unique: false })
   shop_id!: number;
 
-  @Column({ type: DataType.BIGINT, comment: '\u4EFB\u52A1\u4E3B\u952E' })
+  @Column({ type: DataType.BIGINT, comment: '任务主键' })
   @Index({ name: 'idx_task_id', using: 'BTREE', order: 'ASC', unique: false })
   task_id!: number;
 
-  @Column({
-    allowNull: true,
-    type: DataType.DATE,
-    comment: '\u4EFB\u52A1\u65E5\u671F\uFF08\u5197\u4F59\uFF09',
-  })
+  @Column({ allowNull: true, type: DataType.DATE, comment: '任务日期（冗余）' })
   @Index({ name: 'idx_task_day', using: 'BTREE', order: 'ASC', unique: false })
   task_day?: Date;
 
-  @Column({ type: DataType.BIGINT, comment: '\u7C7B\u522B\u7F16\u7801' })
+  @Column({ type: DataType.BIGINT, comment: '类别编码' })
   spu_category_id!: number;
 
-  @Column({
-    type: DataType.BIGINT,
-    comment: '\u4EE3\u8868\u5546\u54C1\u7F16\u7801',
-  })
+  @Column({ type: DataType.BIGINT, comment: '代表商品编码' })
   spu_id!: number;
 
   @Column({
     type: DataType.INTEGER,
-    comment:
-      '\u9886\u53D6\u72B6\u6001\uFF080\u672A\u9886\u53D6 1\u5DF2\u9886\u53D6\uFF09',
+    comment: '领取状态（0未领取 1已领取）',
     defaultValue: '0',
   })
   pick_status?: number;
@@ -70,7 +59,7 @@ export class TShopSwipeTaskItem extends Model {
   @Column({
     allowNull: true,
     type: DataType.STRING(100),
-    comment: '\u9886\u53D6\u4EBAOPEN',
+    comment: '领取人OPEN',
   })
   @Index({
     name: 'idx_pick_user_open',
@@ -80,11 +69,7 @@ export class TShopSwipeTaskItem extends Model {
   })
   pick_user_open?: string;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING(100),
-    comment: '\u9886\u53D6\u4EBAIP',
-  })
+  @Column({ allowNull: true, type: DataType.STRING(100), comment: '领取人IP' })
   @Index({
     name: 'idx_pick_user_ip',
     using: 'BTREE',
@@ -96,33 +81,29 @@ export class TShopSwipeTaskItem extends Model {
   @Column({
     allowNull: true,
     type: DataType.STRING(100),
-    comment: '\u9886\u53D6\u4EBA\u6635\u79F0',
+    comment: '领取人昵称',
   })
   pick_user_name?: string;
 
-  @Column({
-    allowNull: true,
-    type: DataType.DATE,
-    comment: '\u9886\u53D6\u65F6\u95F4',
-  })
+  @Column({ allowNull: true, type: DataType.DATE, comment: '领取时间' })
   pick_time?: Date;
 
-  @Column({ type: DataType.DATE, comment: '\u521B\u5EFA\u65F6\u95F4' })
+  @Column({ type: DataType.DATE, comment: '创建时间' })
   create_time!: Date;
 
-  @Column({ type: DataType.DATE, comment: '\u66F4\u65B0\u65F6\u95F4' })
+  @Column({ type: DataType.DATE, comment: '更新时间' })
   update_time!: Date;
 
   @Column({
     type: DataType.TINYINT,
-    comment: '\u662F\u5426\u903B\u8F91\u5220\u9664 1:\u5DF2\u5220\u9664',
+    comment: '是否逻辑删除 1:已删除',
     defaultValue: '0',
   })
   deleted?: number;
 
-  @Column({ type: DataType.BIGINT, comment: '\u521B\u5EFA\u4EBA' })
+  @Column({ type: DataType.BIGINT, comment: '创建人' })
   creator_id!: number;
 
-  @Column({ type: DataType.BIGINT, comment: '\u4FEE\u6539\u4EBA' })
+  @Column({ type: DataType.BIGINT, comment: '修改人' })
   modifier_id!: number;
 }

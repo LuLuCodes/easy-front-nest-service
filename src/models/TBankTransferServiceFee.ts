@@ -11,15 +11,14 @@ import {
 @Table({
   tableName: 't_bank_transfer_service_fee',
   timestamps: false,
-  comment:
-    '\u5F52\u96C6\u8D26\u53F7\u6253\u5230\u652F\u4ED8\u5B9DB\u7684\u8865\u5145\u624B\u7EED\u8D39\u8868',
+  comment: '归集账号打到支付宝B的补充手续费表',
 })
 export class TBankTransferServiceFee extends Model {
   @Column({
     primaryKey: true,
     autoIncrement: true,
     type: DataType.BIGINT,
-    comment: '\u7CFB\u7EDF\u7F16\u7801',
+    comment: '系统编码',
   })
   @Index({ name: 'PRIMARY', using: 'BTREE', order: 'ASC', unique: true })
   id?: number;
@@ -27,66 +26,49 @@ export class TBankTransferServiceFee extends Model {
   @Column({
     allowNull: true,
     type: DataType.INTEGER,
-    comment: '\u5E94\u7528id',
+    comment: '应用id',
     defaultValue: '10000',
   })
   app_id?: number;
 
-  @Column({
-    type: DataType.DATE,
-    comment: '\u8BF7\u6C42\u652F\u4ED8\u5B9D\u65F6\u95F4',
-  })
+  @Column({ type: DataType.DATE, comment: '请求支付宝时间' })
   fee_time!: Date;
 
-  @Column({
-    allowNull: true,
-    type: DataType.DATE,
-    comment: '\u652F\u4ED8\u5B9D\u5230\u8D26\u65F6\u95F4',
-  })
+  @Column({ allowNull: true, type: DataType.DATE, comment: '支付宝到账时间' })
   success_time?: Date;
 
-  @Column({
-    type: DataType.STRING(100),
-    comment: '\u652F\u4ED8\u5B9D\u6D41\u6C34\u53F7',
-  })
+  @Column({ type: DataType.STRING(100), comment: '支付宝流水号' })
   ali_sn!: string;
 
-  @Column({
-    type: DataType.INTEGER,
-    comment:
-      '(0\u5DF2\u6253\u6B3E 1\u5DF2\u5230\u8D26 2\u5230\u8D26\u5931\u8D25)',
-  })
+  @Column({ type: DataType.INTEGER, comment: '(0已打款 1已到账 2到账失败)' })
   ali_status!: number;
 
-  @Column({
-    type: DataType.DECIMAL(18, 2),
-    comment: '\u652F\u4ED8\u5B9D\u8F6C\u8D26\u91D1\u989D',
-  })
+  @Column({ type: DataType.DECIMAL(18, 2), comment: '支付宝转账金额' })
   ali_amount!: string;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(500),
-    comment: '\u652F\u4ED8\u5B9D\u8F6C\u8D26\u5904\u7406\u7ED3\u679C',
+    comment: '支付宝转账处理结果',
   })
   ali_remark?: string;
 
-  @Column({ type: DataType.DATE, comment: '\u521B\u5EFA\u65F6\u95F4' })
+  @Column({ type: DataType.DATE, comment: '创建时间' })
   create_time!: Date;
 
-  @Column({ type: DataType.DATE, comment: '\u66F4\u65B0\u65F6\u95F4' })
+  @Column({ type: DataType.DATE, comment: '更新时间' })
   update_time!: Date;
 
   @Column({
     type: DataType.TINYINT,
-    comment: '\u662F\u5426\u903B\u8F91\u5220\u9664 1:\u5DF2\u5220\u9664',
+    comment: '是否逻辑删除 1:已删除',
     defaultValue: '0',
   })
   deleted?: number;
 
-  @Column({ type: DataType.BIGINT, comment: '\u521B\u5EFA\u4EBA' })
+  @Column({ type: DataType.BIGINT, comment: '创建人' })
   creator_id!: number;
 
-  @Column({ type: DataType.BIGINT, comment: '\u4FEE\u6539\u4EBA' })
+  @Column({ type: DataType.BIGINT, comment: '修改人' })
   modifier_id!: number;
 }

@@ -11,14 +11,14 @@ import {
 @Table({
   tableName: 't_customer_wallet',
   timestamps: false,
-  comment: '\u7528\u6237\u94B1\u5305\u8868',
+  comment: '用户钱包表',
 })
 export class TCustomerWallet extends Model {
   @Column({
     primaryKey: true,
     autoIncrement: true,
     type: DataType.BIGINT,
-    comment: '\u7CFB\u7EDF\u7F16\u7801',
+    comment: '系统编码',
   })
   @Index({ name: 'PRIMARY', using: 'BTREE', order: 'ASC', unique: true })
   id?: number;
@@ -26,12 +26,12 @@ export class TCustomerWallet extends Model {
   @Column({
     allowNull: true,
     type: DataType.INTEGER,
-    comment: '\u5E94\u7528id',
+    comment: '应用id',
     defaultValue: '10000',
   })
   app_id?: number;
 
-  @Column({ type: DataType.BIGINT, comment: '\u7528\u6237id' })
+  @Column({ type: DataType.BIGINT, comment: '用户id' })
   @Index({
     name: 'customer_id_UNIQUE',
     using: 'BTREE',
@@ -42,62 +42,83 @@ export class TCustomerWallet extends Model {
 
   @Column({
     type: DataType.DECIMAL(18, 4),
-    comment: '\u94B1\u5305\u4F59\u989D',
+    comment: '钱包余额',
     defaultValue: '0.0000',
   })
   amount?: string;
 
   @Column({
     type: DataType.DECIMAL(18, 4),
-    comment: '\u51FA\u8D26\u51BB\u7ED3',
+    comment: '出账冻结',
     defaultValue: '0.0000',
   })
   out_frozen_amount?: string;
 
   @Column({
     type: DataType.DECIMAL(18, 4),
-    comment: '\u8FDB\u5E10\u51BB\u7ED3',
+    comment: '进帐冻结',
     defaultValue: '0.0000',
   })
   in_frozen_amount?: string;
 
   @Column({
     type: DataType.DECIMAL(18, 4),
-    comment: '\u79EF\u5206',
+    comment: '积分',
     defaultValue: '0.0000',
   })
   point?: string;
 
   @Column({
     type: DataType.DECIMAL(18, 4),
-    comment: '\u51FA\u8D26\u51BB\u7ED3',
+    comment: '出账冻结',
     defaultValue: '0.0000',
   })
   out_frozen_point?: string;
 
   @Column({
     type: DataType.DECIMAL(18, 4),
-    comment: '\u51FA\u8D26\u51BB\u7ED3',
+    comment: '出账冻结',
     defaultValue: '0.0000',
   })
   in_frozen_point?: string;
 
   @Column({
+    type: DataType.DECIMAL(18, 4),
+    comment: '积分2',
+    defaultValue: '0.0000',
+  })
+  point2?: string;
+
+  @Column({
+    type: DataType.DECIMAL(18, 4),
+    comment: '出账冻结',
+    defaultValue: '0.0000',
+  })
+  out_frozen_point2?: string;
+
+  @Column({
+    type: DataType.DECIMAL(18, 4),
+    comment: '出账冻结',
+    defaultValue: '0.0000',
+  })
+  in_frozen_point2?: string;
+
+  @Column({
     type: DataType.TINYINT,
-    comment: '\u662F\u5426\u903B\u8F91\u5220\u9664 1:\u5DF2\u5220\u9664',
+    comment: '是否逻辑删除 1:已删除',
     defaultValue: '0',
   })
   deleted?: number;
 
-  @Column({ type: DataType.DATE, comment: '\u521B\u5EFA\u65F6\u95F4' })
+  @Column({ type: DataType.DATE, comment: '创建时间' })
   create_time!: Date;
 
-  @Column({ type: DataType.DATE, comment: '\u66F4\u65B0\u65F6\u95F4' })
+  @Column({ type: DataType.DATE, comment: '更新时间' })
   update_time!: Date;
 
-  @Column({ type: DataType.BIGINT, comment: '\u521B\u5EFA\u4EBA' })
+  @Column({ type: DataType.BIGINT, comment: '创建人' })
   creator_id!: number;
 
-  @Column({ type: DataType.BIGINT, comment: '\u4FEE\u6539\u4EBA' })
+  @Column({ type: DataType.BIGINT, comment: '修改人' })
   modifier_id!: number;
 }

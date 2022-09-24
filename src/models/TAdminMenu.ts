@@ -8,17 +8,13 @@ import {
   ForeignKey,
 } from 'sequelize-typescript';
 
-@Table({
-  tableName: 't_admin_menu',
-  timestamps: false,
-  comment: '\u540E\u53F0\u83DC\u5355\u8868',
-})
+@Table({ tableName: 't_admin_menu', timestamps: false, comment: '后台菜单表' })
 export class TAdminMenu extends Model {
   @Column({
     primaryKey: true,
     autoIncrement: true,
     type: DataType.BIGINT,
-    comment: '\u83DC\u5355\u4E3B\u952E',
+    comment: '菜单主键',
   })
   @Index({ name: 'PRIMARY', using: 'BTREE', order: 'ASC', unique: true })
   id?: number;
@@ -26,34 +22,29 @@ export class TAdminMenu extends Model {
   @Column({
     allowNull: true,
     type: DataType.INTEGER,
-    comment: '\u5E94\u7528id',
+    comment: '应用id',
     defaultValue: '10000',
   })
   app_id?: number;
 
-  @Column({ type: DataType.BIGINT, comment: '\u7236\u7EA7ID' })
+  @Column({ type: DataType.BIGINT, comment: '父级ID' })
   @Index({ name: 'idx_parent_id', using: 'BTREE', order: 'ASC', unique: false })
   parent_id!: number;
 
   @Column({
     allowNull: true,
     type: DataType.TINYINT,
-    comment:
-      '\u6743\u9650\u7C7B\u578B 1\u76EE\u5F55 2\u83DC\u5355 3\u6309\u94AE',
+    comment: '权限类型 1目录 2菜单 3按钮',
   })
   right_type?: number;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING(100),
-    comment: '\u83DC\u5355\u540D\u79F0',
-  })
+  @Column({ allowNull: true, type: DataType.STRING(100), comment: '菜单名称' })
   title?: string;
 
   @Column({
     allowNull: true,
     type: DataType.INTEGER,
-    comment: '\u83DC\u5355\u7EA7\u6570',
+    comment: '菜单级数',
     defaultValue: '0',
   })
   level?: number;
@@ -61,7 +52,7 @@ export class TAdminMenu extends Model {
   @Column({
     allowNull: true,
     type: DataType.INTEGER,
-    comment: '\u83DC\u5355\u6392\u5E8F',
+    comment: '菜单排序',
     defaultValue: '0',
   })
   sort?: number;
@@ -69,25 +60,17 @@ export class TAdminMenu extends Model {
   @Column({
     allowNull: true,
     type: DataType.STRING(50),
-    comment: '\u524D\u7AEF\u8DEF\u7531name',
+    comment: '前端路由name',
   })
   show_name?: string;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING(200),
-    comment: '\u524D\u7AEF\u56FE\u6807',
-  })
+  @Column({ allowNull: true, type: DataType.STRING(200), comment: '前端图标' })
   show_icon?: string;
 
-  @Column({ type: DataType.STRING(50), comment: '\u83DC\u5355\u7F16\u7801' })
+  @Column({ type: DataType.STRING(50), comment: '菜单编码' })
   menu_code!: string;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING(255),
-    comment: '\u8DF3\u8F6C\u5730\u5740',
-  })
+  @Column({ allowNull: true, type: DataType.STRING(255), comment: '跳转地址' })
   redirect?: string;
 
   @Column({ allowNull: true, type: DataType.STRING(50), comment: 'component' })
@@ -96,46 +79,39 @@ export class TAdminMenu extends Model {
   @Column({
     allowNull: true,
     type: DataType.STRING(50),
-    comment: '\u524D\u7AEF\u8DEF\u7531path',
+    comment: '前端路由path',
   })
   show_path?: string;
 
-  @Column({
-    type: DataType.TINYINT,
-    comment: '0 \u53EF\u7528, 1 \u7981\u7528, 2 \u4E0D\u5C55\u793A',
-  })
+  @Column({ type: DataType.TINYINT, comment: '0 可用, 1 禁用, 2 不展示' })
   status!: number;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(500),
-    comment: '\u989D\u5916\u7684\u5B57\u6BB5',
+    comment: '额外的字段',
   })
   extra?: string;
 
-  @Column({
-    type: DataType.INTEGER,
-    comment: '\u6765\u6E90',
-    defaultValue: '0',
-  })
+  @Column({ type: DataType.INTEGER, comment: '来源', defaultValue: '0' })
   source_type?: number;
 
   @Column({
     type: DataType.TINYINT,
-    comment: '\u662F\u5426\u903B\u8F91\u5220\u9664 1:\u5DF2\u5220\u9664',
+    comment: '是否逻辑删除 1:已删除',
     defaultValue: '0',
   })
   deleted?: number;
 
-  @Column({ type: DataType.DATE, comment: '\u521B\u5EFA\u65F6\u95F4' })
+  @Column({ type: DataType.DATE, comment: '创建时间' })
   create_time!: Date;
 
-  @Column({ type: DataType.DATE, comment: '\u66F4\u65B0\u65F6\u95F4' })
+  @Column({ type: DataType.DATE, comment: '更新时间' })
   update_time!: Date;
 
-  @Column({ type: DataType.BIGINT, comment: '\u521B\u5EFA\u4EBA' })
+  @Column({ type: DataType.BIGINT, comment: '创建人' })
   creator_id!: number;
 
-  @Column({ type: DataType.BIGINT, comment: '\u4FEE\u6539\u4EBA' })
+  @Column({ type: DataType.BIGINT, comment: '修改人' })
   modifier_id!: number;
 }

@@ -11,15 +11,14 @@ import {
 @Table({
   tableName: 't_spu_ladder',
   timestamps: false,
-  comment:
-    '\u5546\u54C1(SPU)\u9636\u68AF\u4EF7\u683C\u8868(\u53EA\u9488\u5BF9\u540CSPU)',
+  comment: '商品(SPU)阶梯价格表(只针对同SPU)',
 })
 export class TSpuLadder extends Model {
   @Column({
     primaryKey: true,
     autoIncrement: true,
     type: DataType.BIGINT,
-    comment: '\u4EF7\u683C\u4E3B\u952E',
+    comment: '价格主键',
   })
   @Index({ name: 'PRIMARY', using: 'BTREE', order: 'ASC', unique: true })
   id?: number;
@@ -27,12 +26,12 @@ export class TSpuLadder extends Model {
   @Column({
     allowNull: true,
     type: DataType.INTEGER,
-    comment: '\u5E94\u7528id',
+    comment: '应用id',
     defaultValue: '10000',
   })
   app_id?: number;
 
-  @Column({ type: DataType.BIGINT, comment: '\u5546\u54C1\u4E3B\u952E' })
+  @Column({ type: DataType.BIGINT, comment: '商品主键' })
   @Index({
     name: 'idx_product_id',
     using: 'BTREE',
@@ -43,21 +42,21 @@ export class TSpuLadder extends Model {
 
   @Column({
     type: DataType.INTEGER,
-    comment: '\u6EE1\u8DB3\u7684\u5546\u54C1\u6570\u91CF',
+    comment: '满足的商品数量',
     defaultValue: '0',
   })
   count?: number;
 
   @Column({
     type: DataType.DECIMAL(10, 2),
-    comment: '\u6298\u6263',
+    comment: '折扣',
     defaultValue: '0.00',
   })
   discount?: string;
 
   @Column({
     type: DataType.DECIMAL(10, 2),
-    comment: '\u6298\u540E\u4EF7\u683C',
+    comment: '折后价格',
     defaultValue: '0.00',
   })
   price?: string;
@@ -65,27 +64,27 @@ export class TSpuLadder extends Model {
   @Column({
     allowNull: true,
     type: DataType.TINYINT,
-    comment: '\u662F\u5426\u542F\u7528 1:\u542F\u7528',
+    comment: '是否启用 1:启用',
     defaultValue: '0',
   })
   enabled?: number;
 
-  @Column({ type: DataType.DATE, comment: '\u521B\u5EFA\u65F6\u95F4' })
+  @Column({ type: DataType.DATE, comment: '创建时间' })
   create_time!: Date;
 
-  @Column({ type: DataType.DATE, comment: '\u66F4\u65B0\u65F6\u95F4' })
+  @Column({ type: DataType.DATE, comment: '更新时间' })
   update_time!: Date;
 
   @Column({
     type: DataType.TINYINT,
-    comment: '\u662F\u5426\u903B\u8F91\u5220\u9664 1:\u5DF2\u5220\u9664',
+    comment: '是否逻辑删除 1:已删除',
     defaultValue: '0',
   })
   deleted?: number;
 
-  @Column({ type: DataType.BIGINT, comment: '\u521B\u5EFA\u4EBA' })
+  @Column({ type: DataType.BIGINT, comment: '创建人' })
   creator_id!: number;
 
-  @Column({ type: DataType.BIGINT, comment: '\u4FEE\u6539\u4EBA' })
+  @Column({ type: DataType.BIGINT, comment: '修改人' })
   modifier_id!: number;
 }

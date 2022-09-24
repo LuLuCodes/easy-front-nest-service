@@ -11,50 +11,37 @@ import {
 @Table({
   tableName: 't_customer_extra',
   timestamps: false,
-  comment: 'customer\u6269\u5C55\u8868',
+  comment: 'customer扩展表',
 })
 export class TCustomerExtra extends Model {
-  @Column({
-    primaryKey: true,
-    type: DataType.BIGINT,
-    comment: '\u7528\u6237\u4E3B\u952E',
-  })
+  @Column({ primaryKey: true, type: DataType.BIGINT, comment: '用户主键' })
   @Index({ name: 'PRIMARY', using: 'BTREE', order: 'ASC', unique: true })
   id!: number;
 
   @Column({
     allowNull: true,
     type: DataType.INTEGER,
-    comment: '\u5E94\u7528id',
+    comment: '应用id',
     defaultValue: '10000',
   })
   app_id?: number;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING(36),
-    comment: '\u8D26\u6237code',
-  })
+  @Column({ allowNull: true, type: DataType.STRING(36), comment: '账户code' })
   account_code?: string;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING(20),
-    comment: '\u5FAE\u4FE1\u53F7',
-  })
+  @Column({ allowNull: true, type: DataType.STRING(20), comment: '微信号' })
   weixin_no?: string;
 
   @Column({
     type: DataType.TINYINT,
-    comment: '\u5FAE\u4FE1\u662F\u5426\u5C55\u793A',
+    comment: '微信是否展示',
     defaultValue: '0',
   })
   weixin_enable?: number;
 
   @Column({
     type: DataType.INTEGER,
-    comment:
-      '\u5FAE\u4FE1\u5BA1\u6838\u72B6\u6001\uFF080\u5F85\u5BA1\u6838 1\u5DF2\u5BA1\u6838 2\u5BA1\u6838\u4E0D\u901A\u8FC7\uFF09',
+    comment: '微信审核状态（0待审核 1已审核 2审核不通过）',
     defaultValue: '0',
   })
   weixin_audit?: number;
@@ -62,49 +49,40 @@ export class TCustomerExtra extends Model {
   @Column({
     allowNull: true,
     type: DataType.STRING(1000),
-    comment: '\u5FAE\u4FE1\u4E8C\u7EF4\u7801\u5730\u5740',
+    comment: '微信二维码地址',
   })
   weixin_url?: string;
 
   @Column({
     type: DataType.DECIMAL(18, 4),
-    comment: '\u5FAE\u4FE1\u89E3\u9501\u8C46\u8C46\u8D39\u7528',
+    comment: '微信解锁豆豆费用',
     defaultValue: '0.0000',
   })
   weixin_doudou?: string;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING(200),
-    comment: '\u8BED\u97F3url',
-  })
+  @Column({ allowNull: true, type: DataType.STRING(200), comment: '语音url' })
   voice_url?: string;
 
-  @Column({
-    type: DataType.INTEGER,
-    comment: '\u8BED\u97F3\u65F6\u957F',
-    defaultValue: '0',
-  })
+  @Column({ type: DataType.INTEGER, comment: '语音时长', defaultValue: '0' })
   voice_duration?: number;
 
   @Column({
     type: DataType.INTEGER,
-    comment:
-      '\u8BED\u97F3\u5BA1\u6838\u72B6\u6001\uFF080\u5F85\u5BA1\u6838 1\u5DF2\u5BA1\u6838 2\u5BA1\u6838\u4E0D\u901A\u8FC7\uFF09',
+    comment: '语音审核状态（0待审核 1已审核 2审核不通过）',
     defaultValue: '0',
   })
   voice_audit?: number;
 
   @Column({
     type: DataType.DECIMAL(18, 2),
-    comment: '\u6BCF\u5206\u949F\u8BED\u97F3\u8C46\u8C46\u8D39\u7528',
+    comment: '每分钟语音豆豆费用',
     defaultValue: '2',
   })
   voice_doudou?: string;
 
   @Column({
     type: DataType.DECIMAL(18, 2),
-    comment: '\u6BCF\u5206\u949F\u89C6\u9891\u8C46\u8C46\u8D39\u7528',
+    comment: '每分钟视频豆豆费用',
     defaultValue: '6',
   })
   video_doudou?: string;
@@ -112,15 +90,11 @@ export class TCustomerExtra extends Model {
   @Column({
     allowNull: true,
     type: DataType.STRING(50),
-    comment: '\u804C\u4E1A\uFF1A\u5B57\u5178\u8868\u5BF9\u5E94\u7684key',
+    comment: '职业：字典表对应的key',
   })
   post_id?: string;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING(50),
-    comment: '\u804C\u4E1A,\u5197\u4F59',
-  })
+  @Column({ allowNull: true, type: DataType.STRING(50), comment: '职业,冗余' })
   post?: string;
 
   @Column({
@@ -134,136 +108,113 @@ export class TCustomerExtra extends Model {
   @Column({
     allowNull: true,
     type: DataType.STRING(50),
-    comment: '\u5B66\u5386\uFF1A\u5B57\u5178\u8868\u5BF9\u5E94\u7684key',
+    comment: '学历：字典表对应的key',
   })
   degree_id?: string;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING(50),
-    comment: '\u5B66\u5386,\u5197\u4F59',
-  })
+  @Column({ allowNull: true, type: DataType.STRING(50), comment: '学历,冗余' })
   degree?: string;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(50),
-    comment: '\u8EAB\u578B\uFF1A\u5B57\u5178\u8868\u5BF9\u5E94\u7684key',
+    comment: '身型：字典表对应的key',
   })
   body_type_id?: string;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING(50),
-    comment: '\u8EAB\u578B,\u5197\u4F59',
-  })
+  @Column({ allowNull: true, type: DataType.STRING(50), comment: '身型,冗余' })
   body_type?: string;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(50),
-    comment:
-      '\u5BFB\u627E\u5173\u7CFB\uFF1A\u5B57\u5178\u8868\u5BF9\u5E94\u7684key',
+    comment: '寻找关系：字典表对应的key',
   })
   relationship_id?: string;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING(50),
-    comment: '\u5BFB\u627E\u5173\u7CFB',
-  })
+  @Column({ allowNull: true, type: DataType.STRING(50), comment: '寻找关系' })
   relationship?: string;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING(20),
-    comment: '\u57CE\u5E02\u4EE3\u7801',
-  })
+  @Column({ allowNull: true, type: DataType.STRING(200), comment: '学生证' })
+  student_idcard?: string;
+
+  @Column({ allowNull: true, type: DataType.BIGINT, comment: '学校id' })
+  college_id?: number;
+
+  @Column({ allowNull: true, type: DataType.STRING(50), comment: '学校名称' })
+  college?: string;
+
+  @Column({ allowNull: true, type: DataType.INTEGER, comment: '学校审核状态' })
+  college_audit?: number;
+
+  @Column({ allowNull: true, type: DataType.STRING(50), comment: '专业' })
+  major?: string;
+
+  @Column({ allowNull: true, type: DataType.STRING(50), comment: '班级' })
+  class?: string;
+
+  @Column({ allowNull: true, type: DataType.STRING(20), comment: '城市代码' })
   city_code?: string;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING(50),
-    comment: '\u57CE\u5E02',
-  })
+  @Column({ allowNull: true, type: DataType.STRING(50), comment: '城市' })
   city?: string;
 
-  @Column({
-    type: DataType.STRING(50),
-    comment: '\u5F53\u524D\u6240\u5728\u57CE\u5E02',
-  })
+  @Column({ type: DataType.STRING(50), comment: '当前所在城市' })
   now_city!: string;
 
-  @Column({
-    type: DataType.STRING(50),
-    comment: '\u6CE8\u518C\u6240\u5728\u5730',
-  })
+  @Column({ type: DataType.STRING(50), comment: '注册所在地' })
   reg_city!: string;
 
-  @Column({ type: DataType.STRING(50), comment: '\u5145\u503C\u57CE\u5E02' })
+  @Column({ type: DataType.STRING(50), comment: '充值城市' })
   pay_city!: string;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING(500),
-    comment: '\u4E2A\u6027\u7B7E\u540D',
-  })
+  @Column({ allowNull: true, type: DataType.STRING(500), comment: '个性签名' })
   sign_title?: string;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING(50),
-    comment: '\u7C4D\u8D2F',
-  })
+  @Column({ allowNull: true, type: DataType.STRING(50), comment: '籍贯' })
   birth_place?: string;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING(200),
-    comment: '\u4E2A\u4EBA\u7B80\u4ECB',
-  })
+  @Column({ allowNull: true, type: DataType.STRING(200), comment: '个人简介' })
   profile?: string;
 
   @Column({
     allowNull: true,
     type: DataType.TINYINT,
-    comment: '\u662F\u5426\u6DFB\u52A0\u4F01\u4E1A\u5BA2\u670D',
+    comment: '是否添加企业客服',
   })
   added_qy_service?: number;
 
   @Column({
     allowNull: true,
     type: DataType.TINYINT,
-    comment:
-      '\u8BA4\u8BC1\u72B6\u6001:0:\u672A\u8BA4\u8BC1 1:\u5DF2\u8BA4\u8BC1',
+    comment: '认证状态:0:未认证 1:已认证',
   })
   audit_status?: number;
 
   @Column({
     type: DataType.INTEGER,
-    comment: '\u662F\u5426\u53D1\u5E03\u8FC7\u7EA6\u4F1A',
+    comment: '是否发布过约会',
     defaultValue: '0',
   })
   if_public_meeting?: number;
 
   @Column({
     type: DataType.INTEGER,
-    comment: '\u662F\u5426\u5F00\u542F\u8BED\u97F3',
+    comment: '是否开启语音',
     defaultValue: '1',
   })
   if_open_voice?: number;
 
   @Column({
     type: DataType.INTEGER,
-    comment: '\u662F\u5426\u5F00\u542F\u89C6\u9891',
+    comment: '是否开启视频',
     defaultValue: '1',
   })
   if_open_video?: number;
 
   @Column({
     type: DataType.INTEGER,
-    comment:
-      '\u662F\u5426\u9996\u9875\u53EF\u89C1\uFF080\u53EF\u89C1 1\u4E0D\u53EF\u89C1\uFF09',
+    comment: '是否首页可见（0可见 1不可见）',
     defaultValue: '0',
   })
   show_in_index?: number;
@@ -271,36 +222,70 @@ export class TCustomerExtra extends Model {
   @Column({
     allowNull: true,
     type: DataType.TINYINT,
-    comment:
-      '\u5973\u795E\u8BA4\u8BC1:0:\u672A\u8BA4\u8BC1 1:\u5DF2\u8BA4\u8BC1',
+    comment: '女神认证:0:未认证 1:已认证',
   })
   goddess_audit_status?: number;
 
   @Column({
     allowNull: true,
     type: DataType.TINYINT,
-    comment: '\u662F\u5426\u673A\u5668\u4EBA',
+    comment: '是否机器人',
     defaultValue: '0',
   })
   is_robot?: number;
 
   @Column({
+    type: DataType.INTEGER,
+    comment: '是否开启通知提醒',
+    defaultValue: '1',
+  })
+  if_open_notice?: number;
+
+  @Column({
+    type: DataType.INTEGER,
+    comment: '是否接收App聊天消息',
+    defaultValue: '1',
+  })
+  if_receive_chat?: number;
+
+  @Column({
+    type: DataType.INTEGER,
+    comment: '是否开启铃声',
+    defaultValue: '0',
+  })
+  if_open_ring?: number;
+
+  @Column({
+    type: DataType.INTEGER,
+    comment: '是否开启提示音',
+    defaultValue: '0',
+  })
+  if_open_tips?: number;
+
+  @Column({
+    type: DataType.INTEGER,
+    comment: '是否开启语音视频通话提醒',
+    defaultValue: '1',
+  })
+  if_open_call?: number;
+
+  @Column({
     type: DataType.DECIMAL(28, 10),
-    comment: '\u7EAC\u5EA6',
+    comment: '纬度',
     defaultValue: '0.0000000000',
   })
   latitude?: string;
 
   @Column({
     type: DataType.DECIMAL(28, 10),
-    comment: '\u7ECF\u5EA6',
+    comment: '经度',
     defaultValue: '0.0000000000',
   })
   longitude?: string;
 
   @Column({
     type: DataType.INTEGER,
-    comment: '\u662F\u5426\u9690\u85CF\u8DDD\u79BB',
+    comment: '是否隐藏距离',
     defaultValue: '0',
   })
   hidden_distance?: number;
@@ -308,7 +293,7 @@ export class TCustomerExtra extends Model {
   @Column({
     allowNull: true,
     type: DataType.TINYINT,
-    comment: '\u662F\u5426\u5728\u7EA6\u4F1A\u4E2D',
+    comment: '是否在约会中',
     defaultValue: '0',
   })
   date_status?: number;
@@ -316,136 +301,134 @@ export class TCustomerExtra extends Model {
   @Column({
     allowNull: true,
     type: DataType.TINYINT,
-    comment:
-      '\u65F6\u5019\u79C1\u76F8\u518C 0 \u5F00\u653E 1\u79C1\u5BC6 2\u76F8\u518C\u9501',
+    comment: '时候私相册 0 开放 1私密 2相册锁',
     defaultValue: '0',
   })
   private_photo?: number;
 
   @Column({
     type: DataType.DECIMAL(10, 2),
-    comment: '\u5E73\u5747\u6001\u5EA6\u8BC4\u4EF7',
+    comment: '平均态度评价',
     defaultValue: '0.00',
   })
   manner_point?: string;
 
   @Column({
     type: DataType.INTEGER,
-    comment: '\u7D2F\u8BA1\u6001\u5EA6\u8BC4\u4EF7\u5206\u6570',
+    comment: '累计态度评价分数',
     defaultValue: '0',
   })
   manner_point_total?: number;
 
   @Column({
     type: DataType.INTEGER,
-    comment: '\u7D2F\u8BA1\u6001\u5EA6\u8BC4\u4EF7\u6B21\u6570',
+    comment: '累计态度评价次数',
     defaultValue: '0',
   })
   manner_point_count?: number;
 
   @Column({
     type: DataType.INTEGER,
-    comment:
-      '\u771F\u4EBA\u4E0E\u7167\u7247\u76F8\u4F3C\u5EA6\u8BC4\u4EF7\uFF081\u4E0E\u7167\u7247\u4E0D\u7B26\uFF09',
+    comment: '真人与照片相似度评价（1与照片不符）',
     defaultValue: '0',
   })
   photo_point_1?: number;
 
   @Column({
     type: DataType.INTEGER,
-    comment:
-      '\u771F\u4EBA\u4E0E\u7167\u7247\u76F8\u4F3C\u5EA6\u8BC4\u4EF7\uFF082\u4E0E\u7167\u7247\u76F8\u4F3C\uFF09',
+    comment: '真人与照片相似度评价（2与照片相似）',
     defaultValue: '0',
   })
   photo_point_2?: number;
 
   @Column({
     type: DataType.INTEGER,
-    comment:
-      '\u771F\u4EBA\u4E0E\u7167\u7247\u76F8\u4F3C\u5EA6\u8BC4\u4EF7\uFF083\u6BD4\u7167\u7247\u597D\u770B\uFF09',
+    comment: '真人与照片相似度评价（3比照片好看）',
     defaultValue: '0',
   })
   photo_point_3?: number;
 
   @Column({
     type: DataType.INTEGER,
-    comment: '\u7D2F\u8BA1\u622A\u5C4F\u6B21\u6570',
+    comment: '累计截屏次数',
     defaultValue: '0',
   })
   screen_cut?: number;
 
   @Column({
     type: DataType.DECIMAL(10, 2),
-    comment: '\u4F53\u91CD(kg)',
+    comment: '体重(kg)',
     defaultValue: '0.00',
   })
   weight?: string;
 
   @Column({
     type: DataType.INTEGER,
-    comment: '\u6BCF\u65E5\u67E5\u770B\u8D44\u6599',
+    comment: '每日查看资料',
     defaultValue: '0',
   })
   view_inf_count?: number;
 
-  @Column({
-    allowNull: true,
-    type: DataType.DATE,
-    comment: '\u6700\u540E\u67E5\u770B\u8D44\u6599\u65E5\u671F',
-  })
+  @Column({ allowNull: true, type: DataType.DATE, comment: '最后查看资料日期' })
   view_inf_day?: Date;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(100),
-    comment: '\u652F\u4ED8\u5B9D\u652F\u4ED8\u5BC6\u7801',
+    comment: '支付宝支付密码',
   })
   ali_pay_pass?: string;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(100),
-    comment: '\u652F\u4ED8\u5B9D\u652F\u4ED8\u8D26\u53F7',
+    comment: '支付宝支付账号',
   })
   ali_pay_account?: string;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(100),
-    comment: '\u652F\u4ED8\u5B9D\u63D0\u73B0\u8D26\u53F7',
+    comment: '支付宝提现账号',
   })
   ali_set_account?: string;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(100),
-    comment: '\u94F6\u884C\u5361\u63D0\u73B0\u8D26\u53F7',
+    comment: '银行卡提现账号',
   })
   bank_set_account?: string;
+
+  @Column({ allowNull: true, type: DataType.STRING(100), comment: '银行名称' })
+  bank_set_name?: string;
+
+  @Column({ allowNull: true, type: DataType.STRING(100), comment: '支行名称' })
+  bank_set_name_ext?: string;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(500),
-    comment: '\u884C\u4E1A\u6807\u7B7EJSON [category_id,category_id]',
+    comment: '行业标签JSON [category_id,category_id]',
   })
   industry_tag?: string;
 
   @Column({
     type: DataType.TINYINT,
-    comment: '\u662F\u5426\u903B\u8F91\u5220\u9664 1:\u5DF2\u5220\u9664',
+    comment: '是否逻辑删除 1:已删除',
     defaultValue: '0',
   })
   deleted?: number;
 
-  @Column({ type: DataType.DATE, comment: '\u521B\u5EFA\u65F6\u95F4' })
+  @Column({ type: DataType.DATE, comment: '创建时间' })
   create_time!: Date;
 
-  @Column({ type: DataType.DATE, comment: '\u66F4\u65B0\u65F6\u95F4' })
+  @Column({ type: DataType.DATE, comment: '更新时间' })
   update_time!: Date;
 
-  @Column({ type: DataType.BIGINT, comment: '\u521B\u5EFA\u4EBA' })
+  @Column({ type: DataType.BIGINT, comment: '创建人' })
   creator_id!: number;
 
-  @Column({ type: DataType.BIGINT, comment: '\u4FEE\u6539\u4EBA' })
+  @Column({ type: DataType.BIGINT, comment: '修改人' })
   modifier_id!: number;
 }

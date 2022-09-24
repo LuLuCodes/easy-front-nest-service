@@ -8,17 +8,13 @@ import {
   ForeignKey,
 } from 'sequelize-typescript';
 
-@Table({
-  tableName: 't_cart_item',
-  timestamps: false,
-  comment: '\u8D2D\u7269\u8F66\u8868',
-})
+@Table({ tableName: 't_cart_item', timestamps: false, comment: '购物车表' })
 export class TCartItem extends Model {
   @Column({
     primaryKey: true,
     autoIncrement: true,
     type: DataType.BIGINT,
-    comment: '\u8D2D\u7269\u8F66\u6761\u76EE\u4E3B\u952E',
+    comment: '购物车条目主键',
   })
   @Index({ name: 'PRIMARY', using: 'BTREE', order: 'ASC', unique: true })
   id?: number;
@@ -26,16 +22,12 @@ export class TCartItem extends Model {
   @Column({
     allowNull: true,
     type: DataType.INTEGER,
-    comment: '\u5E94\u7528id',
+    comment: '应用id',
     defaultValue: '10000',
   })
   app_id?: number;
 
-  @Column({
-    type: DataType.BIGINT,
-    comment: '\u7528\u6237id',
-    defaultValue: '0',
-  })
+  @Column({ type: DataType.BIGINT, comment: '用户id', defaultValue: '0' })
   @Index({
     name: 'idx_customer_cdoe',
     using: 'BTREE',
@@ -44,30 +36,26 @@ export class TCartItem extends Model {
   })
   customer_id?: number;
 
-  @Column({ type: DataType.BIGINT, comment: '\u5546\u54C1\u4E3B\u952E' })
+  @Column({ type: DataType.BIGINT, comment: '商品主键' })
   product_id!: number;
 
-  @Column({ type: DataType.BIGINT, comment: '\u5546\u54C1SKU\u4E3B\u952E' })
+  @Column({ type: DataType.BIGINT, comment: '商品SKU主键' })
   sku_id!: number;
 
-  @Column({
-    allowNull: true,
-    type: DataType.INTEGER,
-    comment: '\u8D2D\u4E70\u6570\u91CF',
-  })
+  @Column({ allowNull: true, type: DataType.INTEGER, comment: '购买数量' })
   quantity?: number;
 
   @Column({
     allowNull: true,
     type: DataType.DECIMAL(10, 2),
-    comment: '\u6DFB\u52A0\u5230\u8D2D\u7269\u8F66\u65F6\u7684\u4EF7\u683C',
+    comment: '添加到购物车时的价格',
   })
   price?: string;
 
   @Column({
     allowNull: true,
     type: DataType.TINYINT,
-    comment: '\u662F\u5426\u542F\u7528 1:\u542F\u7528',
+    comment: '是否启用 1:启用',
     defaultValue: '0',
   })
   @Index({
@@ -78,15 +66,15 @@ export class TCartItem extends Model {
   })
   enabled?: number;
 
-  @Column({ type: DataType.DATE, comment: '\u521B\u5EFA\u65F6\u95F4' })
+  @Column({ type: DataType.DATE, comment: '创建时间' })
   create_time!: Date;
 
-  @Column({ type: DataType.DATE, comment: '\u66F4\u65B0\u65F6\u95F4' })
+  @Column({ type: DataType.DATE, comment: '更新时间' })
   update_time!: Date;
 
   @Column({
     type: DataType.TINYINT,
-    comment: '\u662F\u5426\u903B\u8F91\u5220\u9664 1:\u5DF2\u5220\u9664',
+    comment: '是否逻辑删除 1:已删除',
     defaultValue: '0',
   })
   @Index({
@@ -97,9 +85,9 @@ export class TCartItem extends Model {
   })
   deleted?: number;
 
-  @Column({ type: DataType.BIGINT, comment: '\u521B\u5EFA\u4EBA' })
+  @Column({ type: DataType.BIGINT, comment: '创建人' })
   creator_id!: number;
 
-  @Column({ type: DataType.BIGINT, comment: '\u4FEE\u6539\u4EBA' })
+  @Column({ type: DataType.BIGINT, comment: '修改人' })
   modifier_id!: number;
 }

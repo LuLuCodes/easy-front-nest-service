@@ -8,17 +8,13 @@ import {
   ForeignKey,
 } from 'sequelize-typescript';
 
-@Table({
-  tableName: 't_product_brand',
-  timestamps: false,
-  comment: '\u54C1\u724C\u8868',
-})
+@Table({ tableName: 't_product_brand', timestamps: false, comment: '品牌表' })
 export class TProductBrand extends Model {
   @Column({
     primaryKey: true,
     autoIncrement: true,
     type: DataType.BIGINT,
-    comment: '\u54C1\u724Cid',
+    comment: '品牌id',
   })
   @Index({ name: 'PRIMARY', using: 'BTREE', order: 'ASC', unique: true })
   id?: number;
@@ -26,12 +22,12 @@ export class TProductBrand extends Model {
   @Column({
     allowNull: true,
     type: DataType.INTEGER,
-    comment: '\u5E94\u7528id',
+    comment: '应用id',
     defaultValue: '10000',
   })
   app_id?: number;
 
-  @Column({ type: DataType.STRING(64), comment: '\u54C1\u724C\u540D\u79F0' })
+  @Column({ type: DataType.STRING(64), comment: '品牌名称' })
   @Index({
     name: 'idx_brand_name',
     using: 'BTREE',
@@ -40,65 +36,43 @@ export class TProductBrand extends Model {
   })
   brand_name!: string;
 
-  @Column({ type: DataType.STRING(8), comment: '\u9996\u5B57\u6BCD' })
+  @Column({ type: DataType.STRING(8), comment: '首字母' })
   first_letter!: string;
 
   @Column({
     allowNull: true,
     type: DataType.TINYINT,
-    comment:
-      '\u662F\u5426\u4E3A\u54C1\u724C\u5236\u9020\u5546\uFF1A0->\u4E0D\u662F\uFF1B1->\u662F',
+    comment: '是否为品牌制造商：0->不是；1->是',
     defaultValue: '0',
   })
   factory_status?: number;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING(500),
-    comment: '\u54C1\u724Clogo',
-  })
+  @Column({ allowNull: true, type: DataType.STRING(500), comment: '品牌logo' })
   logo_url?: string;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING(255),
-    comment: '\u4E13\u533A\u5927\u56FE',
-  })
+  @Column({ allowNull: true, type: DataType.STRING(255), comment: '专区大图' })
   big_pic_url?: string;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING(32),
-    comment: '\u6E90\u4EA7\u5730',
-  })
+  @Column({ allowNull: true, type: DataType.STRING(32), comment: '源产地' })
   origin_place?: string;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING(2000),
-    comment: '\u54C1\u724C\u7B80\u4ECB',
-  })
+  @Column({ allowNull: true, type: DataType.STRING(2000), comment: '品牌简介' })
   brand_profile?: string;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING,
-    comment: '\u54C1\u724C\u6545\u4E8B',
-  })
+  @Column({ allowNull: true, type: DataType.STRING, comment: '品牌故事' })
   brand_story?: string;
 
   @Column({
     allowNull: true,
     type: DataType.JSON,
-    comment:
-      '\u9ED1\u540D\u5355\u6E20\u9053(JSON [{"id":1\uFF08\u6E20\u9053id\uFF09,"name":"\u6E20\u90531"}])',
+    comment: '黑名单渠道(JSON [{"id":1（渠道id）,"name":"渠道1"}])',
   })
   no_sale_channel_json?: object;
 
   @Column({
     allowNull: true,
     type: DataType.TINYINT,
-    comment: '\u662F\u5426\u70ED\u95E8\u54C1\u724C',
+    comment: '是否热门品牌',
     defaultValue: '0',
   })
   is_hot?: number;
@@ -106,7 +80,7 @@ export class TProductBrand extends Model {
   @Column({
     allowNull: true,
     type: DataType.TINYINT,
-    comment: '\u662F\u5426\u63A8\u8350\u54C1\u724C',
+    comment: '是否推荐品牌',
     defaultValue: '0',
   })
   is_recommend?: number;
@@ -114,7 +88,7 @@ export class TProductBrand extends Model {
   @Column({
     allowNull: true,
     type: DataType.INTEGER,
-    comment: '\u6392\u5E8F',
+    comment: '排序',
     defaultValue: '0',
   })
   @Index({ name: 'idx_sort', using: 'BTREE', order: 'ASC', unique: false })
@@ -123,34 +97,34 @@ export class TProductBrand extends Model {
   @Column({
     allowNull: true,
     type: DataType.TINYINT,
-    comment: '\u662F\u5426\u542F\u7528 1:\u542F\u7528',
+    comment: '是否启用 1:启用',
     defaultValue: '0',
   })
   enabled?: number;
 
   @Column({
     type: DataType.DECIMAL(10, 2),
-    comment: '\u5173\u8054\u79F0\u91CD\u5546\u54C1x\u5143/\u514B',
+    comment: '关联称重商品x元/克',
     defaultValue: '0',
   })
   unit_price?: string;
 
   @Column({
     type: DataType.TINYINT,
-    comment: '\u662F\u5426\u903B\u8F91\u5220\u9664 1:\u5DF2\u5220\u9664',
+    comment: '是否逻辑删除 1:已删除',
     defaultValue: '0',
   })
   deleted?: number;
 
-  @Column({ type: DataType.DATE, comment: '\u521B\u5EFA\u65F6\u95F4' })
+  @Column({ type: DataType.DATE, comment: '创建时间' })
   create_time!: Date;
 
-  @Column({ type: DataType.DATE, comment: '\u66F4\u65B0\u65F6\u95F4' })
+  @Column({ type: DataType.DATE, comment: '更新时间' })
   update_time!: Date;
 
-  @Column({ type: DataType.BIGINT, comment: '\u521B\u5EFA\u4EBA' })
+  @Column({ type: DataType.BIGINT, comment: '创建人' })
   creator_id!: number;
 
-  @Column({ type: DataType.BIGINT, comment: '\u4FEE\u6539\u4EBA' })
+  @Column({ type: DataType.BIGINT, comment: '修改人' })
   modifier_id!: number;
 }

@@ -8,17 +8,13 @@ import {
   ForeignKey,
 } from 'sequelize-typescript';
 
-@Table({
-  tableName: 't_shop',
-  timestamps: false,
-  comment: '\u5E97\u94FA\u8868',
-})
+@Table({ tableName: 't_shop', timestamps: false, comment: '店铺表' })
 export class TShop extends Model {
   @Column({
     primaryKey: true,
     autoIncrement: true,
     type: DataType.BIGINT,
-    comment: '\u5546\u54C1\u4E3B\u952E',
+    comment: '商品主键',
   })
   @Index({ name: 'PRIMARY', using: 'BTREE', order: 'ASC', unique: true })
   id?: number;
@@ -26,21 +22,21 @@ export class TShop extends Model {
   @Column({
     allowNull: true,
     type: DataType.INTEGER,
-    comment: '\u5E94\u7528id',
+    comment: '应用id',
     defaultValue: '10000',
   })
   app_id?: number;
 
-  @Column({ type: DataType.BIGINT, comment: '\u4F01\u4E1A\u7F16\u7801' })
+  @Column({ type: DataType.BIGINT, comment: '企业编码' })
   @Index({ name: 'idx_seller_id', using: 'BTREE', order: 'ASC', unique: false })
   seller_id!: number;
 
-  @Column({ type: DataType.STRING(100), comment: '\u5E97\u94FA\u540D\u79F0' })
+  @Column({ type: DataType.STRING(100), comment: '店铺名称' })
   shop_name!: string;
 
   @Column({
     type: DataType.INTEGER,
-    comment: '\u662F\u5426\u5C55\u793A\u5728\u8FD0\u8425\u7AEF',
+    comment: '是否展示在运营端',
     defaultValue: '0',
   })
   if_show_yy?: number;
@@ -48,7 +44,7 @@ export class TShop extends Model {
   @Column({
     allowNull: true,
     type: DataType.STRING(36),
-    comment: '\u5F52\u5C5E\u4EE3\u7406\u5546account_code',
+    comment: '归属代理商account_code',
   })
   @Index({
     name: 'idx_agent_account_code',
@@ -60,210 +56,201 @@ export class TShop extends Model {
 
   @Column({
     type: DataType.INTEGER,
-    comment:
-      '\u5E97\u94FA\u7C7B\u578B\uFF081\u4E9A\u9A6C\u900A,2\u6DD8\u5B9D,3\u5929\u732B\u2026\u2026\uFF09',
+    comment: '店铺类型（1亚马逊,2淘宝,3天猫……）',
     defaultValue: '0',
   })
   cps_type?: number;
 
-  @Column({ type: DataType.STRING(100), comment: '\u5E97\u94FA\u8D26\u53F7' })
+  @Column({ type: DataType.STRING(100), comment: '店铺账号' })
   cps_account!: string;
 
-  @Column({ type: DataType.STRING(100), comment: '\u5356\u5BB6ID' })
+  @Column({ type: DataType.STRING(100), comment: '卖家ID' })
   cps_appid!: string;
 
-  @Column({ type: DataType.STRING(100), comment: '\u6388\u6743\u7801' })
+  @Column({ type: DataType.STRING(100), comment: '授权码' })
   cps_secret!: string;
 
-  @Column({
-    allowNull: true,
-    type: DataType.DATE,
-    comment: '\u6388\u6743\u7801\u8FC7\u671F\u65F6\u95F4',
-  })
+  @Column({ allowNull: true, type: DataType.DATE, comment: '授权码过期时间' })
   cps_secret_overtime?: Date;
 
-  @Column({
-    allowNull: true,
-    type: DataType.DATE,
-    comment: '\u6388\u6743\u7801\u66F4\u65B0\u65F6\u95F4',
-  })
+  @Column({ allowNull: true, type: DataType.DATE, comment: '授权码更新时间' })
   cps_secret_updatetime?: Date;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING(200),
-    comment: '\u4E09\u65B9\u54C1\u724C',
-  })
+  @Column({ allowNull: true, type: DataType.STRING(200), comment: '三方品牌' })
   cps_brand?: string;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING(50),
-    comment: '\u8FD0\u8D39\u6A21\u7248',
-  })
+  @Column({ allowNull: true, type: DataType.STRING(50), comment: '运费模版' })
   cps_postage_id?: string;
 
-  @Column({
-    type: DataType.STRING(500),
-    comment: '\u7AD9\u70B9\uFF08\u9017\u53F7\u5206\u9694\uFF09',
-  })
+  @Column({ type: DataType.STRING(500), comment: '站点（逗号分隔）' })
   web_countrys!: string;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(500),
-    comment:
-      '\u5DF2\u6388\u6743\u7AD9\u70B9\uFF08\u9017\u53F7\u5206\u9694\uFF09',
+    comment: '已授权站点（逗号分隔）',
   })
   haskey_web_countrys?: string;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(100),
-    comment: '\u652F\u4ED8\u5B9Dappid',
+    comment: '支付宝appid',
   })
   ali_pay_appid?: string;
 
   @Column({
     allowNull: true,
     type: DataType.TINYINT,
-    comment: '\u662F\u5426\u542F\u7528 1:\u542F\u7528',
+    comment: '是否启用 1:启用',
     defaultValue: '0',
   })
   enabled?: number;
 
   @Column({
     type: DataType.DECIMAL(10, 2),
-    comment:
-      '\u5141\u8BB8\u552E\u5356\u7684\u6700\u8D35\u5546\u54C1\u4EF7\u683C',
+    comment: '允许售卖的最贵商品价格',
     defaultValue: '300',
   })
   max_price?: string;
 
   @Column({
+    type: DataType.DECIMAL(10, 2),
+    comment: '允许售卖的最便宜商品价格',
+    defaultValue: '10',
+  })
+  min_price?: string;
+
+  @Column({
     type: DataType.INTEGER,
-    comment: '\u662F\u5426\u5F00\u542F\u5237\u5355',
+    comment: '是否开启刷单',
     defaultValue: '1',
   })
   if_open_swipe?: number;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING,
-    comment: '\u5237\u5355\u5546\u54C1',
-  })
+  @Column({ allowNull: true, type: DataType.STRING, comment: '刷单商品' })
   swipe_product?: string;
 
   @Column({
     type: DataType.STRING(100),
-    comment: '\u5237\u5355\u65F6\u95F4\u533A\u95F4',
+    comment: '刷单时间区间',
     defaultValue: '{"start_time":"16:00:00","end_time":"23:59:59"}',
   })
   swipe_time_array?: string;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING,
-    comment: '\u7CFB\u7EDF\u5237\u5355\u5546\u54C1',
-  })
+  @Column({ allowNull: true, type: DataType.STRING, comment: '系统刷单商品' })
   sys_swipe_product?: string;
 
   @Column({
     type: DataType.INTEGER,
-    comment: '\u89E6\u53D1\u5237\u5355\u9884\u8B66\u660E\u7EC6\u6761\u6570',
+    comment: '触发刷单预警明细条数',
     defaultValue: '4',
   })
   min_swipe_count?: number;
 
   @Column({
     type: DataType.STRING(50),
-    comment: '\u5237\u5355\u9ED8\u8BA4\u53D1\u8D27\u4EBA',
-    defaultValue: '\u6C88\u5973\u58EB',
+    comment: '刷单默认发货人',
+    defaultValue: '沈女士',
   })
   swipe_send_name?: string;
 
   @Column({
     type: DataType.STRING(50),
-    comment: '\u5237\u5355\u9ED8\u8BA4\u53D1\u8D27\u4EBA\u624B\u673A\u53F7',
+    comment: '刷单默认发货人手机号',
     defaultValue: '15657308109',
   })
   swipe_send_mobile?: string;
 
-  @Column({
-    type: DataType.INTEGER,
-    comment: '\u662F\u5426\u62C9\u8BA2\u5355',
-    defaultValue: '1',
-  })
+  @Column({ type: DataType.INTEGER, comment: '是否拉订单', defaultValue: '1' })
   if_pull_order?: number;
 
   @Column({
     type: DataType.DECIMAL(18, 2),
-    comment: '\u5927\u989D\u8BA2\u5355\u9884\u8B66\u91D1\u989D',
+    comment: '大额订单预警金额',
     defaultValue: '300.00',
   })
   warning_amount?: string;
 
   @Column({
     type: DataType.INTEGER,
-    comment: '\u662F\u5426\u5F00\u901A\u5F52\u96C6',
+    comment: '是否开通归集',
     defaultValue: '0',
   })
   if_up_bank_transfer?: number;
 
   @Column({
+    type: DataType.INTEGER,
+    comment: '开通网商后，是否提现到网商',
+    defaultValue: '0',
+  })
+  if_open_bank_transfer?: number;
+
+  @Column({
+    allowNull: true,
+    type: DataType.INTEGER,
+    comment: '开通网商后，提现到网商的星期（1，2，3……7）',
+  })
+  day_of_open_bank_transfer?: number;
+
+  @Column({
+    allowNull: true,
+    type: DataType.STRING(10),
+    comment: '开通网商后，提现到网商的具体时间点00:00:00',
+  })
+  time_of_open_bank_transfer?: string;
+
+  @Column({
     allowNull: true,
     type: DataType.STRING(100),
-    comment: '\u5E97\u94FA\u8D44\u91D1\u652F\u4ED8\u5B9D',
+    comment: '店铺资金支付宝',
   })
   ali_account?: string;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(100),
-    comment:
-      '\u5E97\u94FA\u8D44\u91D1\u652F\u4ED8\u5B9D\u652F\u4ED8\u5BC6\u7801',
+    comment: '店铺资金支付宝支付密码',
   })
   ali_pay_pass?: string;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(100),
-    comment:
-      '\u5E97\u94FA\u8D44\u91D1\u652F\u4ED8\u5B9D\u767B\u5F55\u5BC6\u7801',
+    comment: '店铺资金支付宝登录密码',
   })
   ali_log_pass?: string;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(100),
-    comment:
-      '\u5E97\u94FA\u8D44\u91D1\u652F\u4ED8\u5B9D\u767B\u5F55\u5B89\u5168\u95EE\u9898',
+    comment: '店铺资金支付宝登录安全问题',
   })
   ali_log_ask?: string;
 
   @Column({
     allowNull: true,
     type: DataType.DATE,
-    comment: '\u6570\u636E\u770B\u677F\u663E\u793A\u5F00\u5E97\u65F6\u95F4',
+    comment: '数据看板显示开店时间',
   })
   report_start_date?: Date;
 
-  @Column({ type: DataType.DATE, comment: '\u521B\u5EFA\u65F6\u95F4' })
+  @Column({ type: DataType.DATE, comment: '创建时间' })
   create_time!: Date;
 
-  @Column({ type: DataType.DATE, comment: '\u66F4\u65B0\u65F6\u95F4' })
+  @Column({ type: DataType.DATE, comment: '更新时间' })
   update_time!: Date;
 
   @Column({
     type: DataType.TINYINT,
-    comment: '\u662F\u5426\u903B\u8F91\u5220\u9664 1:\u5DF2\u5220\u9664',
+    comment: '是否逻辑删除 1:已删除',
     defaultValue: '0',
   })
   deleted?: number;
 
-  @Column({ type: DataType.BIGINT, comment: '\u521B\u5EFA\u4EBA' })
+  @Column({ type: DataType.BIGINT, comment: '创建人' })
   creator_id!: number;
 
-  @Column({ type: DataType.BIGINT, comment: '\u4FEE\u6539\u4EBA' })
+  @Column({ type: DataType.BIGINT, comment: '修改人' })
   modifier_id!: number;
 }

@@ -11,14 +11,14 @@ import {
 @Table({
   tableName: 't_source_video',
   timestamps: false,
-  comment: '\u7D20\u6750\u89C6\u9891\u8868',
+  comment: '素材视频表',
 })
 export class TSourceVideo extends Model {
   @Column({
     primaryKey: true,
     autoIncrement: true,
     type: DataType.BIGINT,
-    comment: '\u7CFB\u7EDF\u7F16\u7801',
+    comment: '系统编码',
   })
   @Index({ name: 'PRIMARY', using: 'BTREE', order: 'ASC', unique: true })
   id?: number;
@@ -26,12 +26,12 @@ export class TSourceVideo extends Model {
   @Column({
     allowNull: true,
     type: DataType.INTEGER,
-    comment: '\u5E94\u7528id',
+    comment: '应用id',
     defaultValue: '10000',
   })
   app_id?: number;
 
-  @Column({ allowNull: true, type: DataType.BIGINT, comment: '\u7D20\u6750id' })
+  @Column({ allowNull: true, type: DataType.BIGINT, comment: '素材id' })
   @Index({
     name: 'idx_source_head_id',
     using: 'BTREE',
@@ -40,58 +40,45 @@ export class TSourceVideo extends Model {
   })
   source_head_id?: number;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING,
-    comment: '\u539F\u59CB\u89C6\u9891\u5730\u5740',
-  })
+  @Column({ allowNull: true, type: DataType.STRING, comment: '原始视频地址' })
   video_url?: string;
 
   @Column({
     allowNull: true,
     type: DataType.STRING,
-    comment: '\u91C7\u96C6\u540E\u7684\u89C6\u9891\u5730\u5740',
+    comment: '采集后的视频地址',
   })
   oss_url?: string;
 
   @Column({
     type: DataType.INTEGER,
-    comment:
-      '\u961F\u5217\u72B6\u6001\uFF080\u5F85\u91C7\u96C6 10\u91C7\u96C6\u4E2D 20\u91C7\u96C6\u5B8C\u6BD5\u5F85 30\u91C7\u96C6\u5931\u8D25\uFF09',
+    comment: '队列状态（0待采集 10采集中 20采集完毕待 30采集失败）',
     defaultValue: '0',
   })
   pick_status?: number;
 
-  @Column({
-    allowNull: true,
-    type: DataType.DATE,
-    comment: '\u961F\u5217\u9886\u53D6\u65F6\u95F4',
-  })
+  @Column({ allowNull: true, type: DataType.DATE, comment: '队列领取时间' })
   pick_time?: Date;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING(500),
-    comment: '\u91C7\u96C6\u5907\u6CE8',
-  })
+  @Column({ allowNull: true, type: DataType.STRING(500), comment: '采集备注' })
   pick_remark?: string;
 
-  @Column({ type: DataType.DATE, comment: '\u521B\u5EFA\u65F6\u95F4' })
+  @Column({ type: DataType.DATE, comment: '创建时间' })
   create_time!: Date;
 
-  @Column({ type: DataType.DATE, comment: '\u66F4\u65B0\u65F6\u95F4' })
+  @Column({ type: DataType.DATE, comment: '更新时间' })
   update_time!: Date;
 
   @Column({
     type: DataType.TINYINT,
-    comment: '\u662F\u5426\u903B\u8F91\u5220\u9664 1:\u5DF2\u5220\u9664',
+    comment: '是否逻辑删除 1:已删除',
     defaultValue: '0',
   })
   deleted?: number;
 
-  @Column({ type: DataType.BIGINT, comment: '\u521B\u5EFA\u4EBA' })
+  @Column({ type: DataType.BIGINT, comment: '创建人' })
   creator_id!: number;
 
-  @Column({ type: DataType.BIGINT, comment: '\u4FEE\u6539\u4EBA' })
+  @Column({ type: DataType.BIGINT, comment: '修改人' })
   modifier_id!: number;
 }

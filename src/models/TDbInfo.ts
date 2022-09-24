@@ -8,17 +8,13 @@ import {
   ForeignKey,
 } from 'sequelize-typescript';
 
-@Table({
-  tableName: 't_db_info',
-  timestamps: false,
-  comment: '\u6570\u636E\u5E93\u7248\u672C\u53F7',
-})
+@Table({ tableName: 't_db_info', timestamps: false, comment: '数据库版本号' })
 export class TDbInfo extends Model {
   @Column({
     primaryKey: true,
     autoIncrement: true,
     type: DataType.INTEGER,
-    comment: '\u4E3B\u952E',
+    comment: '主键',
   })
   @Index({ name: 'PRIMARY', using: 'BTREE', order: 'ASC', unique: true })
   id?: number;
@@ -26,31 +22,23 @@ export class TDbInfo extends Model {
   @Column({
     allowNull: true,
     type: DataType.INTEGER,
-    comment: '\u5E94\u7528id',
+    comment: '应用id',
     defaultValue: '10000',
   })
   app_id?: number;
 
-  @Column({ type: DataType.INTEGER, comment: '\u7248\u672C' })
+  @Column({ type: DataType.INTEGER, comment: '版本' })
   version!: number;
 
-  @Column({
-    allowNull: true,
-    type: DataType.DATE,
-    comment: '\u521B\u5EFA\u65F6\u95F4',
-  })
+  @Column({ allowNull: true, type: DataType.DATE, comment: '创建时间' })
   create_time?: Date;
 
-  @Column({
-    allowNull: true,
-    type: DataType.DATE,
-    comment: '\u66F4\u65B0\u65F6\u95F4',
-  })
+  @Column({ allowNull: true, type: DataType.DATE, comment: '更新时间' })
   update_time?: Date;
 
-  @Column({ type: DataType.BIGINT, comment: '\u521B\u5EFA\u4EBA' })
+  @Column({ type: DataType.BIGINT, comment: '创建人' })
   creator_id!: number;
 
-  @Column({ type: DataType.BIGINT, comment: '\u4FEE\u6539\u4EBA' })
+  @Column({ type: DataType.BIGINT, comment: '修改人' })
   modifier_id!: number;
 }

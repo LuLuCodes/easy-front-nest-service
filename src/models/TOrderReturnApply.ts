@@ -11,14 +11,14 @@ import {
 @Table({
   tableName: 't_order_return_apply',
   timestamps: false,
-  comment: '\u8BA2\u5355\u9000\u8D27\u7533\u8BF7',
+  comment: '订单退货申请',
 })
 export class TOrderReturnApply extends Model {
   @Column({
     primaryKey: true,
     autoIncrement: true,
     type: DataType.BIGINT,
-    comment: '\u7CFB\u7EDF\u7F16\u7801',
+    comment: '系统编码',
   })
   @Index({ name: 'PRIMARY', using: 'BTREE', order: 'ASC', unique: true })
   id?: number;
@@ -26,22 +26,18 @@ export class TOrderReturnApply extends Model {
   @Column({
     allowNull: true,
     type: DataType.INTEGER,
-    comment: '\u5E94\u7528id',
+    comment: '应用id',
     defaultValue: '10000',
   })
   app_id?: number;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING(100),
-    comment: '\u9000\u5355\u7F16\u53F7',
-  })
+  @Column({ allowNull: true, type: DataType.STRING(100), comment: '退单编号' })
   return_sn?: string;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(100),
-    comment: '\u9000\u5355\u6765\u6E90\u7F16\u53F7',
+    comment: '退单来源编号',
   })
   @Index({
     name: 'idx_from_cps_sn',
@@ -51,24 +47,20 @@ export class TOrderReturnApply extends Model {
   })
   from_cps_sn?: string;
 
-  @Column({
-    allowNull: true,
-    type: DataType.DATE,
-    comment: '\u9000\u5355\u6765\u6E90\u8D85\u65F6\u65F6\u95F4',
-  })
+  @Column({ allowNull: true, type: DataType.DATE, comment: '退单来源超时时间' })
   from_time_out?: Date;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(100),
-    comment: '\u91C7\u8D2D\u9000\u5355\u7F16\u53F7',
+    comment: '采购退单编号',
   })
   to_cps_sn?: string;
 
   @Column({
     type: DataType.INTEGER,
     comment:
-      '\u539F\u59CB\u9000\u8D27\u5355\u722C\u866B\u540C\u6B65\u91C7\u8D2D\u9000\u8D27\u72B6\u6001\uFF080\u5F85\u722C\u866B\u9886\u53D6 1\u5DF2\u9886\u53D6 3\u722C\u866B\u5904\u7406\u4E2D 2\u5904\u7406\u6210\u529F 11\u91C7\u8D2D\u4E0A\u6E38\u62D2\u7EDD 12\u722C\u866B\u4EFB\u52A1\u5931\u8D25\uFF09',
+      '原始退货单爬虫同步采购退货状态（0待爬虫领取 1已领取 3爬虫处理中 2处理成功 11采购上游拒绝 12爬虫任务失败）',
     defaultValue: '0',
   })
   from_cps_sync_rma?: number;
@@ -76,15 +68,13 @@ export class TOrderReturnApply extends Model {
   @Column({
     allowNull: true,
     type: DataType.DATE,
-    comment:
-      '\u539F\u59CB\u9000\u8D27\u5355\u722C\u866B\u540C\u6B65\u91C7\u8D2D\u9000\u8D27\u9886\u53D6\u65F6\u95F4',
+    comment: '原始退货单爬虫同步采购退货领取时间',
   })
   from_cps_sync_rma_pick_time?: Date;
 
   @Column({
     type: DataType.BIGINT,
-    comment:
-      '\u539F\u59CB\u9000\u8D27\u5355\u722C\u866B\u540C\u6B65\u91C7\u8D2D\u9000\u8D27\u9886\u53D6\u4EBA',
+    comment: '原始退货单爬虫同步采购退货领取人',
     defaultValue: '0',
   })
   @Index({
@@ -98,15 +88,13 @@ export class TOrderReturnApply extends Model {
   @Column({
     allowNull: true,
     type: DataType.STRING(100),
-    comment:
-      '\u539F\u59CB\u9000\u8D27\u5355\u722C\u866B\u540C\u6B65\u91C7\u8D2D\u9000\u8D27\u4E0A\u6E38\u5904\u7406\u5907\u6CE8',
+    comment: '原始退货单爬虫同步采购退货上游处理备注',
   })
   from_cps_sync_rma_remark?: string;
 
   @Column({
     type: DataType.INTEGER,
-    comment:
-      '\u4E09\u65B9\u91C7\u8D2D\u5355\u662F\u5426\u540C\u610F\u9000\u6B3E(1\u540C\u610F 2\u4E0D\u540C\u610F)',
+    comment: '三方采购单是否同意退款(1同意 2不同意)',
     defaultValue: '0',
   })
   to_cps_audit_status?: number;
@@ -114,27 +102,27 @@ export class TOrderReturnApply extends Model {
   @Column({
     allowNull: true,
     type: DataType.STRING(100),
-    comment: '\u4E09\u65B9\u91C7\u8D2D\u5355\u9000\u6B3E\u5907\u6CE8',
+    comment: '三方采购单退款备注',
   })
   to_cps_audit_remark?: string;
 
   @Column({
     allowNull: true,
     type: DataType.STRING,
-    comment: '\u4E09\u65B9\u91C7\u8D2D\u5355\u9000\u6B3E\u56FE\u7247',
+    comment: '三方采购单退款图片',
   })
   to_cps_audit_img?: string;
 
   @Column({
     type: DataType.DECIMAL(18, 2),
-    comment: '\u4E09\u65B9\u91C7\u8D2D\u5355\u9000\u6B3E\u91D1\u989D',
+    comment: '三方采购单退款金额',
     defaultValue: '0.00',
   })
   to_cps_return_amount?: string;
 
   @Column({
     type: DataType.INTEGER,
-    comment: '\u4E09\u65B9\u91C7\u8D2D\u5355\u9000\u8D27\u6570\u91CF',
+    comment: '三方采购单退货数量',
     defaultValue: '0',
   })
   to_cps_return_quantity?: number;
@@ -142,7 +130,7 @@ export class TOrderReturnApply extends Model {
   @Column({
     type: DataType.INTEGER,
     comment:
-      '\u6DD8\u5B9D\u5904\u7406\u4E09\u65B9\u6765\u6E90\u8BA2\u5355\u9000\u6B3E\u72B6\u6001\uFF080\u5F85\u5904\u7406 1\u6DD8\u5B9D\u540C\u610F\u9000\u6B3E\u5904\u7406\u6210\u529F 11\u6DD8\u5B9D\u540C\u610F\u9000\u6B3E\u5904\u7406\u5931\u8D25\uFF09',
+      '淘宝处理三方来源订单退款状态（0待处理 1淘宝同意退款处理成功 11淘宝同意退款处理失败）',
     defaultValue: '0',
   })
   tb_cps_rma_status?: number;
@@ -150,22 +138,17 @@ export class TOrderReturnApply extends Model {
   @Column({
     allowNull: true,
     type: DataType.STRING(100),
-    comment:
-      '\u6DD8\u5B9D\u5904\u7406\u4E09\u65B9\u6765\u6E90\u8BA2\u5355\u7ED3\u679C\u5907\u6CE8',
+    comment: '淘宝处理三方来源订单结果备注',
   })
   tb_cps_rma_remark?: string;
 
-  @Column({
-    allowNull: true,
-    type: DataType.DATE,
-    comment: '\u4E0A\u6E38\u9000\u6B3E\u65F6\u95F4',
-  })
+  @Column({ allowNull: true, type: DataType.DATE, comment: '上游退款时间' })
   tb_cps_rma_time?: Date;
 
   @Column({
     type: DataType.INTEGER,
     comment:
-      '\u6DD8\u5B9D\u5904\u7406\u4E09\u65B9\u6765\u6E90\u8BA2\u5355\u62D2\u7EDD\u9000\u6B3E\u72B6\u6001\uFF080\u5F85\u5904\u7406 1\u6DD8\u5B9D\u62D2\u7EDD\u9000\u6B3E\u5904\u7406\u6210\u529F 11\u6DD8\u5B9D\u62D2\u7EDD\u9000\u6B3E\u5904\u7406\u5931\u8D25\uFF09',
+      '淘宝处理三方来源订单拒绝退款状态（0待处理 1淘宝拒绝退款处理成功 11淘宝拒绝退款处理失败）',
     defaultValue: '0',
   })
   tb_cps_norma_status?: number;
@@ -173,23 +156,21 @@ export class TOrderReturnApply extends Model {
   @Column({
     allowNull: true,
     type: DataType.STRING(100),
-    comment:
-      '\u6DD8\u5B9D\u5904\u7406\u4E09\u65B9\u6765\u6E90\u8BA2\u5355\u62D2\u7EDD\u9000\u6B3E\u7ED3\u679C\u5907\u6CE8',
+    comment: '淘宝处理三方来源订单拒绝退款结果备注',
   })
   tb_cps_norma_remark?: string;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(10),
-    comment:
-      '\u6DD8\u5B9D\u5904\u7406\u4E09\u65B9\u6765\u6E90\u8BA2\u5355\u9A8C\u8BC1\u7801',
+    comment: '淘宝处理三方来源订单验证码',
   })
   tb_cps_rma_code?: string;
 
   @Column({
     type: DataType.INTEGER,
     comment:
-      '\u81EA\u52A8\u540C\u610F\u672A\u53D1\u8D27\u672A\u91C7\u8D2D\u7684\u9000\u6B3E\u6DD8\u5B9D\u72B6\u6001\uFF080\u5F85\u540C\u6B65\uFF0C1\u540C\u610F\u6210\u529F\uFF0C2\u540C\u610F\u5931\u8D25\uFF09',
+      '自动同意未发货未采购的退款淘宝状态（0待同步，1同意成功，2同意失败）',
     defaultValue: '0',
   })
   auto_up_status?: number;
@@ -197,66 +178,53 @@ export class TOrderReturnApply extends Model {
   @Column({
     allowNull: true,
     type: DataType.STRING(200),
-    comment:
-      '\u81EA\u52A8\u540C\u610F\u672A\u53D1\u8D27\u672A\u91C7\u8D2D\u7684\u9000\u6B3E\u6DD8\u5B9D\u5907\u6CE8',
+    comment: '自动同意未发货未采购的退款淘宝备注',
   })
   auto_up_remark?: string;
 
   @Column({
     allowNull: true,
     type: DataType.DATE,
-    comment:
-      '\u81EA\u52A8\u540C\u610F\u672A\u53D1\u8D27\u672A\u91C7\u8D2D\u7684\u9000\u6B3E\u6DD8\u5B9D\u540C\u6B65\u65F6\u95F4',
+    comment: '自动同意未发货未采购的退款淘宝同步时间',
   })
   auto_up_time?: Date;
 
   @Column({
     allowNull: true,
     type: DataType.INTEGER,
-    comment:
-      '\u70B9\u51FB\u201C\u540C\u610F\u6DD8\u5B9D\u9000\u6B3E\u201D\u4EFB\u52A1\u4EBA',
+    comment: '点击“同意淘宝退款”任务人',
   })
   to_tb_auto_up_user_id?: number;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(100),
-    comment:
-      '\u70B9\u51FB\u201C\u540C\u610F\u6DD8\u5B9D\u9000\u6B3E\u201D\u4EFB\u52A1\u4EBA',
+    comment: '点击“同意淘宝退款”任务人',
   })
   to_tb_auto_up_user?: string;
 
   @Column({
     allowNull: true,
     type: DataType.DATE,
-    comment:
-      '\u70B9\u51FB\u201C\u540C\u610F\u6DD8\u5B9D\u9000\u6B3E\u201D\u4EFB\u52A1\u65F6\u95F4',
+    comment: '点击“同意淘宝退款”任务时间',
   })
   to_tb_auto_up_time?: Date;
 
   @Column({
     type: DataType.INTEGER,
-    comment:
-      '\u662F\u5426\u4E0B\u53D1\u201C\u540C\u610F\u6DD8\u5B9D\u9000\u6B3E\u201D\u4EFB\u52A1\uFF081\u4E0B\u53D1 0\u672A\u4E0B\u53D1\uFF09',
+    comment: '是否下发“同意淘宝退款”任务（1下发 0未下发）',
     defaultValue: '0',
   })
   to_tb_auto_up_status?: number;
 
-  @Column({
-    allowNull: true,
-    type: DataType.BIGINT,
-    comment: '\u9000\u6B3E\u4EBA',
-  })
+  @Column({ allowNull: true, type: DataType.BIGINT, comment: '退款人' })
   customer_id?: number;
 
-  @Column({ type: DataType.BIGINT, comment: '\u8BA2\u5355id' })
+  @Column({ type: DataType.BIGINT, comment: '订单id' })
   @Index({ name: 'idx_order_id', using: 'BTREE', order: 'ASC', unique: false })
   order_id!: number;
 
-  @Column({
-    type: DataType.BIGINT,
-    comment: '\u8BA2\u5355\u660E\u7EC6\u4E3B\u952E',
-  })
+  @Column({ type: DataType.BIGINT, comment: '订单明细主键' })
   @Index({
     name: 'idx_order_item_id',
     using: 'BTREE',
@@ -265,44 +233,38 @@ export class TOrderReturnApply extends Model {
   })
   order_item_id!: number;
 
-  @Column({ type: DataType.BIGINT, comment: '\u5546\u54C1\u4E3B\u952E' })
+  @Column({ type: DataType.BIGINT, comment: '商品主键' })
   product_id!: number;
 
-  @Column({ type: DataType.BIGINT, comment: '\u5546\u54C1SKU\u4E3B\u952E' })
+  @Column({ type: DataType.BIGINT, comment: '商品SKU主键' })
   sku_id!: number;
 
   @Column({
     type: DataType.TINYINT,
-    comment:
-      '\u9000\u8D27\u9000\u6B3E\u7C7B\u578B\uFF1A1->\u4EC5\u9000\u6B3E\uFF1B2->\u9000\u8D27\u9000\u6B3E\uFF1B3->\u5DF2\u53D1\u8D27\u4F46\u4EC5\u9000\u6B3E\uFF1B',
+    comment: '退货退款类型：1->仅退款；2->退货退款；3->已发货但仅退款；',
   })
   return_type!: number;
 
   @Column({
     allowNull: true,
     type: DataType.DECIMAL(10, 2),
-    comment: '\u9000\u6B3E\u91D1\u989D',
+    comment: '退款金额',
   })
   return_amount?: string;
 
-  @Column({
-    allowNull: true,
-    type: DataType.INTEGER,
-    comment: '\u9000\u8D27\u6570\u91CF',
-  })
+  @Column({ allowNull: true, type: DataType.INTEGER, comment: '退货数量' })
   return_quantity?: number;
 
   @Column({
     type: DataType.TINYINT,
     comment:
-      '\u7533\u8BF7\u72B6\u6001\uFF1A1->\u7B49\u5F85\u5356\u5BB6\u540C\u610F\u9000\u8D27\uFF1B2->\u7B49\u5F85\u4E70\u5BB6\u9000\u8D27\uFF1B3->\u7B49\u5F85\u5356\u5BB6\u786E\u8BA4\u6536\u8D27\uFF1B4->\u7B49\u5F85\u5356\u5BB6\u540C\u610F\u9000\u6B3E\uFF08\u53EA\u6709\u8679\u8FD0\u9879\u76EE\u662F\u201C\u5356\u5BB6\u62D2\u7EDD\u9000\u6B3E\u201D\uFF09\uFF1B5->\u9000\u6B3E\u6210\u529F\uFF1B  6->\u9000\u6B3E\u5173\u95ED\uFF1B7->\u5356\u5BB6\u62D2\u7EDD\u9000\u6B3E',
+      '申请状态：1->等待卖家同意退货；2->等待买家退货；3->等待卖家确认收货；4->等待卖家同意退款（只有虹运项目是“卖家拒绝退款”）；5->退款成功；  6->退款关闭；7->卖家拒绝退款',
   })
   return_status!: number;
 
   @Column({
     type: DataType.TINYINT,
-    comment:
-      '\u5546\u54C1\u9000\u8D27\u72B6\u6001\uFF0C\u9000\u8D27\u9000\u6B3E\u6709\u6548\uFF080\u5F85\u5BA1\u6838  1\u5DF2\u5230\u8D27 2\u4E22\u8D27\uFF09',
+    comment: '商品退货状态，退货退款有效（0待审核  1已到货 2丢货）',
     defaultValue: '0',
   })
   good_return_status?: number;
@@ -310,315 +272,253 @@ export class TOrderReturnApply extends Model {
   @Column({
     allowNull: true,
     type: DataType.BIGINT,
-    comment: '\u5546\u54C1\u9000\u8D27\u72B6\u6001\u5BA1\u6838\u4EBA',
+    comment: '商品退货状态审核人',
   })
   good_return_id?: number;
 
-  @Column({
-    allowNull: true,
-    type: DataType.DATE,
-    comment: '\u5546\u54C1\u9000\u8D27\u5BA1\u6838\u65F6\u95F4',
-  })
+  @Column({ allowNull: true, type: DataType.DATE, comment: '商品退货审核时间' })
   good_return_time?: Date;
 
   @Column({
     type: DataType.TINYINT,
-    comment:
-      '\u9000\u6B3E\u72B6\u6001\uFF080\u672A\u9000\u6B3E 1\u5DF2\u9000\u6B3E 2\u5DF2\u62D2\u7EDD\uFF09',
+    comment: '退款状态（0未退款 1已退款 2已拒绝）',
     defaultValue: '0',
   })
   money_return_status?: number;
 
-  @Column({
-    allowNull: true,
-    type: DataType.BIGINT,
-    comment: '\u9000\u6B3E\u5BA1\u6838\u4EBA',
-  })
+  @Column({ allowNull: true, type: DataType.BIGINT, comment: '退款审核人' })
   money_return_id?: number;
 
-  @Column({
-    allowNull: true,
-    type: DataType.DATE,
-    comment: '\u9000\u6B3E\u65F6\u95F4',
-  })
+  @Column({ allowNull: true, type: DataType.DATE, comment: '退款时间' })
   money_return_time?: Date;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING(200),
-    comment: '\u539F\u56E0',
-  })
+  @Column({ allowNull: true, type: DataType.STRING(200), comment: '原因' })
   reason?: string;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING(500),
-    comment: '\u63CF\u8FF0',
-  })
+  @Column({ allowNull: true, type: DataType.STRING(500), comment: '描述' })
   description?: string;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(2000),
-    comment: '\u51ED\u8BC1\u56FE\u7247\uFF0C\u4EE5\u9017\u53F7\u9694\u5F00',
+    comment: '凭证图片，以逗号隔开',
   })
   proof_pics?: string;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING(30),
-    comment: '\u6536\u8D27\u4EBA',
-  })
+  @Column({ allowNull: true, type: DataType.STRING(30), comment: '收货人' })
   receive_person_name?: string;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING(30),
-    comment: '\u6536\u8D27\u4EBA\u624B\u673A',
-  })
+  @Column({ allowNull: true, type: DataType.STRING(30), comment: '收货人手机' })
   receive_person_phone?: string;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(100),
-    comment: '\u9000\u8D27\u5730\u5740pcd code',
+    comment: '退货地址pcd code',
   })
   receive_pcd_code?: string;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(100),
-    comment: '\u9000\u8D27\u5730\u5740pcd desc',
+    comment: '退货地址pcd desc',
   })
   receive_pcd_desc?: string;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(500),
-    comment: '\u9000\u8D27\u5BC4\u9001\u5730\u5740',
+    comment: '退货寄送地址',
   })
   receive_address?: string;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING(500),
-    comment: '\u6536\u8D27\u5907\u6CE8',
-  })
+  @Column({ allowNull: true, type: DataType.STRING(500), comment: '收货备注' })
   receive_note?: string;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(100),
-    comment: '\u9000\u8D27\u5FEB\u9012\u5355\u53F7',
+    comment: '退货快递单号',
   })
   receive_sn?: string;
 
-  @Column({
-    allowNull: true,
-    type: DataType.BIGINT,
-    comment: '\u5FEB\u9012\u516C\u53F8\u7F16\u7801',
-  })
+  @Column({ allowNull: true, type: DataType.BIGINT, comment: '快递公司编码' })
   receive_company_id?: number;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(64),
-    comment: '\u5FEB\u9012\u516C\u53F8\u540D\u79F0',
+    comment: '快递公司名称',
   })
   receive_company_name?: string;
 
   @Column({
     type: DataType.INTEGER,
-    comment:
-      '\u5904\u7406\u6807\u8BB0\uFF080\u5F85\u5904\u7406 1\u5DF2\u5904\u7406\uFF09',
+    comment: '处理标记（0待处理 1已处理）',
     defaultValue: '0',
   })
   mark_status?: number;
 
-  @Column({
-    allowNull: true,
-    type: DataType.INTEGER,
-    comment: '\u5904\u7406\u4EBA',
-  })
+  @Column({ allowNull: true, type: DataType.INTEGER, comment: '处理人' })
   mark_user_id?: number;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING(100),
-    comment: '\u5904\u7406\u5907\u6CE8',
-  })
+  @Column({ allowNull: true, type: DataType.STRING(100), comment: '处理备注' })
   mark_remark?: string;
 
   @Column({
     allowNull: true,
     type: DataType.INTEGER,
-    comment:
-      '\u5411\u4E0A\u6E38\u7533\u8BF7\u9000\u8D27\u7C7B\u578B\uFF081\u4EC5\u9000\u6B3E 2\u9000\u8D27\u9000\u6B3E\uFF09',
+    comment: '向上游申请退货类型（1仅退款 2退货退款）',
   })
   opt_to_return_type?: number;
 
   @Column({
     allowNull: true,
     type: DataType.INTEGER,
-    comment:
-      '\u5411\u4E0A\u6E38\u7533\u8BF7\u9000\u8D27\u7C7B\u578B\uFF081\u672A\u6536\u5230\u8D27 2\u5DF2\u6536\u5230\u8D27\uFF09',
+    comment: '向上游申请退货类型（1未收到货 2已收到货）',
   })
   opt_to_return_good_type?: number;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(100),
-    comment: '\u5411\u4E0A\u6E38\u7533\u8BF7\u9000\u6B3E\u539F\u56E0',
+    comment: '向上游申请退款原因',
   })
   opt_to_return_reason?: string;
 
   @Column({
     allowNull: true,
     type: DataType.DECIMAL(10, 2),
-    comment: '\u5411\u4E0A\u6E38\u7533\u8BF7\u9000\u6B3E\u91D1\u989D',
+    comment: '向上游申请退款金额',
   })
   opt_to_return_amount?: string;
 
   @Column({
     allowNull: true,
     type: DataType.STRING,
-    comment: '\u5411\u4E0A\u6E38\u7533\u8BF7\u9000\u6B3E\u5907\u6CE8',
+    comment: '向上游申请退款备注',
   })
   opt_to_return_remark?: string;
 
   @Column({
     allowNull: true,
     type: DataType.STRING,
-    comment: '\u5411\u4E0A\u6E38\u7533\u8BF7\u9000\u6B3E\u56FE\u7247',
+    comment: '向上游申请退款图片',
   })
   opt_to_return_imgs?: string;
 
   @Column({
     allowNull: true,
     type: DataType.STRING,
-    comment:
-      '\u4E0D\u4F7F\u7528\u6781\u901F\u9000\u6B3E\u670D\u52A1\uFF0C\u6388\u6743\u5546\u5BB6\u586B\u5199\u8FD0\u5355\u53F7',
+    comment: '不使用极速退款服务，授权商家填写运单号',
   })
   opt_to_return_server_type?: string;
 
   @Column({
     allowNull: true,
     type: DataType.INTEGER,
-    comment:
-      '\u5411\u4E0A\u6E38\u7533\u8BF7\u9000\u6B3E\u4E0A\u4F20\u7ED3\u679C\uFF081\u5F85\u5904\u7406  2\u5904\u7406\u4E2D 3\u6210\u529F 4\u5931\u8D25\uFF09',
+    comment: '向上游申请退款上传结果（1待处理  2处理中 3成功 4失败）',
   })
   opt_to_result_status?: number;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(200),
-    comment:
-      '\u5411\u4E0A\u6E38\u7533\u8BF7\u9000\u6B3E\u4E0A\u4F20\u7ED3\u679C',
+    comment: '向上游申请退款上传结果',
   })
   opt_to_result_remark?: string;
 
   @Column({
     allowNull: true,
     type: DataType.INTEGER,
-    comment: '1\u540C\u610F\u9000\u6B3E 2\u4E0D\u540C\u610F\u9000\u6B3E',
+    comment: '1同意退款 2不同意退款',
   })
   opt_to_result?: number;
 
   @Column({
     allowNull: true,
     type: DataType.DATE,
-    comment:
-      '\u5411\u4E0A\u6E38\u7533\u8BF7\u9000\u6B3E\u4EFB\u52A1\u521B\u5EFA\u65F6\u95F4',
+    comment: '向上游申请退款任务创建时间',
   })
   opt_to_result_create_time?: Date;
 
   @Column({
     allowNull: true,
     type: DataType.DATE,
-    comment:
-      '\u5411\u4E0A\u6E38\u7533\u8BF7\u9000\u6B3E\u4EFB\u52A1\u9886\u53D6\u65F6\u95F4',
+    comment: '向上游申请退款任务领取时间',
   })
   opt_to_result_pick_time?: Date;
 
   @Column({
     allowNull: true,
     type: DataType.DATE,
-    comment:
-      '\u5411\u4E0A\u6E38\u7533\u8BF7\u9000\u6B3E\u4EFB\u52A1\u4E0A\u4F20\u65F6\u95F4',
+    comment: '向上游申请退款任务上传时间',
   })
   opt_to_result_finish_time?: Date;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(100),
-    comment: '\u9000\u8D27\u5730\u5740\u6536\u8D27\u4EBA',
+    comment: '退货地址收货人',
   })
   opt_to_result_receiver?: string;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(20),
-    comment: '\u9000\u8D27\u5730\u5740\u6536\u8D27\u4EBA\u624B\u673A\u53F7',
+    comment: '退货地址收货人手机号',
   })
   opt_to_result_phone?: string;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(500),
-    comment: '\u9000\u8D27\u5730\u5740\u6536\u8D27\u4EBA\u5730\u5740',
+    comment: '退货地址收货人地址',
   })
   opt_to_result_address?: string;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(200),
-    comment: '\u9000\u8D27\u5730\u5740\u6536\u8D27\u4EBA\u7701\u5E02\u533A',
+    comment: '退货地址收货人省市区',
   })
   opt_to_result_pcd?: string;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING,
-    comment: '\u4E0A\u6E38\u7684\u9000\u8D27\u8BF4\u660E',
-  })
+  @Column({ allowNull: true, type: DataType.STRING, comment: '上游的退货说明' })
   opt_to_result_back_remark?: string;
 
   @Column({
     allowNull: true,
     type: DataType.STRING,
-    comment: '\u4E0A\u6E38\u7684\u9000\u8D27\u8BF4\u660E(\u521D\u59CB)',
+    comment: '上游的退货说明(初始)',
   })
   opt_to_result_ini_back_remark?: string;
 
   @Column({
     allowNull: true,
     type: DataType.INTEGER,
-    comment:
-      '\u4E0A\u6E38\u7684\u9000\u8D27\u7269\u6D41\u540C\u6B65\u72B6\u6001\uFF081\u5F85\u540C\u6B65 2\u5DF2\u9886\u53D6 3\u5DF2\u540C\u6B65 4\u540C\u6B65\u5931\u8D25\uFF09',
+    comment: '上游的退货物流同步状态（1待同步 2已领取 3已同步 4同步失败）',
   })
   opt_to_result_receive_sn_status?: number;
 
   @Column({
     allowNull: true,
     type: DataType.DATE,
-    comment:
-      '\u4E0A\u6E38\u7684\u9000\u8D27\u7269\u6D41\u540C\u6B65\u63D2\u4EF6\u9886\u53D6\u65F6\u95F4',
+    comment: '上游的退货物流同步插件领取时间',
   })
   opt_to_result_receive_sn_time?: Date;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(200),
-    comment:
-      '\u4E0A\u6E38\u7684\u9000\u8D27\u7269\u6D41\u540C\u6B65\u6700\u540E\u5904\u7406\u5907\u6CE8',
+    comment: '上游的退货物流同步最后处理备注',
   })
   opt_to_result_receive_sn_deal_remark?: string;
 
   @Column({
     allowNull: true,
     type: DataType.DATE,
-    comment:
-      '\u4E0A\u6E38\u7684\u9000\u8D27\u7269\u6D41\u540C\u6B65\u6700\u540E\u5904\u7406\u65F6\u95F4',
+    comment: '上游的退货物流同步最后处理时间',
   })
   opt_to_result_receive_sn_deal_time?: Date;
 
@@ -626,54 +526,49 @@ export class TOrderReturnApply extends Model {
     allowNull: true,
     type: DataType.INTEGER,
     comment:
-      '\u5E97\u94FA\u7EF4\u62A4\u4E0A\u6E38\u9000\u8D27\u9000\u6B3E\u5730\u5740\u4EFB\u52A1\u72B6\u6001\uFF081\u5F85\u9886\u53D6 2\u5DF2\u9886\u53D6 3\u5DF2\u540C\u6B65 4\u540C\u6B65\u5931\u8D25\uFF09',
+      '店铺维护上游退货退款地址任务状态（1待领取 2已领取 3已同步 4同步失败）',
   })
   opt_to_result_address_deal_status?: number;
 
   @Column({
     allowNull: true,
     type: DataType.DATE,
-    comment:
-      '\u5E97\u94FA\u7EF4\u62A4\u4E0A\u6E38\u9000\u8D27\u9000\u6B3E\u5730\u5740\u4EFB\u52A1\u6700\u540E\u9886\u53D6\u65F6\u95F4',
+    comment: '店铺维护上游退货退款地址任务最后领取时间',
   })
   opt_to_result_address_pick_time?: Date;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(200),
-    comment:
-      '\u5E97\u94FA\u7EF4\u62A4\u4E0A\u6E38\u9000\u8D27\u9000\u6B3E\u5730\u5740\u4EFB\u52A1\u6700\u540E\u5904\u7406\u5907\u6CE8',
+    comment: '店铺维护上游退货退款地址任务最后处理备注',
   })
   opt_to_result_address_deal_remark?: string;
 
   @Column({
     allowNull: true,
     type: DataType.DATE,
-    comment:
-      '\u5E97\u94FA\u7EF4\u62A4\u4E0A\u6E38\u9000\u8D27\u9000\u6B3E\u5730\u5740\u4EFB\u52A1\u6700\u540E\u5904\u7406\u65F6\u95F4',
+    comment: '店铺维护上游退货退款地址任务最后处理时间',
   })
   opt_to_result_address_deal_time?: Date;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(100),
-    comment:
-      '\u5E97\u94FA\u7EF4\u62A4\u4E0A\u6E38\u9000\u8D27\u9000\u6B3E\u5730\u5740\u4EFB\u52A1\u540E\u7684\u6DD8\u5B9D\u5730\u5740id',
+    comment: '店铺维护上游退货退款地址任务后的淘宝地址id',
   })
   opt_to_result_address_cps_id?: string;
 
   @Column({
     type: DataType.INTEGER,
     comment:
-      '\u6DD8\u5B9D\u539F\u59CB\u5355\u722C\u866B\u540C\u6B65\u9000\u6B3E\u72B6\u6001\uFF080\u5F85\u722C\u866B\u9886\u53D6 1\u5DF2\u9886\u53D6 2\u5904\u7406\u6210\u529F 11\u5904\u7406\u5931\u8D25\uFF09',
+      '淘宝原始单爬虫同步退款状态（0待爬虫领取 1已领取 2处理成功 11处理失败）',
     defaultValue: '0',
   })
   tb_cps_sync_amount?: number;
 
   @Column({
     type: DataType.BIGINT,
-    comment:
-      '\u6DD8\u5B9D\u539F\u59CB\u5355\u722C\u866B\u540C\u6B65\u9000\u6B3E\u4EBA',
+    comment: '淘宝原始单爬虫同步退款人',
     defaultValue: '0',
   })
   tb_cps_sync_amount_id?: number;
@@ -681,185 +576,179 @@ export class TOrderReturnApply extends Model {
   @Column({
     allowNull: true,
     type: DataType.STRING(100),
-    comment:
-      '\u6DD8\u5B9D\u539F\u59CB\u5355\u722C\u866B\u540C\u6B65\u9000\u6B3E\u5904\u7406\u5907\u6CE8',
+    comment: '淘宝原始单爬虫同步退款处理备注',
   })
   tb_cps_sync_amount_remark?: string;
 
   @Column({
     allowNull: true,
     type: DataType.INTEGER,
-    comment:
-      '\u63D2\u4EF6\u62D2\u7EDD\u9000\u6B3E\u7533\u8BF7\u4EFB\u52A1\u72B6\u6001\uFF081\u5F85\u5904\u7406  2\u5904\u7406\u4E2D 3\u6210\u529F 4\u5931\u8D25\uFF09',
+    comment: '插件拒绝退款申请任务状态（1待处理  2处理中 3成功 4失败）',
   })
   to_tb_refuse_status?: number;
 
   @Column({
     allowNull: true,
     type: DataType.INTEGER,
-    comment:
-      '\u70B9\u51FB\u201C\u62D2\u7EDD\u6DD8\u5B9D\u9000\u6B3E\u201D\u4EFB\u52A1\u4EBA',
+    comment: '点击“拒绝淘宝退款”任务人',
   })
   to_tb_refuse_user_id?: number;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(100),
-    comment:
-      '\u70B9\u51FB\u201C\u62D2\u7EDD\u6DD8\u5B9D\u9000\u6B3E\u201D\u4EFB\u52A1\u4EBA',
+    comment: '点击“拒绝淘宝退款”任务人',
   })
   to_tb_refuse_user?: string;
 
   @Column({
     allowNull: true,
     type: DataType.DATE,
-    comment:
-      '\u70B9\u51FB\u201C\u62D2\u7EDD\u6DD8\u5B9D\u9000\u6B3E\u201D\u4EFB\u52A1\u65F6\u95F4',
+    comment: '点击“拒绝淘宝退款”任务时间',
   })
   to_tb_refuse_time?: Date;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(100),
-    comment:
-      '\u63D2\u4EF6\u62D2\u7EDD\u9000\u6B3E\u7533\u8BF7\u4EFB\u52A1\u539F\u56E0',
+    comment: '插件拒绝退款申请任务原因',
   })
   to_tb_refuse_reson?: string;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(500),
-    comment:
-      '\u63D2\u4EF6\u62D2\u7EDD\u9000\u6B3E\u7533\u8BF7\u4EFB\u52A1\u62D2\u7EDD\u8BF4\u660E',
+    comment: '插件拒绝退款申请任务拒绝说明',
   })
   to_tb_refuse_remark?: string;
 
   @Column({
     allowNull: true,
     type: DataType.STRING,
-    comment:
-      '\u63D2\u4EF6\u62D2\u7EDD\u9000\u6B3E\u7533\u8BF7\u4EFB\u52A1\u62D2\u7EDD\u51ED\u8BC1',
+    comment: '插件拒绝退款申请任务拒绝凭证',
   })
   to_tb_refuse_files?: string;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(100),
-    comment:
-      '\u63D2\u4EF6\u62D2\u7EDD\u9000\u6B3E\u7533\u8BF7\u4EFB\u52A1\u5EFA\u8BAE\u539F\u56E0',
+    comment: '插件拒绝退款申请任务建议原因',
   })
   to_tb_refuse_suggest?: string;
 
   @Column({
     allowNull: true,
     type: DataType.DECIMAL(10, 2),
-    comment:
-      '\u63D2\u4EF6\u62D2\u7EDD\u9000\u6B3E\u7533\u8BF7\u4EFB\u52A1\u5EFA\u8BAE\u91D1\u989D',
+    comment: '插件拒绝退款申请任务建议金额',
   })
   to_tb_refuse_suggest_amount?: string;
 
   @Column({
     allowNull: true,
     type: DataType.DATE,
-    comment:
-      '\u63D2\u4EF6\u62D2\u7EDD\u9000\u6B3E\u7533\u8BF7\u4EFB\u52A1\u63D2\u4EF6\u5904\u7406\u65F6\u95F4',
+    comment: '插件拒绝退款申请任务插件处理时间',
   })
   to_tb_refuse_deal_time?: Date;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(200),
-    comment:
-      '\u63D2\u4EF6\u62D2\u7EDD\u9000\u6B3E\u7533\u8BF7\u4EFB\u52A1\u63D2\u4EF6\u5904\u7406\u5907\u6CE8',
+    comment: '插件拒绝退款申请任务插件处理备注',
   })
   to_tb_refuse_deal_remark?: string;
 
   @Column({
-    allowNull: true,
     type: DataType.INTEGER,
-    comment:
-      '\u540E\u53F0\u5E97\u94FA\u540C\u610F/\u62D2\u7EDD\u9000\u8D27\u72B6\u6001\uFF081\u540C\u610F 2\u62D2\u7EDD\uFF09',
+    comment: '后台店铺同意/拒绝退货状态（1同意 2拒绝）',
+    defaultValue: '0',
   })
   to_tb_good_auto_up_status?: number;
 
   @Column({
     allowNull: true,
     type: DataType.BIGINT,
-    comment:
-      '\u540E\u53F0\u5E97\u94FA\u540C\u610F/\u62D2\u7EDD\u9000\u8D27\u4EBA',
+    comment: '后台店铺同意/拒绝退货人',
   })
   to_tb_good_auto_up_user_id?: number;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(100),
-    comment:
-      '\u540E\u53F0\u5E97\u94FA\u540C\u610F/\u62D2\u7EDD\u9000\u8D27\u4EBA',
+    comment: '后台店铺同意/拒绝退货人',
   })
   to_tb_good_auto_up_user?: string;
 
   @Column({
     allowNull: true,
     type: DataType.DATE,
-    comment:
-      '\u540E\u53F0\u5E97\u94FA\u540C\u610F/\u62D2\u7EDD\u9000\u8D27\u65F6\u95F4',
+    comment: '后台店铺同意/拒绝退货时间',
   })
   to_tb_good_auto_up_time?: Date;
 
   @Column({
     allowNull: true,
     type: DataType.STRING,
-    comment: '\u4E0A\u6E38\u7684\u62D2\u7EDD\u9000\u8D27\u8BF4\u660E',
+    comment: '上游的拒绝退货说明',
   })
   to_tb_good_refuse_up_remark?: string;
 
   @Column({
     allowNull: true,
     type: DataType.STRING,
-    comment:
-      '\u4E0A\u6E38\u7684\u62D2\u7EDD\u9000\u8D27\u8BF4\u660E(\u521D\u59CB)',
+    comment: '上游的拒绝退货说明(初始)',
   })
   to_tb_good_ini_refuse_up_remark?: string;
 
   @Column({
     allowNull: true,
     type: DataType.STRING,
-    comment: '\u4E0A\u6E38\u7684\u62D2\u7EDD\u9000\u8D27\u56FE\u7247',
+    comment: '上游的拒绝退货图片',
   })
   to_tb_good_refuse_up_img?: string;
 
   @Column({
     allowNull: true,
     type: DataType.STRING,
-    comment:
-      '\u4E0A\u6E38\u7684\u62D2\u7EDD\u9000\u8D27\u56FE\u7247(\u521D\u59CB)',
+    comment: '上游的拒绝退货图片(初始)',
   })
   to_tb_good_ini_refuse_up_img?: string;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(100),
-    comment: '\u4E0A\u6E38\u7684\u62D2\u7EDD\u9000\u8D27\u539F\u56E0',
+    comment: '上游的拒绝退货原因',
   })
   to_tb_good_refuse_up_type?: string;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(100),
-    comment:
-      '\u4E0A\u6E38\u7684\u62D2\u7EDD\u9000\u8D27\u539F\u56E0(\u521D\u59CB)',
+    comment: '上游的拒绝退货原因(初始)',
   })
   to_tb_good_ini_refuse_up_type?: string;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(100),
-    comment:
-      '\u4E0A\u6E38\u7684\u62D2\u7EDD\u9000\u8D27\u539F\u56E0(\u6DD8\u5B9D\u62D2\u7EDDid)',
+    comment: '上游的拒绝退货原因(淘宝拒绝id)',
   })
   to_tb_good_refuse_up_type_cps_id?: string;
 
-  @Column({ type: DataType.DATE, comment: '\u521B\u5EFA\u65F6\u95F4' })
+  @Column({
+    allowNull: true,
+    type: DataType.STRING(100),
+    comment: '淘宝退货退款dispute_id',
+  })
+  dispute_id?: string;
+
+  @Column({
+    type: DataType.INTEGER,
+    comment: '是否淘宝客服介入',
+    defaultValue: '0',
+  })
+  if_tb_server_warning?: number;
+
+  @Column({ type: DataType.DATE, comment: '创建时间' })
   @Index({
     name: 'idx_create_time',
     using: 'BTREE',
@@ -868,19 +757,19 @@ export class TOrderReturnApply extends Model {
   })
   create_time!: Date;
 
-  @Column({ type: DataType.DATE, comment: '\u66F4\u65B0\u65F6\u95F4' })
+  @Column({ type: DataType.DATE, comment: '更新时间' })
   update_time!: Date;
 
   @Column({
     type: DataType.TINYINT,
-    comment: '\u662F\u5426\u903B\u8F91\u5220\u9664 1:\u5DF2\u5220\u9664',
+    comment: '是否逻辑删除 1:已删除',
     defaultValue: '0',
   })
   deleted?: number;
 
-  @Column({ type: DataType.BIGINT, comment: '\u521B\u5EFA\u4EBA' })
+  @Column({ type: DataType.BIGINT, comment: '创建人' })
   creator_id!: number;
 
-  @Column({ type: DataType.BIGINT, comment: '\u4FEE\u6539\u4EBA' })
+  @Column({ type: DataType.BIGINT, comment: '修改人' })
   modifier_id!: number;
 }

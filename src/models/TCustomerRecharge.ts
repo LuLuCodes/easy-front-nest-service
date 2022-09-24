@@ -11,14 +11,14 @@ import {
 @Table({
   tableName: 't_customer_recharge',
   timestamps: false,
-  comment: '\u5BA2\u6237\u5145\u503C',
+  comment: '客户充值',
 })
 export class TCustomerRecharge extends Model {
   @Column({
     primaryKey: true,
     autoIncrement: true,
     type: DataType.INTEGER,
-    comment: '\u7CFB\u7EDF\u7F16\u7801',
+    comment: '系统编码',
   })
   @Index({ name: 'PRIMARY', using: 'BTREE', order: 'ASC', unique: true })
   id?: number;
@@ -26,12 +26,12 @@ export class TCustomerRecharge extends Model {
   @Column({
     allowNull: true,
     type: DataType.INTEGER,
-    comment: '\u5E94\u7528id',
+    comment: '应用id',
     defaultValue: '10000',
   })
   app_id?: number;
 
-  @Column({ type: DataType.INTEGER, comment: '\u5BA2\u6237\u7F16\u7801' })
+  @Column({ type: DataType.INTEGER, comment: '客户编码' })
   @Index({
     name: 'idx_customer_id',
     using: 'BTREE',
@@ -42,43 +42,38 @@ export class TCustomerRecharge extends Model {
 
   @Column({
     type: DataType.INTEGER,
-    comment: '\u8D26\u53F7\u6765\u6E90\uFF080customer 1seller\uFF09',
+    comment: '账号来源（0customer 1seller）',
     defaultValue: '0',
   })
   source_type?: number;
 
-  @Column({
-    type: DataType.DECIMAL(10, 2),
-    comment: '\u5145\u503C\u91D1\u989D',
-  })
+  @Column({ type: DataType.DECIMAL(10, 2), comment: '充值金额' })
   amount!: string;
 
   @Column({
     type: DataType.INTEGER,
-    comment:
-      '\u5145\u503C\u7C7B\u578B\uFF081vip\u5145\u503C\u8BA2\u5355 2\u8C46\u8C46\u5E01 3\u5BF9\u8C61\u94B1\u5305t_object_wallet\uFF09',
+    comment: '充值类型（1vip充值订单 2豆豆币 3对象钱包t_object_wallet）',
   })
   recharge_type!: number;
 
   @Column({
     allowNull: true,
     type: DataType.INTEGER,
-    comment:
-      '\u5145\u503C\u65F6\u6548\uFF0810 10\u5929\uFF0C30 \u4E00\u4E2A\u6708\uFF0C90\u4E09\u4E2A\u6708 180 \u516D\u4E2A\u6708 \uFF09',
+    comment: '充值时效（10 10天，30 一个月，90三个月 180 六个月 ）',
   })
   useful_type?: number;
 
   @Column({
     allowNull: true,
     type: DataType.INTEGER,
-    comment: '\u5145\u503C\u7C7B\u578B\uFF080\u65B0\u8D2D 1\u7EED\u8D39\uFF09',
+    comment: '充值类型（0新购 1续费）',
   })
   oper_type?: number;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(200),
-    comment: '\u4E09\u65B9\u652F\u4ED8\u6D41\u6C34\u53F7',
+    comment: '三方支付流水号',
   })
   @Index({ name: 'idx_trade_no', using: 'BTREE', order: 'ASC', unique: true })
   trade_no?: string;
@@ -86,98 +81,80 @@ export class TCustomerRecharge extends Model {
   @Column({
     allowNull: true,
     type: DataType.INTEGER,
-    comment:
-      '\u652F\u4ED8\u7C7B\u578B \uFF081->\u652F\u4ED8\u5B9D\uFF1B2->\u5FAE\u4FE1\uFF1B3->\u94B1\u5305\u4F59\u989D\uFF09',
+    comment: '支付类型 （1->支付宝；2->微信；3->钱包余额）',
   })
   pay_type?: number;
 
   @Column({
     allowNull: true,
     type: DataType.INTEGER,
-    comment:
-      '\u652F\u4ED8\u72B6\u6001\uFF080\u5F85\u652F\u4ED8 10\u5DF2\u652F\u4ED8 11\u5DF2\u5173\u95ED\uFF09',
+    comment: '支付状态（0待支付 10已支付 11已关闭）',
   })
   pay_status?: number;
 
-  @Column({
-    allowNull: true,
-    type: DataType.DATE,
-    comment: '\u652F\u4ED8\u65F6\u95F4',
-  })
+  @Column({ allowNull: true, type: DataType.DATE, comment: '支付时间' })
   pay_time?: Date;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING(50),
-    comment: '\u5145\u503C\u57CE\u5E02',
-  })
+  @Column({ allowNull: true, type: DataType.STRING(50), comment: '充值城市' })
   pay_city?: string;
 
   @Column({
     type: DataType.DECIMAL(18, 2),
-    comment: '\u8C46\u8C46\u5E01',
+    comment: '豆豆币',
     defaultValue: '0.00',
   })
   point?: string;
 
-  @Column({
-    type: DataType.INTEGER,
-    comment: '\u5206\u6DA6\u7C7B\u578B',
-    defaultValue: '0',
-  })
+  @Column({ type: DataType.INTEGER, comment: '分润类型', defaultValue: '0' })
   split_type?: number;
 
   @Column({
     type: DataType.DECIMAL(18, 2),
-    comment: '\u9996\u51B2\u5206\u6DA6',
+    comment: '首冲分润',
     defaultValue: '0.00',
   })
   first_split?: string;
 
   @Column({
     type: DataType.DECIMAL(18, 2),
-    comment: '\u5E73\u53F0\u5206\u6DA6',
+    comment: '平台分润',
     defaultValue: '0.00',
   })
   plant_split?: string;
 
-  @Column({
-    allowNull: true,
-    type: DataType.BIGINT,
-    comment: '\u6240\u5C5E\u6E20\u9053',
-  })
+  @Column({ allowNull: true, type: DataType.BIGINT, comment: '所属渠道' })
   sale_channel_id?: number;
 
   @Column({
     type: DataType.DECIMAL(18, 2),
-    comment: '\u6240\u5C5E\u6E20\u9053\u5206\u6DA6',
+    comment: '所属渠道分润',
     defaultValue: '0.00',
   })
   sale_channel_split?: string;
 
   @Column({
     type: DataType.DECIMAL(18, 2),
-    comment: '\u5206\u7ED9\u4EE3\u7406\u7684\u94B1',
+    comment: '分给代理的钱',
     defaultValue: '0.00',
   })
   agent_split?: string;
 
-  @Column({ type: DataType.DATE, comment: '\u521B\u5EFA\u65F6\u95F4' })
+  @Column({ type: DataType.DATE, comment: '创建时间' })
   create_time!: Date;
 
-  @Column({ type: DataType.DATE, comment: '\u66F4\u65B0\u65F6\u95F4' })
+  @Column({ type: DataType.DATE, comment: '更新时间' })
   update_time!: Date;
 
   @Column({
     type: DataType.TINYINT,
-    comment: '\u662F\u5426\u903B\u8F91\u5220\u9664 1:\u5DF2\u5220\u9664',
+    comment: '是否逻辑删除 1:已删除',
     defaultValue: '0',
   })
   deleted?: number;
 
-  @Column({ type: DataType.BIGINT, comment: '\u521B\u5EFA\u4EBA' })
+  @Column({ type: DataType.BIGINT, comment: '创建人' })
   creator_id!: number;
 
-  @Column({ type: DataType.BIGINT, comment: '\u4FEE\u6539\u4EBA' })
+  @Column({ type: DataType.BIGINT, comment: '修改人' })
   modifier_id!: number;
 }

@@ -8,17 +8,13 @@ import {
   ForeignKey,
 } from 'sequelize-typescript';
 
-@Table({
-  tableName: 't_activity',
-  timestamps: false,
-  comment: '\u6D3B\u52A8\u8868',
-})
+@Table({ tableName: 't_activity', timestamps: false, comment: '活动表' })
 export class TActivity extends Model {
   @Column({
     primaryKey: true,
     autoIncrement: true,
     type: DataType.BIGINT,
-    comment: '\u7CFB\u7EDF\u7F16\u7801',
+    comment: '系统编码',
   })
   @Index({ name: 'PRIMARY', using: 'BTREE', order: 'ASC', unique: true })
   id?: number;
@@ -26,120 +22,83 @@ export class TActivity extends Model {
   @Column({
     allowNull: true,
     type: DataType.INTEGER,
-    comment: '\u5E94\u7528id',
+    comment: '应用id',
     defaultValue: '10000',
   })
   app_id?: number;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING(100),
-    comment: '\u6D3B\u52A8\u6807\u9898',
-  })
+  @Column({ allowNull: true, type: DataType.STRING(100), comment: '活动标题' })
   act_title?: string;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(200),
-    comment: '\u6D3B\u52A8\u526F\u6807\u9898',
+    comment: '活动副标题',
   })
   act_title_ext?: string;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING(500),
-    comment: '\u6D3B\u52A8\u56FE\u7247',
-  })
+  @Column({ allowNull: true, type: DataType.STRING(500), comment: '活动图片' })
   act_file?: string;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(500),
-    comment: '\u6D3B\u52A8\u62D3\u5C55\u56FE\u7247',
+    comment: '活动拓展图片',
   })
   act_file_ext?: string;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING,
-    comment: '\u6D3B\u52A8\u8BE6\u60C5',
-  })
+  @Column({ allowNull: true, type: DataType.STRING, comment: '活动详情' })
   act_detail?: string;
 
-  @Column({
-    allowNull: true,
-    type: DataType.DATE,
-    comment: '\u6D3B\u52A8\u5F00\u59CB\u65F6\u95F4',
-  })
+  @Column({ allowNull: true, type: DataType.DATE, comment: '活动开始时间' })
   start_time?: Date;
 
-  @Column({
-    allowNull: true,
-    type: DataType.DATE,
-    comment: '\u6D3B\u52A8\u5F00\u59CB\u65F6\u95F4',
-  })
+  @Column({ allowNull: true, type: DataType.DATE, comment: '活动开始时间' })
   end_time?: Date;
 
-  @Column({
-    allowNull: true,
-    type: DataType.DATE,
-    comment: '\u62A5\u540D\u622A\u6B62\u65F6\u95F4',
-  })
+  @Column({ allowNull: true, type: DataType.DATE, comment: '报名截止时间' })
   sign_up_end_time?: Date;
 
   @Column({
     allowNull: true,
     type: DataType.DECIMAL(18, 2),
-    comment: '\u7B7E\u5230\u8303\u56F4\uFF08\u7C73\uFF09',
+    comment: '签到范围（米）',
   })
   sign_array?: string;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING(500),
-    comment: '\u4E0A\u8BFE\u5730\u70B9',
-  })
+  @Column({ allowNull: true, type: DataType.STRING(500), comment: '上课地点' })
   act_address?: string;
 
-  @Column({
-    allowNull: true,
-    type: DataType.DECIMAL(18, 10),
-    comment: '\u7ECF\u5EA6',
-  })
+  @Column({ allowNull: true, type: DataType.DECIMAL(18, 10), comment: '经度' })
   longitude?: string;
 
-  @Column({
-    allowNull: true,
-    type: DataType.DECIMAL(18, 10),
-    comment: '\u7EAC\u5EA6',
-  })
+  @Column({ allowNull: true, type: DataType.DECIMAL(18, 10), comment: '纬度' })
   latitude?: string;
 
   @Column({
     type: DataType.INTEGER,
-    comment: '\u6D3B\u52A8\u53EF\u62A5\u540D\u4EBA\u6570',
+    comment: '活动可报名人数',
     defaultValue: '0',
   })
   limit_count?: number;
 
   @Column({
     type: DataType.INTEGER,
-    comment: '\u6D3B\u52A8\u5DF2\u62A5\u540D\u4EBA\u6570',
+    comment: '活动已报名人数',
     defaultValue: '0',
   })
   sign_up_count?: number;
 
   @Column({
     type: DataType.INTEGER,
-    comment: '\u6D3B\u52A8\u5DF2\u7B7E\u5230\u4EBA\u6570',
+    comment: '活动已签到人数',
     defaultValue: '0',
   })
   sign_in_count?: number;
 
   @Column({
     type: DataType.INTEGER,
-    comment:
-      '\u6D3B\u52A8\u72B6\u6001 0 \u5F85\u53D1\u5E03,1\u53D1\u5E03 2\u64A4\u4E0B',
+    comment: '活动状态 0 待发布,1发布 2撤下',
     defaultValue: '0',
   })
   status?: number;
@@ -147,40 +106,63 @@ export class TActivity extends Model {
   @Column({
     allowNull: true,
     type: DataType.BIGINT,
-    comment: '\u6D3B\u52A8\u5173\u8054\u7684\u8BFE\u7A0B\u5546\u54C1',
+    comment: '活动关联的课程商品',
   })
   spu_id?: number;
 
   @Column({
     type: DataType.DECIMAL(18, 2),
-    comment: '\u573A\u5730\u8D39\u7528',
+    comment: '场地费用',
     defaultValue: '0.00',
   })
   field_fee?: string;
 
   @Column({
+    type: DataType.DECIMAL(18, 2),
+    comment: '早鸟费用',
+    defaultValue: '0.00',
+  })
+  early_field_fee?: string;
+
+  @Column({
+    allowNull: true,
     type: DataType.INTEGER,
-    comment: '\u6392\u5E8F',
+    comment: '早鸟价享受终止天数（距离活动结束时间）',
+  })
+  early_end_day?: number;
+
+  @Column({ allowNull: true, type: DataType.JSON, comment: '退款阶梯配置' })
+  refund_config?: object;
+
+  @Column({
+    type: DataType.INTEGER,
+    comment: '是否隐藏价格',
     defaultValue: '0',
   })
+  hidden_price?: number;
+
+  @Column({ type: DataType.INTEGER, comment: '排序', defaultValue: '0' })
   sort?: number;
 
-  @Column({ type: DataType.DATE, comment: '\u521B\u5EFA\u65F6\u95F4' })
+  @Column({ type: DataType.INTEGER, comment: '分组次数', defaultValue: '0' })
+  group_count?: number;
+
+  @Column({ type: DataType.DATE, comment: '创建时间' })
   create_time!: Date;
 
-  @Column({ type: DataType.DATE, comment: '\u66F4\u65B0\u65F6\u95F4' })
+  @Column({ type: DataType.DATE, comment: '更新时间' })
   update_time!: Date;
 
   @Column({
     type: DataType.TINYINT,
-    comment: '\u662F\u5426\u903B\u8F91\u5220\u9664 1:\u5DF2\u5220\u9664',
+    comment: '是否逻辑删除 1:已删除',
     defaultValue: '0',
   })
   deleted?: number;
 
-  @Column({ type: DataType.BIGINT, comment: '\u521B\u5EFA\u4EBA' })
+  @Column({ type: DataType.BIGINT, comment: '创建人' })
   creator_id!: number;
 
-  @Column({ type: DataType.BIGINT, comment: '\u4FEE\u6539\u4EBA' })
+  @Column({ type: DataType.BIGINT, comment: '修改人' })
   modifier_id!: number;
 }

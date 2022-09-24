@@ -8,17 +8,13 @@ import {
   ForeignKey,
 } from 'sequelize-typescript';
 
-@Table({
-  tableName: 't_coupon',
-  timestamps: false,
-  comment: '\u4F18\u60E0\u5238\u8868',
-})
+@Table({ tableName: 't_coupon', timestamps: false, comment: '优惠券表' })
 export class TCoupon extends Model {
   @Column({
     primaryKey: true,
     autoIncrement: true,
     type: DataType.BIGINT,
-    comment: '\u4F18\u60E0\u5238\u4E3B\u952E',
+    comment: '优惠券主键',
   })
   @Index({ name: 'PRIMARY', using: 'BTREE', order: 'ASC', unique: true })
   id?: number;
@@ -26,15 +22,12 @@ export class TCoupon extends Model {
   @Column({
     allowNull: true,
     type: DataType.INTEGER,
-    comment: '\u5E94\u7528id',
+    comment: '应用id',
     defaultValue: '10000',
   })
   app_id?: number;
 
-  @Column({
-    type: DataType.STRING(63),
-    comment: '\u4F18\u60E0\u5238\u540D\u79F0',
-  })
+  @Column({ type: DataType.STRING(63), comment: '优惠券名称' })
   @Index({
     name: 'idx_coupon_name',
     using: 'BTREE',
@@ -46,32 +39,28 @@ export class TCoupon extends Model {
   @Column({
     allowNull: true,
     type: DataType.STRING(127),
-    comment:
-      '\u4F18\u60E0\u5238\u4ECB\u7ECD\uFF0C\u901A\u5E38\u662F\u663E\u793A\u4F18\u60E0\u5238\u4F7F\u7528\u9650\u5236\u6587\u5B57',
+    comment: '优惠券介绍，通常是显示优惠券使用限制文字',
   })
   coupon_desc?: string;
 
   @Column({
     allowNull: true,
     type: DataType.TINYINT,
-    comment:
-      '\u4F7F\u7528\u5E73\u53F0\uFF1A0->\u5168\u90E8\uFF1B1->\u79FB\u52A8\uFF1B2->PC',
+    comment: '使用平台：0->全部；1->移动；2->PC',
   })
   platform?: number;
 
   @Column({
     allowNull: true,
     type: DataType.JSON,
-    comment:
-      '\u6295\u653E\u6E20\u9053(JSON [{"id":1\uFF080\u4EE3\u8868\u5168\u7F51\u6295\u653E\uFF09,"name":"\u6E20\u90531"}])',
+    comment: '投放渠道(JSON [{"id":1（0代表全网投放）,"name":"渠道1"}])',
   })
   no_sale_channel_json?: object;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(63),
-    comment:
-      '\u4F18\u60E0\u5238\u6807\u7B7E\uFF0C\u4F8B\u5982\u65B0\u4EBA\u4E13\u7528',
+    comment: '优惠券标签，例如新人专用',
   })
   tag?: string;
 
@@ -79,7 +68,7 @@ export class TCoupon extends Model {
     allowNull: true,
     type: DataType.SMALLINT,
     comment:
-      '\u4F18\u60E0\u5238\u8D60\u9001\u7C7B\u578B\uFF0C0->\u5168\u573A\u8D60\u5238\uFF1B1->\u4F1A\u5458\u8D60\u5238\uFF1B2->\u8D2D\u7269\u8D60\u5238\uFF1B3->\u6CE8\u518C\u8D60\u5238',
+      '优惠券赠送类型，0->全场赠券；1->会员赠券；2->购物赠券；3->注册赠券',
     defaultValue: '0',
   })
   @Index({ name: 'idx_type', using: 'BTREE', order: 'ASC', unique: false })
@@ -87,8 +76,7 @@ export class TCoupon extends Model {
 
   @Column({
     type: DataType.INTEGER,
-    comment:
-      '\u4F18\u60E0\u5238\u603B\u6570\u91CF\uFF0C\u5982\u679C\u662F0\uFF0C\u5219\u662F\u65E0\u9650\u91CF',
+    comment: '优惠券总数量，如果是0，则是无限量',
     defaultValue: '0',
   })
   count?: number;
@@ -96,7 +84,7 @@ export class TCoupon extends Model {
   @Column({
     allowNull: true,
     type: DataType.DECIMAL(10, 2),
-    comment: '\u4F18\u60E0\u91D1\u989D',
+    comment: '优惠金额',
     defaultValue: '0.00',
   })
   amount?: string;
@@ -104,7 +92,7 @@ export class TCoupon extends Model {
   @Column({
     allowNull: true,
     type: DataType.INTEGER,
-    comment: '\u6BCF\u4EBA\u9650\u9886\u5F20\u6570',
+    comment: '每人限领张数',
     defaultValue: '1',
   })
   per_limit?: number;
@@ -112,8 +100,7 @@ export class TCoupon extends Model {
   @Column({
     allowNull: true,
     type: DataType.DECIMAL(10, 2),
-    comment:
-      '\u4F7F\u7528\u95E8\u69DB(\u6700\u5C11\u6D88\u8D39\u91D1\u989D\u624D\u80FD\u4F7F\u7528\u4F18\u60E0\u5238)\uFF1B0\u8868\u793A\u65E0\u95E8\u69DB',
+    comment: '使用门槛(最少消费金额才能使用优惠券)；0表示无门槛',
     defaultValue: '0.00',
   })
   min_point?: string;
@@ -121,8 +108,7 @@ export class TCoupon extends Model {
   @Column({
     allowNull: true,
     type: DataType.TINYINT,
-    comment:
-      '\u4F7F\u7528\u7C7B\u578B\uFF1A0->\u5168\u573A\u901A\u7528\uFF1B1->\u6307\u5B9A\u5206\u7C7B\uFF1B2->\u6307\u5B9A\u5546\u54C1',
+    comment: '使用类型：0->全场通用；1->指定分类；2->指定商品',
     defaultValue: '0',
   })
   @Index({ name: 'idx_use_type', using: 'BTREE', order: 'ASC', unique: false })
@@ -131,7 +117,7 @@ export class TCoupon extends Model {
   @Column({
     allowNull: true,
     type: DataType.INTEGER,
-    comment: '\u53D1\u884C\u6570\u91CF, 0->\u65E0\u9650\u91CF',
+    comment: '发行数量, 0->无限量',
     defaultValue: '0',
   })
   publish_count?: number;
@@ -139,7 +125,7 @@ export class TCoupon extends Model {
   @Column({
     allowNull: true,
     type: DataType.INTEGER,
-    comment: '\u5DF2\u4F7F\u7528\u6570\u91CF',
+    comment: '已使用数量',
     defaultValue: '0',
   })
   use_count?: number;
@@ -147,45 +133,32 @@ export class TCoupon extends Model {
   @Column({
     allowNull: true,
     type: DataType.INTEGER,
-    comment: '\u9886\u53D6\u6570\u91CF',
+    comment: '领取数量',
     defaultValue: '0',
   })
   receive_count?: number;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING(64),
-    comment: '\u4F18\u60E0\u7801',
-  })
+  @Column({ allowNull: true, type: DataType.STRING(64), comment: '优惠码' })
   code?: string;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(1200),
-    comment:
-      '\u53EF\u9886\u53D6\u7684\u4F1A\u5458\u7C7B\u578B\u4E3B\u952E\uFF08\u7528\u9017\u53F7\u9694\u5F00\uFF09\uFF1A\u7A7A->\u65E0\u9650\u5236',
+    comment: '可领取的会员类型主键（用逗号隔开）：空->无限制',
   })
   customer_level?: string;
 
-  @Column({
-    allowNull: true,
-    type: DataType.DATE,
-    comment: '\u53EF\u4EE5\u9886\u53D6\u5F00\u59CB\u65F6\u95F4',
-  })
+  @Column({ allowNull: true, type: DataType.DATE, comment: '可以领取开始时间' })
   pick_start_time?: Date;
 
-  @Column({
-    allowNull: true,
-    type: DataType.DATE,
-    comment: '\u53EF\u4EE5\u9886\u53D6\u7ED3\u675F\u65F6\u95F4',
-  })
+  @Column({ allowNull: true, type: DataType.DATE, comment: '可以领取结束时间' })
   pick_end_time?: Date;
 
   @Column({
     allowNull: true,
     type: DataType.SMALLINT,
     comment:
-      '\u6709\u6548\u65F6\u95F4\u9650\u5236\uFF0C\u5982\u679C\u662F0\uFF0C\u5219\u57FA\u4E8E\u9886\u53D6\u65F6\u95F4\u7684\u6709\u6548\u5929\u6570days\uFF1B\u5982\u679C\u662F1\uFF0C\u5219use_start_time\u548Cuse_end_time\u662F\u4F18\u60E0\u5238\u6709\u6548\u671F\uFF1B',
+      '有效时间限制，如果是0，则基于领取时间的有效天数days；如果是1，则use_start_time和use_end_time是优惠券有效期；',
     defaultValue: '0',
   })
   use_time_type?: number;
@@ -193,8 +166,7 @@ export class TCoupon extends Model {
   @Column({
     allowNull: true,
     type: DataType.SMALLINT,
-    comment:
-      '\u57FA\u4E8E\u9886\u53D6\u65F6\u95F4\u7684\u6709\u6548\u5929\u6570days\u3002',
+    comment: '基于领取时间的有效天数days。',
     defaultValue: '0',
   })
   days?: number;
@@ -202,41 +174,41 @@ export class TCoupon extends Model {
   @Column({
     allowNull: true,
     type: DataType.DATE,
-    comment: '\u4F18\u60E0\u5238\u53EF\u4F7F\u7528\u5F00\u59CB\u65F6\u95F4',
+    comment: '优惠券可使用开始时间',
   })
   use_start_time?: Date;
 
   @Column({
     allowNull: true,
     type: DataType.DATE,
-    comment: '\u4F18\u60E0\u5238\u53EF\u4F7F\u7528\u7ED3\u675F\u65F6\u95F4',
+    comment: '优惠券可使用结束时间',
   })
   use_end_time?: Date;
 
   @Column({
     allowNull: true,
     type: DataType.TINYINT,
-    comment: '\u662F\u5426\u542F\u7528 1:\u542F\u7528',
+    comment: '是否启用 1:启用',
     defaultValue: '0',
   })
   enabled?: number;
 
-  @Column({ type: DataType.DATE, comment: '\u521B\u5EFA\u65F6\u95F4' })
+  @Column({ type: DataType.DATE, comment: '创建时间' })
   create_time!: Date;
 
-  @Column({ type: DataType.DATE, comment: '\u66F4\u65B0\u65F6\u95F4' })
+  @Column({ type: DataType.DATE, comment: '更新时间' })
   update_time!: Date;
 
   @Column({
     type: DataType.TINYINT,
-    comment: '\u662F\u5426\u903B\u8F91\u5220\u9664 1:\u5DF2\u5220\u9664',
+    comment: '是否逻辑删除 1:已删除',
     defaultValue: '0',
   })
   deleted?: number;
 
-  @Column({ type: DataType.TINYINT, comment: '\u521B\u5EFA\u4EBA' })
+  @Column({ type: DataType.TINYINT, comment: '创建人' })
   creator_id!: number;
 
-  @Column({ type: DataType.BIGINT, comment: '\u4FEE\u6539\u4EBA' })
+  @Column({ type: DataType.BIGINT, comment: '修改人' })
   modifier_id!: number;
 }

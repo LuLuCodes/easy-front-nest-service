@@ -11,14 +11,14 @@ import {
 @Table({
   tableName: 't_activity_white',
   timestamps: false,
-  comment: '\u6D3B\u52A8\u767D\u540D\u5355\u5217\u8868',
+  comment: '活动白名单列表',
 })
 export class TActivityWhite extends Model {
   @Column({
     primaryKey: true,
     autoIncrement: true,
     type: DataType.BIGINT,
-    comment: '\u7CFB\u7EDF\u7F16\u7801',
+    comment: '系统编码',
   })
   @Index({ name: 'PRIMARY', using: 'BTREE', order: 'ASC', unique: true })
   id?: number;
@@ -26,12 +26,12 @@ export class TActivityWhite extends Model {
   @Column({
     allowNull: true,
     type: DataType.INTEGER,
-    comment: '\u5E94\u7528id',
+    comment: '应用id',
     defaultValue: '10000',
   })
   app_id?: number;
 
-  @Column({ type: DataType.BIGINT, comment: '\u6D3B\u52A8\u7F16\u53F7' })
+  @Column({ type: DataType.BIGINT, comment: '活动编号' })
   @Index({
     name: 'idx_activity_id',
     using: 'BTREE',
@@ -40,11 +40,7 @@ export class TActivityWhite extends Model {
   })
   activity_id!: number;
 
-  @Column({
-    allowNull: true,
-    type: DataType.INTEGER,
-    comment: '\u5BA2\u6237\u7F16\u7801',
-  })
+  @Column({ allowNull: true, type: DataType.INTEGER, comment: '客户编码' })
   @Index({
     name: 'idx_customer_id',
     using: 'BTREE',
@@ -53,29 +49,25 @@ export class TActivityWhite extends Model {
   })
   customer_id?: number;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING(50),
-    comment: '\u521B\u5EFA\u4EBA',
-  })
+  @Column({ allowNull: true, type: DataType.STRING(50), comment: '创建人' })
   create_user?: string;
 
-  @Column({ type: DataType.DATE, comment: '\u521B\u5EFA\u65F6\u95F4' })
+  @Column({ type: DataType.DATE, comment: '创建时间' })
   create_time!: Date;
 
-  @Column({ type: DataType.DATE, comment: '\u66F4\u65B0\u65F6\u95F4' })
+  @Column({ type: DataType.DATE, comment: '更新时间' })
   update_time!: Date;
 
   @Column({
     type: DataType.TINYINT,
-    comment: '\u662F\u5426\u903B\u8F91\u5220\u9664 1:\u5DF2\u5220\u9664',
+    comment: '是否逻辑删除 1:已删除',
     defaultValue: '0',
   })
   deleted?: number;
 
-  @Column({ type: DataType.BIGINT, comment: '\u521B\u5EFA\u4EBA' })
+  @Column({ type: DataType.BIGINT, comment: '创建人' })
   creator_id!: number;
 
-  @Column({ type: DataType.BIGINT, comment: '\u4FEE\u6539\u4EBA' })
+  @Column({ type: DataType.BIGINT, comment: '修改人' })
   modifier_id!: number;
 }

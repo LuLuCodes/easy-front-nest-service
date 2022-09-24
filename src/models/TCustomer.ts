@@ -8,17 +8,13 @@ import {
   ForeignKey,
 } from 'sequelize-typescript';
 
-@Table({
-  tableName: 't_customer',
-  timestamps: false,
-  comment: '\u7528\u6237\u8868',
-})
+@Table({ tableName: 't_customer', timestamps: false, comment: '用户表' })
 export class TCustomer extends Model {
   @Column({
     primaryKey: true,
     autoIncrement: true,
     type: DataType.BIGINT,
-    comment: '\u7528\u6237\u4E3B\u952E',
+    comment: '用户主键',
   })
   @Index({ name: 'PRIMARY', using: 'BTREE', order: 'ASC', unique: true })
   id?: number;
@@ -26,12 +22,12 @@ export class TCustomer extends Model {
   @Column({
     allowNull: true,
     type: DataType.INTEGER,
-    comment: '\u5E94\u7528id',
+    comment: '应用id',
     defaultValue: '10000',
   })
   app_id?: number;
 
-  @Column({ type: DataType.STRING(36), comment: '\u8D26\u6237code' })
+  @Column({ type: DataType.STRING(36), comment: '账户code' })
   @Index({
     name: 'idx_account_code',
     using: 'BTREE',
@@ -40,7 +36,7 @@ export class TCustomer extends Model {
   })
   account_code!: string;
 
-  @Column({ type: DataType.STRING(36), comment: '\u7528\u6237code' })
+  @Column({ type: DataType.STRING(36), comment: '用户code' })
   @Index({
     name: 'idx_customer_cdoe',
     using: 'BTREE',
@@ -51,8 +47,7 @@ export class TCustomer extends Model {
 
   @Column({
     type: DataType.INTEGER,
-    comment:
-      '\u5BA2\u6237\u6765\u6E90\uFF080\u666E\u901A\u5BA2\u6237 1\u4EE3\u8D2D\u4EBA\u5458  2\u4EE3\u7406\u5546 3\u770B\u677F\u7BA1\u7406\u8005\uFF09',
+    comment: '客户来源（0普通客户 1代购人员  2代理商 3看板管理者）',
     defaultValue: '0',
   })
   source_type?: number;
@@ -60,146 +55,115 @@ export class TCustomer extends Model {
   @Column({
     allowNull: true,
     type: DataType.TINYINT,
-    comment: '\u6027\u522B\uFF1A0 \u672A\u77E5\uFF0C 1\u7537\uFF0C 2 \u5973',
+    comment: '性别：0 未知， 1男， 2 女',
     defaultValue: '0',
   })
   @Index({ name: 'idx_gender', using: 'BTREE', order: 'ASC', unique: false })
   gender?: number;
 
-  @Column({ allowNull: true, type: DataType.DATEONLY, comment: '\u751F\u65E5' })
+  @Column({ allowNull: true, type: DataType.DATEONLY, comment: '生日' })
   birthday?: string;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING(20),
-    comment: '\u6635\u79F0',
-  })
+  @Column({ allowNull: true, type: DataType.STRING(50), comment: '身份证号' })
+  idcard?: string;
+
+  @Column({ allowNull: true, type: DataType.STRING(20), comment: '昵称' })
   @Index({ name: 'idx_nick', using: 'BTREE', order: 'ASC', unique: false })
   nick_name?: string;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING(20),
-    comment: '\u59D3\u540D',
-  })
+  @Column({ allowNull: true, type: DataType.STRING(20), comment: '姓名' })
   @Index({ name: 'idx_name', using: 'BTREE', order: 'ASC', unique: false })
   real_name?: string;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING(255),
-    comment: '\u5934\u50CF\u5730\u5740',
-  })
+  @Column({ allowNull: true, type: DataType.STRING(100), comment: '常用名' })
+  common_name?: string;
+
+  @Column({ allowNull: true, type: DataType.STRING(50), comment: '标签' })
+  tag?: string;
+
+  @Column({ allowNull: true, type: DataType.STRING(255), comment: '头像地址' })
   avatar_url?: string;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING(20),
-    comment: '\u624B\u673A\u53F7\u7801',
-  })
+  @Column({ allowNull: true, type: DataType.STRING(20), comment: '手机号码' })
   phone?: string;
 
   @Column({
     allowNull: true,
     type: DataType.INTEGER,
-    comment: '\u7528\u6237\u7B49\u7EA7',
+    comment: '用户等级',
     defaultValue: '0',
   })
   @Index({ name: 'idx_level', using: 'BTREE', order: 'ASC', unique: false })
   level?: number;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING(10),
-    comment: '\u9080\u8BF7\u7801',
-  })
+  @Column({ allowNull: true, type: DataType.STRING(10), comment: '邀请码' })
   invitation_code?: string;
 
-  @Column({
-    allowNull: true,
-    type: DataType.DATE,
-    comment: 'VIP\u8FC7\u671F\u65F6\u95F4',
-  })
+  @Column({ allowNull: true, type: DataType.DATE, comment: 'VIP过期时间' })
   vip_expire?: Date;
 
   @Column({
     type: DataType.INTEGER,
-    comment: 'VIP\u84C4\u6C34\u65F6\u95F4\uFF08\u5929\uFF09',
+    comment: 'VIP蓄水时间（天）',
     defaultValue: '0',
   })
   vip_save_days?: number;
 
-  @Column({
-    type: DataType.TINYINT,
-    comment: '\u662F\u5426\u6E38\u5BA2',
-    defaultValue: '0',
-  })
+  @Column({ type: DataType.TINYINT, comment: '是否游客', defaultValue: '0' })
   is_tour?: number;
 
-  @Column({
-    allowNull: true,
-    type: DataType.BIGINT,
-    comment: '\u9500\u552E\u6E20\u9053',
-  })
+  @Column({ type: DataType.INTEGER, comment: '是否黑名单', defaultValue: '0' })
+  is_black?: number;
+
+  @Column({ allowNull: true, type: DataType.BIGINT, comment: '销售渠道' })
   sale_channel_id?: number;
 
   @Column({
     allowNull: true,
     type: DataType.INTEGER,
-    comment: '\u5F85\u5BA1\u6838\u7684\u9500\u552E\u6E20\u9053',
+    comment: '待审核的销售渠道',
   })
   wait_audit_sale_channel_id?: number;
 
   @Column({
     allowNull: true,
     type: DataType.DATE,
-    comment:
-      '\u6700\u540E\u5BA1\u6838\u7684\u9500\u552E\u6E20\u9053\u65F6\u95F4',
+    comment: '最后审核的销售渠道时间',
   })
   audit_sale_channel_time?: Date;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(100),
-    comment:
-      '\u6700\u540E\u5BA1\u6838\u7684\u9500\u552E\u6E20\u9053\u4EBA\u5458',
+    comment: '最后审核的销售渠道人员',
   })
   audit_sale_channel_user?: string;
 
   @Column({
     allowNull: true,
     type: DataType.BIGINT,
-    comment:
-      '\u6700\u540E\u5BA1\u6838\u7684\u9500\u552E\u6E20\u9053\u4EBA\u5458',
+    comment: '最后审核的销售渠道人员',
   })
   audit_sale_channel_user_id?: number;
 
   @Column({
     type: DataType.TINYINT,
-    comment: '\u5728\u7EBF\u72B6\u6001\uFF080\u79BB\u7EBF 1\u5728\u7EBF\uFF09',
+    comment: '在线状态（0离线 1在线）',
     defaultValue: '0',
   })
   online_status?: number;
 
-  @Column({
-    allowNull: true,
-    type: DataType.DATE,
-    comment: '\u6700\u540E\u5FC3\u8DF3\u65F6\u95F4',
-  })
+  @Column({ allowNull: true, type: DataType.DATE, comment: '最后心跳时间' })
   beet_time?: Date;
 
   @Column({
     type: DataType.INTEGER,
-    comment: '\u767B\u5F55\u72B6\u6001\uFF080\u767B\u51FA 1\u767B\u5165\uFF09',
+    comment: '登录状态（0登出 1登入）',
     defaultValue: '0',
   })
   login_status?: number;
 
-  @Column({
-    allowNull: true,
-    type: DataType.DATE,
-    comment: '\u6700\u540E\u4E0B\u7EBF\u65F6\u95F4',
-  })
+  @Column({ allowNull: true, type: DataType.DATE, comment: '最后下线时间' })
   offline_time?: Date;
 
   @Column({ allowNull: true, type: DataType.STRING(100), comment: 'app_key' })
@@ -212,22 +176,28 @@ export class TCustomer extends Model {
   })
   app_secret?: string;
 
+  @Column({ type: DataType.INTEGER, comment: '签到次数', defaultValue: '0' })
+  sign_in_count?: number;
+
+  @Column({ allowNull: true, type: DataType.DATE, comment: '最后签到时间' })
+  last_sign_in_time?: Date;
+
   @Column({
     type: DataType.TINYINT,
-    comment: '\u662F\u5426\u903B\u8F91\u5220\u9664 1:\u5DF2\u5220\u9664',
+    comment: '是否逻辑删除 1:已删除',
     defaultValue: '0',
   })
   deleted?: number;
 
-  @Column({ type: DataType.DATE, comment: '\u521B\u5EFA\u65F6\u95F4' })
+  @Column({ type: DataType.DATE, comment: '创建时间' })
   create_time!: Date;
 
-  @Column({ type: DataType.DATE, comment: '\u66F4\u65B0\u65F6\u95F4' })
+  @Column({ type: DataType.DATE, comment: '更新时间' })
   update_time!: Date;
 
-  @Column({ type: DataType.BIGINT, comment: '\u521B\u5EFA\u4EBA' })
+  @Column({ type: DataType.BIGINT, comment: '创建人' })
   creator_id!: number;
 
-  @Column({ type: DataType.BIGINT, comment: '\u4FEE\u6539\u4EBA' })
+  @Column({ type: DataType.BIGINT, comment: '修改人' })
   modifier_id!: number;
 }

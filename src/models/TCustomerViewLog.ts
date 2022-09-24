@@ -11,14 +11,14 @@ import {
 @Table({
   tableName: 't_customer_view_log',
   timestamps: false,
-  comment: '\u7528\u6237\u8868\u67E5\u770B\u8868',
+  comment: '用户表查看表',
 })
 export class TCustomerViewLog extends Model {
   @Column({
     primaryKey: true,
     autoIncrement: true,
     type: DataType.BIGINT,
-    comment: '\u7528\u6237\u4E3B\u952E',
+    comment: '用户主键',
   })
   @Index({ name: 'PRIMARY', using: 'BTREE', order: 'ASC', unique: true })
   id?: number;
@@ -26,12 +26,12 @@ export class TCustomerViewLog extends Model {
   @Column({
     allowNull: true,
     type: DataType.INTEGER,
-    comment: '\u5E94\u7528id',
+    comment: '应用id',
     defaultValue: '10000',
   })
   app_id?: number;
 
-  @Column({ type: DataType.INTEGER, comment: '\u7528\u6237\u7F16\u7801' })
+  @Column({ type: DataType.INTEGER, comment: '用户编码' })
   @Index({
     name: 'idx_customer_id',
     using: 'BTREE',
@@ -40,39 +40,31 @@ export class TCustomerViewLog extends Model {
   })
   customer_id!: number;
 
-  @Column({ type: DataType.INTEGER, comment: '\u67E5\u770B\u5BF9\u8C61' })
+  @Column({ type: DataType.INTEGER, comment: '查看对象' })
   to_object_id!: number;
 
-  @Column({
-    type: DataType.INTEGER,
-    comment:
-      '\u67E5\u770B\u5BF9\u8C61\u7C7B\u578B\uFF081\u5973\u6027\u8D44\u6599\uFF09',
-  })
+  @Column({ type: DataType.INTEGER, comment: '查看对象类型（1女性资料）' })
   to_object_type!: number;
 
-  @Column({
-    allowNull: true,
-    type: DataType.DATE,
-    comment: '\u6700\u540E\u67E5\u770B\u65F6\u95F4',
-  })
+  @Column({ allowNull: true, type: DataType.DATE, comment: '最后查看时间' })
   last_view?: Date;
 
   @Column({
     type: DataType.TINYINT,
-    comment: '\u662F\u5426\u903B\u8F91\u5220\u9664 1:\u5DF2\u5220\u9664',
+    comment: '是否逻辑删除 1:已删除',
     defaultValue: '0',
   })
   deleted?: number;
 
-  @Column({ type: DataType.DATE, comment: '\u521B\u5EFA\u65F6\u95F4' })
+  @Column({ type: DataType.DATE, comment: '创建时间' })
   create_time!: Date;
 
-  @Column({ type: DataType.DATE, comment: '\u66F4\u65B0\u65F6\u95F4' })
+  @Column({ type: DataType.DATE, comment: '更新时间' })
   update_time!: Date;
 
-  @Column({ type: DataType.BIGINT, comment: '\u521B\u5EFA\u4EBA' })
+  @Column({ type: DataType.BIGINT, comment: '创建人' })
   creator_id!: number;
 
-  @Column({ type: DataType.BIGINT, comment: '\u4FEE\u6539\u4EBA' })
+  @Column({ type: DataType.BIGINT, comment: '修改人' })
   modifier_id!: number;
 }

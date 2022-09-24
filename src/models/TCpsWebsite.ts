@@ -11,14 +11,14 @@ import {
 @Table({
   tableName: 't_cps_website',
   timestamps: false,
-  comment: 'cps\u7AD9\u70B9\u548C\u6C47\u7387\u8868',
+  comment: 'cps站点和汇率表',
 })
 export class TCpsWebsite extends Model {
   @Column({
     primaryKey: true,
     autoIncrement: true,
     type: DataType.BIGINT,
-    comment: '\u5546\u54C1\u4E3B\u952E',
+    comment: '商品主键',
   })
   @Index({ name: 'PRIMARY', using: 'BTREE', order: 'ASC', unique: true })
   id?: number;
@@ -26,96 +26,78 @@ export class TCpsWebsite extends Model {
   @Column({
     allowNull: true,
     type: DataType.INTEGER,
-    comment: '\u5E94\u7528id',
+    comment: '应用id',
     defaultValue: '10000',
   })
   app_id?: number;
 
-  @Column({
-    type: DataType.INTEGER,
-    comment:
-      '\u5E97\u94FA\u7C7B\u578B\uFF081\u4E9A\u9A6C\u900A\u2026\u2026\uFF09',
-  })
+  @Column({ type: DataType.INTEGER, comment: '店铺类型（1亚马逊……）' })
   cps_type!: number;
 
-  @Column({
-    type: DataType.STRING(50),
-    comment: '\u7AD9\u70B9\u540D\u79F0\uFF08\u663E\u793A\u7528\uFF09',
-  })
+  @Column({ type: DataType.STRING(50), comment: '站点名称（显示用）' })
   web_country!: string;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(50),
-    comment:
-      '\u7AD9\u70B9\u540D\u79F0\u7F16\u53F7\uFF08\u5BF9\u63A5\u7528\uFF09',
+    comment: '站点名称编号（对接用）',
   })
   web_country_code?: string;
 
-  @Column({ type: DataType.STRING(50), comment: '\u8D27\u5E01\u7C7B\u578B' })
+  @Column({ type: DataType.STRING(50), comment: '货币类型' })
   currency_type!: string;
 
-  @Column({ type: DataType.STRING(50), comment: '\u8D27\u5E01\u7B26\u53F7' })
+  @Column({ type: DataType.STRING(50), comment: '货币符号' })
   currency_code!: string;
 
-  @Column({
-    type: DataType.DECIMAL(18, 4),
-    comment: '\u4EBA\u6C11\u5E01\u6C47\u7387',
-  })
+  @Column({ type: DataType.DECIMAL(18, 4), comment: '人民币汇率' })
   exchange_rate!: string;
 
   @Column({
     type: DataType.DECIMAL(18, 2),
-    comment: '\u5E73\u53F0\u4F63\u91D1',
+    comment: '平台佣金',
     defaultValue: '0.00',
   })
   plant_rate?: string;
 
-  @Column({
-    type: DataType.STRING(50),
-    comment: '\u4E91\u56FE\u56FD\u9645\u7269\u6D41\u56FD\u5BB6\u7B80\u7801',
-  })
+  @Column({ type: DataType.STRING(50), comment: '云图国际物流国家简码' })
   express_code!: string;
 
   @Column({
     field: 'marketplaceId',
     allowNull: true,
     type: DataType.STRING(100),
-    comment: '\u4E9A\u9A6C\u900AMarketplaceId',
+    comment: '亚马逊MarketplaceId',
   })
   marketplaceid?: string;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING,
-    comment: '\u8FDE\u63A5\u5730\u5740',
-  })
+  @Column({ allowNull: true, type: DataType.STRING, comment: '连接地址' })
   link_url?: string;
 
   @Column({
     allowNull: true,
     type: DataType.TINYINT,
-    comment: '\u662F\u5426\u542F\u7528 1:\u542F\u7528',
+    comment: '是否启用 1:启用',
     defaultValue: '0',
   })
   enabled?: number;
 
-  @Column({ type: DataType.DATE, comment: '\u521B\u5EFA\u65F6\u95F4' })
+  @Column({ type: DataType.DATE, comment: '创建时间' })
   create_time!: Date;
 
-  @Column({ type: DataType.DATE, comment: '\u66F4\u65B0\u65F6\u95F4' })
+  @Column({ type: DataType.DATE, comment: '更新时间' })
   update_time!: Date;
 
   @Column({
     type: DataType.TINYINT,
-    comment: '\u662F\u5426\u903B\u8F91\u5220\u9664 1:\u5DF2\u5220\u9664',
+    comment: '是否逻辑删除 1:已删除',
     defaultValue: '0',
   })
   deleted?: number;
 
-  @Column({ type: DataType.BIGINT, comment: '\u521B\u5EFA\u4EBA' })
+  @Column({ type: DataType.BIGINT, comment: '创建人' })
   creator_id!: number;
 
-  @Column({ type: DataType.BIGINT, comment: '\u4FEE\u6539\u4EBA' })
+  @Column({ type: DataType.BIGINT, comment: '修改人' })
   modifier_id!: number;
 }

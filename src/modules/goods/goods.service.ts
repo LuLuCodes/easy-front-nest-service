@@ -118,7 +118,7 @@ export class GoodsService {
         type: QueryTypes.SELECT,
       });
 
-      const { count } = await this.sequelize.query(count_sql, {
+      const { count } = await this.sequelize.query<any>(count_sql, {
         replacements: {
           group_id,
           offset,
@@ -129,7 +129,7 @@ export class GoodsService {
         type: QueryTypes.SELECT,
       });
 
-      return { rows, count };
+      return { rows, count: count };
     }
   }
 

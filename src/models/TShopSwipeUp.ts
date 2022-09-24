@@ -11,14 +11,14 @@ import {
 @Table({
   tableName: 't_shop_swipe_up',
   timestamps: false,
-  comment: '\u5E97\u94FA\u5237\u5355-\u5237\u5355\u4E0A\u4F20\u8868',
+  comment: '店铺刷单-刷单上传表',
 })
 export class TShopSwipeUp extends Model {
   @Column({
     primaryKey: true,
     autoIncrement: true,
     type: DataType.BIGINT,
-    comment: '\u7CFB\u7EDF\u7F16\u7801',
+    comment: '系统编码',
   })
   @Index({ name: 'PRIMARY', using: 'BTREE', order: 'ASC', unique: true })
   id?: number;
@@ -26,37 +26,30 @@ export class TShopSwipeUp extends Model {
   @Column({
     allowNull: true,
     type: DataType.INTEGER,
-    comment: '\u5E94\u7528id',
+    comment: '应用id',
     defaultValue: '10000',
   })
   app_id?: number;
 
-  @Column({
-    type: DataType.BIGINT,
-    comment: '\u5E97\u94FA\u7CFB\u7EDF\u7F16\u7801',
-  })
+  @Column({ type: DataType.BIGINT, comment: '店铺系统编码' })
   @Index({ name: 'idx_shop_id', using: 'BTREE', order: 'ASC', unique: false })
   shop_id!: number;
 
   @Column({
     type: DataType.INTEGER,
-    comment:
-      '\u5237\u5355\u7C7B\u578B\uFF081\u7CBE\u51C6\u5237\u5355 21\u62D66\u6279\u91CF\u5237\u5355\uFF09',
+    comment: '刷单类型（1精准刷单 21拖6批量刷单）',
     defaultValue: '1',
   })
   swipe_type?: number;
 
-  @Column({
-    type: DataType.DATE,
-    comment: '\u4E0A\u62A5\u65F6\u95F4\uFF08\u5E74\u6708\u65E5\uFF09',
-  })
+  @Column({ type: DataType.DATE, comment: '上报时间（年月日）' })
   @Index({ name: 'idx_up_time', using: 'BTREE', order: 'ASC', unique: false })
   up_time!: Date;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(100),
-    comment: '\u6DD8\u5B9D\u8BA2\u5355\u7F16\u7801',
+    comment: '淘宝订单编码',
   })
   @Index({
     name: 'idx_from_cps_tid',
@@ -69,7 +62,7 @@ export class TShopSwipeUp extends Model {
   @Column({
     allowNull: true,
     type: DataType.STRING(500),
-    comment: '\u4E0B\u5355\u4EBA\u65FA\u65FA\u53F7',
+    comment: '下单人旺旺号',
   })
   @Index({ name: 'idx_nick_name', using: 'BTREE', order: 'ASC', unique: false })
   nick_name?: string;
@@ -77,51 +70,46 @@ export class TShopSwipeUp extends Model {
   @Column({
     allowNull: true,
     type: DataType.BIGINT,
-    comment:
-      '\u6B3E\u7CFB\u7EDF\u7F16\u7801\uFF08\u9ED8\u8BA4\u53D61\u4E2A\uFF09',
+    comment: '款系统编码（默认取1个）',
   })
   spu_id?: number;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(300),
-    comment: '\u6B3E\u540D\u79F0\uFF08\u9ED8\u8BA4\u53D61\u4E2A\uFF09',
+    comment: '款名称（默认取1个）',
   })
   spu_name?: string;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(300),
-    comment: '\u6B3E\u540D\u79F0\uFF08\u9ED8\u8BA4\u53D61\u4E2A\uFF09',
+    comment: '款名称（默认取1个）',
   })
   product_sn?: string;
 
   @Column({
     allowNull: true,
     type: DataType.BIGINT,
-    comment: 'SKU\u7CFB\u7EDF\u7F16\u7801\uFF08\u9ED8\u8BA4\u53D61\u4E2A\uFF09',
+    comment: 'SKU系统编码（默认取1个）',
   })
   sku_id?: number;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(300),
-    comment: 'SKU\u540D\u79F0\uFF08\u9ED8\u8BA4\u53D61\u4E2A\uFF09',
+    comment: 'SKU名称（默认取1个）',
   })
   sku_name?: string;
 
   @Column({
     type: DataType.DECIMAL(10, 2),
-    comment: '\u8BA2\u5355\u91D1\u989D',
+    comment: '订单金额',
     defaultValue: '0.00',
   })
   order_amount?: string;
 
-  @Column({
-    allowNull: true,
-    type: DataType.DATE,
-    comment: '\u8BA2\u5355\u4E0B\u5355\u65F6\u95F4',
-  })
+  @Column({ allowNull: true, type: DataType.DATE, comment: '订单下单时间' })
   @Index({
     name: 'idx_order_create_time',
     using: 'BTREE',
@@ -130,110 +118,79 @@ export class TShopSwipeUp extends Model {
   })
   order_create_time?: Date;
 
-  @Column({
-    allowNull: true,
-    type: DataType.DATE,
-    comment: '\u8BA2\u5355\u652F\u4ED8\u65F6\u95F4',
-  })
+  @Column({ allowNull: true, type: DataType.DATE, comment: '订单支付时间' })
   order_payment_time?: Date;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(32),
-    comment: '\u7701\u4EFD/\u76F4\u8F96\u5E02',
+    comment: '省份/直辖市',
   })
   receiver_pcd_desc?: string;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING(200),
-    comment: '\u8BE6\u7EC6\u5730\u5740',
-  })
+  @Column({ allowNull: true, type: DataType.STRING(200), comment: '详细地址' })
   receiver_detail_address?: string;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(100),
-    comment: '\u6536\u8D27\u4EBA\u59D3\u540D',
+    comment: '收货人姓名',
   })
   receiver_name?: string;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING(32),
-    comment: '\u6536\u8D27\u4EBA\u7535\u8BDD',
-  })
+  @Column({ allowNull: true, type: DataType.STRING(32), comment: '收货人电话' })
   receiver_phone?: string;
 
   @Column({
     type: DataType.DECIMAL(10, 2),
-    comment: '\u4F63\u91D1',
+    comment: '佣金',
     defaultValue: '0.00',
   })
   swipe_fee?: string;
 
   @Column({
     type: DataType.INTEGER,
-    comment:
-      '\u7ED3\u7B97\u72B6\u6001\uFF080\u672A\u7ED3\u7B97 1\u5DF2\u7ED3\u7B97\uFF09',
+    comment: '结算状态（0未结算 1已结算）',
     defaultValue: '0',
   })
   settle_status?: number;
 
   @Column({
     type: DataType.DECIMAL(10, 2),
-    comment: '\u7ED3\u7B97\u91D1\u989D',
+    comment: '结算金额',
     defaultValue: '0.00',
   })
   settle_amount?: string;
 
-  @Column({
-    allowNull: true,
-    type: DataType.DATE,
-    comment: '\u7ED3\u7B97\u65F6\u95F4',
-  })
+  @Column({ allowNull: true, type: DataType.DATE, comment: '结算时间' })
   settle_time?: Date;
 
-  @Column({
-    allowNull: true,
-    type: DataType.BIGINT,
-    comment: '\u7ED3\u7B97\u4EBA',
-  })
+  @Column({ allowNull: true, type: DataType.BIGINT, comment: '结算人' })
   settle_user_id?: number;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING(100),
-    comment: '\u7ED3\u7B97\u4EBA',
-  })
+  @Column({ allowNull: true, type: DataType.STRING(100), comment: '结算人' })
   settle_user?: string;
 
   @Column({
     type: DataType.INTEGER,
-    comment:
-      '\u9A8C\u8BC1\u72B6\u6001\uFF080\u9A8C\u8BC1\u4E2D 1\u6709\u6548 2\u5F02\u5E38\uFF09',
+    comment: '验证状态（0验证中 1有效 2异常）',
     defaultValue: '0',
   })
   check_status?: number;
 
   @Column({
     type: DataType.INTEGER,
-    comment: '\u662F\u5426\u6392\u9519\uFF080\u6B63\u5E38 1\u62CD\u9519\uFF09',
+    comment: '是否排错（0正常 1拍错）',
     defaultValue: '0',
   })
   if_error?: number;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING(500),
-    comment: '\u5907\u6CE8\u4FE1\u606F',
-  })
+  @Column({ allowNull: true, type: DataType.STRING(500), comment: '备注信息' })
   opt_remark?: string;
 
   @Column({
     type: DataType.INTEGER,
-    comment:
-      '\u540C\u6B65\u53D1\u8D27\u72B6\u6001\uFF080\u5F85\u53D1\u8D27 1\u53D1\u8D27\u6210\u529F\uFF09',
+    comment: '同步发货状态（0待发货 1发货成功）',
     defaultValue: '0',
   })
   sync_gift_status?: number;
@@ -241,21 +198,20 @@ export class TShopSwipeUp extends Model {
   @Column({
     allowNull: true,
     type: DataType.STRING(500),
-    comment: '\u793C\u54C1\u7F51\u5907\u6CE8\u4FE1\u606F',
+    comment: '礼品网备注信息',
   })
   sync_gift_remark?: string;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(100),
-    comment: '\u793C\u54C1\u7F51\u6D41\u6C34\u53F7',
+    comment: '礼品网流水号',
   })
   sync_gift_sn?: string;
 
   @Column({
     type: DataType.INTEGER,
-    comment:
-      '\u793C\u54C1\u7F51\u8BA2\u5355\u521B\u5EFA\u72B6\u6001(0\u5F85\u521B\u5EFA 1\u5DF2\u521B\u5EFA 2\u521B\u5EFA\u5931\u8D25)',
+    comment: '礼品网订单创建状态(0待创建 1已创建 2创建失败)',
     defaultValue: '0',
   })
   add_gift_status?: number;
@@ -263,33 +219,29 @@ export class TShopSwipeUp extends Model {
   @Column({
     allowNull: true,
     type: DataType.STRING(500),
-    comment: '\u793C\u54C1\u7F51\u8BA2\u5355\u521B\u5EFA\u5907\u6CE8',
+    comment: '礼品网订单创建备注',
   })
   add_gift_remark?: string;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING(100),
-    comment: '\u521B\u5EFA\u4EBA',
-  })
+  @Column({ allowNull: true, type: DataType.STRING(100), comment: '创建人' })
   creator_user?: string;
 
-  @Column({ type: DataType.DATE, comment: '\u521B\u5EFA\u65F6\u95F4' })
+  @Column({ type: DataType.DATE, comment: '创建时间' })
   create_time!: Date;
 
-  @Column({ type: DataType.DATE, comment: '\u66F4\u65B0\u65F6\u95F4' })
+  @Column({ type: DataType.DATE, comment: '更新时间' })
   update_time!: Date;
 
   @Column({
     type: DataType.TINYINT,
-    comment: '\u662F\u5426\u903B\u8F91\u5220\u9664 1:\u5DF2\u5220\u9664',
+    comment: '是否逻辑删除 1:已删除',
     defaultValue: '0',
   })
   deleted?: number;
 
-  @Column({ type: DataType.BIGINT, comment: '\u521B\u5EFA\u4EBA' })
+  @Column({ type: DataType.BIGINT, comment: '创建人' })
   creator_id!: number;
 
-  @Column({ type: DataType.BIGINT, comment: '\u4FEE\u6539\u4EBA' })
+  @Column({ type: DataType.BIGINT, comment: '修改人' })
   modifier_id!: number;
 }

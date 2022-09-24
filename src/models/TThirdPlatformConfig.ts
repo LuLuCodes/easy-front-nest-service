@@ -11,14 +11,14 @@ import {
 @Table({
   tableName: 't_third_platform_config',
   timestamps: false,
-  comment: '\u4E09\u65B9\u5E73\u53F0\u914D\u7F6E',
+  comment: '三方平台配置',
 })
 export class TThirdPlatformConfig extends Model {
   @Column({
     primaryKey: true,
     autoIncrement: true,
     type: DataType.INTEGER,
-    comment: '\u4E3B\u952E',
+    comment: '主键',
   })
   @Index({ name: 'PRIMARY', using: 'BTREE', order: 'ASC', unique: true })
   id?: number;
@@ -26,7 +26,7 @@ export class TThirdPlatformConfig extends Model {
   @Column({
     allowNull: true,
     type: DataType.INTEGER,
-    comment: '\u5E94\u7528id',
+    comment: '应用id',
     defaultValue: '10000',
   })
   app_id?: number;
@@ -34,169 +34,157 @@ export class TThirdPlatformConfig extends Model {
   @Column({
     allowNull: true,
     type: DataType.STRING(32),
-    comment: '\u516C\u4F17\u53F7AppID',
+    comment: '公众号AppID',
   })
   wx_appid?: string;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(255),
-    comment: '\u516C\u4F17\u53F7AppSecret',
+    comment: '公众号AppSecret',
   })
   wx_appsecret?: string;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(32),
-    comment: '\u5E73\u53F0token(\u975Eaccess token)',
+    comment: '平台token(非access token)',
   })
   wx_token?: string;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(32),
-    comment: '\u5FAE\u4FE1\u5C0F\u7A0B\u5E8FAppID',
+    comment: '微信小程序AppID',
   })
   wx_miniprogram_appid?: string;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(255),
-    comment: '\u5FAE\u4FE1\u5C0F\u7A0B\u5E8FAppSecret',
+    comment: '微信小程序AppSecret',
   })
   wx_miniprogram_appsecret?: string;
 
-  @Column({
-    type: DataType.STRING(32),
-    comment: '\u5F00\u653E\u5E73\u53F0APPID',
-  })
+  @Column({ type: DataType.STRING(32), comment: '开放平台APPID' })
   wx_open_appid!: string;
 
-  @Column({
-    type: DataType.STRING(255),
-    comment: '\u5F00\u653E\u5E73\u53F0AppSecret',
-  })
+  @Column({ type: DataType.STRING(255), comment: '开放平台AppSecret' })
   wx_open_appsecret!: string;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(32),
-    comment: '\u5FAE\u4FE1\u5546\u6237\u53F7ID',
+    comment: '微信商户号ID',
   })
   wx_pay_mchid?: string;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(255),
-    comment: '\u5FAE\u4FE1\u5546\u6237ApiSecret',
+    comment: '微信商户ApiSecret',
   })
   wx_pay_apisecret?: string;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(255),
-    comment: '\u5FAE\u4FE1\u5546\u6237ApiSecret3',
+    comment: '微信商户ApiSecret3',
   })
   wx_pay_api3secret?: string;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(255),
-    comment: '\u5FAE\u4FE1\u652F\u4ED8\u56DE\u8C03\u5730\u5740',
+    comment: '微信支付回调地址',
   })
   wx_pay_notify_url?: string;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(255),
-    comment: '\u5FAE\u4FE1\u652F\u4ED8\u9000\u6B3E\u56DE\u8C03\u5730\u5740',
+    comment: '微信支付退款回调地址',
   })
   wx_pay_refund_notify_url?: string;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(64),
-    comment: '\u5FAE\u4FE1\u652F\u4ED8\u8BC1\u4E66\u5E8F\u5217\u53F7',
+    comment: '微信支付证书序列号',
   })
   wx_pay_serial_no?: string;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(64),
-    comment:
-      '\u5FAE\u4FE1\u652F\u4ED8\u5E73\u53F0\u8BC1\u4E66\u5E8F\u5217\u53F7',
+    comment: '微信支付平台证书序列号',
   })
   wx_pay_plat_serial_no?: string;
 
-  @Column({
-    type: DataType.STRING(255),
-    comment:
-      '\u5FAE\u4FE1\u5145\u503C\u4F1A\u5458\u652F\u4ED8\u56DE\u8C03\u5730\u5740',
-  })
+  @Column({ type: DataType.STRING(255), comment: '微信充值会员支付回调地址' })
   wx_pay_recharge_notify_url!: string;
 
-  @Column({ type: DataType.STRING(32), comment: '\u652F\u4ED8\u5B9Dappid' })
+  @Column({ type: DataType.STRING(32), comment: '支付宝appid' })
   ali_pay_appid!: string;
 
   @Column({
     type: DataType.STRING(32),
-    comment:
-      '\u5408\u4F5C\u8EAB\u4EFD\u8005ID\uFF0C\u7B7E\u7EA6\u8D26\u53F7\uFF0C\u4EE52088\u5F00\u5934\u753116\u4F4D\u7EAF\u6570\u5B57\u7EC4\u6210\u7684\u5B57\u7B26\u4E32',
+    comment: '合作身份者ID，签约账号，以2088开头由16位纯数字组成的字符串',
   })
   ali_pay_partner!: string;
 
   @Column({
     type: DataType.STRING(32),
     comment:
-      '\u6536\u6B3E\u652F\u4ED8\u5B9D\u8D26\u53F7\uFF0C\u4EE52088\u5F00\u5934\u753116\u4F4D\u7EAF\u6570\u5B57\u7EC4\u6210\u7684\u5B57\u7B26\u4E32\uFF0C\u4E00\u822C\u60C5\u51B5\u4E0B\u6536\u6B3E\u8D26\u53F7\u5C31\u662F\u7B7E\u7EA6\u8D26\u53F7',
+      '收款支付宝账号，以2088开头由16位纯数字组成的字符串，一般情况下收款账号就是签约账号',
   })
   ali_pay_seller_id!: string;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(100),
-    comment: '\u652F\u4ED8\u5B9D\u8D26\u53F7\u59D3\u540D',
+    comment: '支付宝账号姓名',
   })
   ali_pay_name?: string;
 
   @Column({
     type: DataType.STRING(255),
     comment:
-      '\u670D\u52A1\u5668\u5F02\u6B65\u901A\u77E5\u9875\u9762\u8DEF\u5F84\uFF0C\u9700http://\u683C\u5F0F\u7684\u5B8C\u6574\u8DEF\u5F84\uFF0C\u4E0D\u80FD\u52A0?id=123\u8FD9\u7C7B\u81EA\u5B9A\u4E49\u53C2\u6570,\u5FC5\u987B\u5916\u7F51\u53EF\u4EE5\u6B63\u5E38\u8BBF\u95EE',
+      '服务器异步通知页面路径，需http://格式的完整路径，不能加?id=123这类自定义参数,必须外网可以正常访问',
   })
   ali_pay_notify_url!: string;
 
   @Column({
     type: DataType.STRING(255),
     comment:
-      '\u670D\u52A1\u5668\u5F02\u6B65\u901A\u77E5\u9875\u9762\u8DEF\u5F84\uFF0C\u9700http://\u683C\u5F0F\u7684\u5B8C\u6574\u8DEF\u5F84\uFF0C\u4E0D\u80FD\u52A0?id=123\u8FD9\u7C7B\u81EA\u5B9A\u4E49\u53C2\u6570,\u5FC5\u987B\u5916\u7F51\u53EF\u4EE5\u6B63\u5E38\u8BBF\u95EE',
+      '服务器异步通知页面路径，需http://格式的完整路径，不能加?id=123这类自定义参数,必须外网可以正常访问',
   })
   ali_pay_recharge_notify_url!: string;
 
   @Column({
     allowNull: true,
     type: DataType.TINYINT,
-    comment: '\u662F\u5426\u542F\u7528 1:\u542F\u7528',
+    comment: '是否启用 1:启用',
     defaultValue: '0',
   })
   enabled?: number;
 
   @Column({
     type: DataType.TINYINT,
-    comment: '\u662F\u5426\u903B\u8F91\u5220\u9664 1:\u5DF2\u5220\u9664',
+    comment: '是否逻辑删除 1:已删除',
     defaultValue: '0',
   })
   deleted?: number;
 
-  @Column({ type: DataType.DATE, comment: '\u521B\u5EFA\u65F6\u95F4' })
+  @Column({ type: DataType.DATE, comment: '创建时间' })
   create_time!: Date;
 
-  @Column({ type: DataType.DATE, comment: '\u66F4\u65B0\u65F6\u95F4' })
+  @Column({ type: DataType.DATE, comment: '更新时间' })
   update_time!: Date;
 
-  @Column({ type: DataType.BIGINT, comment: '\u521B\u5EFA\u4EBA' })
+  @Column({ type: DataType.BIGINT, comment: '创建人' })
   creator_id!: number;
 
-  @Column({ type: DataType.BIGINT, comment: '\u4FEE\u6539\u4EBA' })
+  @Column({ type: DataType.BIGINT, comment: '修改人' })
   modifier_id!: number;
 }

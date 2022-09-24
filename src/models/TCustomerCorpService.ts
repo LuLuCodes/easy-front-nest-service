@@ -11,14 +11,14 @@ import {
 @Table({
   tableName: 't_customer_corp_service',
   timestamps: false,
-  comment: '\u7528\u6237\u7ED1\u5B9A\u4F01\u4E1A\u5BA2\u670D\u8BB0\u5F55\u8868',
+  comment: '用户绑定企业客服记录表',
 })
 export class TCustomerCorpService extends Model {
   @Column({ primaryKey: true, autoIncrement: true, type: DataType.BIGINT })
   @Index({ name: 'PRIMARY', using: 'BTREE', order: 'ASC', unique: true })
   id?: number;
 
-  @Column({ allowNull: true, type: DataType.BIGINT, comment: '\u5BA2\u6237id' })
+  @Column({ allowNull: true, type: DataType.BIGINT, comment: '客户id' })
   @Index({
     name: 'idx_customer_id',
     using: 'BTREE',
@@ -30,21 +30,21 @@ export class TCustomerCorpService extends Model {
   @Column({
     allowNull: true,
     type: DataType.STRING(50),
-    comment: '\u4F01\u4E1A\u5FAE\u4FE1\u7528\u6237id(\u4E09\u65B9)',
+    comment: '企业微信用户id(三方)',
   })
   corp_user_id?: string;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(50),
-    comment: '\u4F01\u4E1A\u5FAE\u4FE1\u5BA2\u670Did(\u4E09\u65B9)',
+    comment: '企业微信客服id(三方)',
   })
   corp_service_id?: string;
 
   @Column({
     allowNull: true,
     type: DataType.STRING(50),
-    comment: '\u4F01\u4E1A\u5FAE\u4FE1\u7528\u6237\u6635\u79F0(\u4E09\u65B9)',
+    comment: '企业微信用户昵称(三方)',
   })
   corp_user_name?: string;
 
@@ -53,27 +53,27 @@ export class TCustomerCorpService extends Model {
 
   @Column({
     type: DataType.TINYINT,
-    comment: '\u662F\u5426\u903B\u8F91\u5220\u9664 1:\u5DF2\u5220\u9664',
+    comment: '是否逻辑删除 1:已删除',
     defaultValue: '0',
   })
   deleted?: number;
 
-  @Column({ type: DataType.DATE, comment: '\u521B\u5EFA\u65F6\u95F4' })
+  @Column({ type: DataType.DATE, comment: '创建时间' })
   create_time!: Date;
 
-  @Column({ type: DataType.DATE, comment: '\u66F4\u65B0\u65F6\u95F4' })
+  @Column({ type: DataType.DATE, comment: '更新时间' })
   update_time!: Date;
 
-  @Column({ type: DataType.BIGINT, comment: '\u521B\u5EFA\u4EBA' })
+  @Column({ type: DataType.BIGINT, comment: '创建人' })
   creator_id!: number;
 
-  @Column({ type: DataType.BIGINT, comment: '\u4FEE\u6539\u4EBA' })
+  @Column({ type: DataType.BIGINT, comment: '修改人' })
   modifier_id!: number;
 
   @Column({
     allowNull: true,
     type: DataType.INTEGER,
-    comment: '\u5E94\u7528id',
+    comment: '应用id',
     defaultValue: '10000',
   })
   app_id?: number;

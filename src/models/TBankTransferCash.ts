@@ -11,14 +11,14 @@ import {
 @Table({
   tableName: 't_bank_transfer_cash',
   timestamps: false,
-  comment: '\u5F52\u96C6\u8D26\u53F7\u624B\u5DE5\u63D0\u73B0\u8868',
+  comment: '归集账号手工提现表',
 })
 export class TBankTransferCash extends Model {
   @Column({
     primaryKey: true,
     autoIncrement: true,
     type: DataType.BIGINT,
-    comment: '\u7CFB\u7EDF\u7F16\u7801',
+    comment: '系统编码',
   })
   @Index({ name: 'PRIMARY', using: 'BTREE', order: 'ASC', unique: true })
   id?: number;
@@ -26,60 +26,42 @@ export class TBankTransferCash extends Model {
   @Column({
     allowNull: true,
     type: DataType.INTEGER,
-    comment: '\u5E94\u7528id',
+    comment: '应用id',
     defaultValue: '10000',
   })
   app_id?: number;
 
-  @Column({
-    type: DataType.DATE,
-    comment: '\u63D0\u73B0\u65F6\u95F4\u65F6\u95F4',
-  })
+  @Column({ type: DataType.DATE, comment: '提现时间时间' })
   cash_time!: Date;
 
-  @Column({
-    type: DataType.DECIMAL(18, 2),
-    comment: '\u63D0\u73B0\u91D1\u989D',
-  })
+  @Column({ type: DataType.DECIMAL(18, 2), comment: '提现金额' })
   cash_amount!: string;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING(200),
-    comment: '\u63D0\u73B0\u5907\u6CE8',
-  })
+  @Column({ allowNull: true, type: DataType.STRING(200), comment: '提现备注' })
   cash_remark?: string;
 
-  @Column({
-    allowNull: true,
-    type: DataType.BIGINT,
-    comment: '\u63D2\u5165\u4EBA',
-  })
+  @Column({ allowNull: true, type: DataType.BIGINT, comment: '插入人' })
   opt_user_id?: number;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING(50),
-    comment: '\u63D2\u5165\u4EBA',
-  })
+  @Column({ allowNull: true, type: DataType.STRING(50), comment: '插入人' })
   opt_user?: string;
 
-  @Column({ type: DataType.DATE, comment: '\u521B\u5EFA\u65F6\u95F4' })
+  @Column({ type: DataType.DATE, comment: '创建时间' })
   create_time!: Date;
 
-  @Column({ type: DataType.DATE, comment: '\u66F4\u65B0\u65F6\u95F4' })
+  @Column({ type: DataType.DATE, comment: '更新时间' })
   update_time!: Date;
 
   @Column({
     type: DataType.TINYINT,
-    comment: '\u662F\u5426\u903B\u8F91\u5220\u9664 1:\u5DF2\u5220\u9664',
+    comment: '是否逻辑删除 1:已删除',
     defaultValue: '0',
   })
   deleted?: number;
 
-  @Column({ type: DataType.BIGINT, comment: '\u521B\u5EFA\u4EBA' })
+  @Column({ type: DataType.BIGINT, comment: '创建人' })
   creator_id!: number;
 
-  @Column({ type: DataType.BIGINT, comment: '\u4FEE\u6539\u4EBA' })
+  @Column({ type: DataType.BIGINT, comment: '修改人' })
   modifier_id!: number;
 }

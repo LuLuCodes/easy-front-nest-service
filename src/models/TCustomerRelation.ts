@@ -11,14 +11,14 @@ import {
 @Table({
   tableName: 't_customer_relation',
   timestamps: false,
-  comment: '\u7528\u6237\u5173\u7CFB(\u4E0A\u4E0B\u7EA7\u5173\u7CFB)\u8868',
+  comment: '用户关系(上下级关系)表',
 })
 export class TCustomerRelation extends Model {
   @Column({
     primaryKey: true,
     autoIncrement: true,
     type: DataType.BIGINT,
-    comment: '\u7528\u6237\u5173\u7CFB\u4E3B\u952E(\u81EA\u589E)',
+    comment: '用户关系主键(自增)',
   })
   @Index({ name: 'PRIMARY', using: 'BTREE', order: 'ASC', unique: true })
   id?: number;
@@ -26,12 +26,12 @@ export class TCustomerRelation extends Model {
   @Column({
     allowNull: true,
     type: DataType.INTEGER,
-    comment: '\u5E94\u7528id',
+    comment: '应用id',
     defaultValue: '10000',
   })
   app_id?: number;
 
-  @Column({ type: DataType.BIGINT, comment: '\u7528\u6237id' })
+  @Column({ type: DataType.BIGINT, comment: '用户id' })
   @Index({
     name: 'idx_customer_id',
     using: 'BTREE',
@@ -40,10 +40,7 @@ export class TCustomerRelation extends Model {
   })
   customer_id!: number;
 
-  @Column({
-    type: DataType.BIGINT,
-    comment: '\u9080\u8BF7\u4EBA\u7528\u6237\u4E3B\u952E',
-  })
+  @Column({ type: DataType.BIGINT, comment: '邀请人用户主键' })
   @Index({
     name: 'idx_inviter_id',
     using: 'BTREE',
@@ -52,44 +49,36 @@ export class TCustomerRelation extends Model {
   })
   inviter_id!: number;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING(500),
-    comment: '\u9080\u8BF7\u5907\u6CE8',
-  })
+  @Column({ allowNull: true, type: DataType.STRING(500), comment: '邀请备注' })
   invite_remark?: string;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING(4000),
-    comment: '\u5C42\u7EA7\u8DEF\u5F84',
-  })
+  @Column({ allowNull: true, type: DataType.STRING(4000), comment: '层级路径' })
   sub_path?: string;
 
   @Column({
     allowNull: true,
     type: DataType.TINYINT,
-    comment: '\u662F\u5426\u542F\u7528 1:\u542F\u7528',
+    comment: '是否启用 1:启用',
     defaultValue: '0',
   })
   enabled?: number;
 
   @Column({
     type: DataType.TINYINT,
-    comment: '\u662F\u5426\u903B\u8F91\u5220\u9664 1:\u5DF2\u5220\u9664',
+    comment: '是否逻辑删除 1:已删除',
     defaultValue: '0',
   })
   deleted?: number;
 
-  @Column({ type: DataType.DATE, comment: '\u521B\u5EFA\u65F6\u95F4' })
+  @Column({ type: DataType.DATE, comment: '创建时间' })
   create_time!: Date;
 
-  @Column({ type: DataType.DATE, comment: '\u66F4\u65B0\u65F6\u95F4' })
+  @Column({ type: DataType.DATE, comment: '更新时间' })
   update_time!: Date;
 
-  @Column({ type: DataType.BIGINT, comment: '\u521B\u5EFA\u4EBA' })
+  @Column({ type: DataType.BIGINT, comment: '创建人' })
   creator_id!: number;
 
-  @Column({ type: DataType.BIGINT, comment: '\u4FEE\u6539\u4EBA' })
+  @Column({ type: DataType.BIGINT, comment: '修改人' })
   modifier_id!: number;
 }
