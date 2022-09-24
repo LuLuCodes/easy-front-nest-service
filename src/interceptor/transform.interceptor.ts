@@ -16,6 +16,7 @@ import {
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { OkResponse } from '@libs/util';
 
 @Injectable()
 export class TransformInterceptor implements NestInterceptor {
@@ -26,7 +27,7 @@ export class TransformInterceptor implements NestInterceptor {
         if (req.body && req.body.ef_author) {
           data.ef_author = 'qian.qing@aliyun.com';
         }
-        return data;
+        return OkResponse(data);
       }),
     );
   }

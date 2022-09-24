@@ -71,7 +71,6 @@ export class WxMediaController {
     },
   })
   // @UseInterceptors(FilesInterceptor('files'))
-  @CatchError()
   async uploadTemporaryMaterial(
     @UploadedFiles() files: Array<Express.Multer.File>,
     @Body() body: any,
@@ -115,7 +114,6 @@ export class WxMediaController {
   })
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('get-temporary-material')
-  @CatchError()
   async getTemporaryMaterial(@Body() body: MediaIdDTO): Promise<any> {
     const data = await this.wxMediaService.getTemporaryMaterial(body);
     return data;
@@ -131,7 +129,6 @@ export class WxMediaController {
   })
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('get-jssdk-material')
-  @CatchError()
   async getJssdkMedia(@Body() body: MediaIdDTO): Promise<any> {
     const data = await this.wxMediaService.getJssdkMedia(body);
     return data;
@@ -147,7 +144,6 @@ export class WxMediaController {
   })
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('add-news')
-  @CatchError()
   async addNews(@Body() body: AddNewsDTO): Promise<any> {
     const data = await this.wxMediaService.addNews(body);
     return data;
@@ -163,7 +159,6 @@ export class WxMediaController {
   })
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('update-news')
-  @CatchError()
   async updateNews(@Body() body: UpdateNewsDTO): Promise<any> {
     const data = await this.wxMediaService.updateNews(body);
     return data;
@@ -182,7 +177,6 @@ export class WxMediaController {
     },
   })
   // @UseInterceptors(FilesInterceptor('files'))
-  @CatchError()
   async uploadImg(
     @UploadedFiles() files: Array<Express.Multer.File>,
     @Body() body: any,
@@ -228,7 +222,6 @@ export class WxMediaController {
     },
   })
   // @UseInterceptors(FilesInterceptor('files'))
-  @CatchError()
   async addOtherMaterial(
     @UploadedFiles() files: Array<Express.Multer.File>,
     @Body() body: any,
@@ -280,7 +273,6 @@ export class WxMediaController {
     },
   })
   // @UseInterceptors(FileInterceptor('files'))
-  @CatchError()
   async addVideoMaterial(
     @UploadedFile() file: Express.Multer.File,
     @Body() body: any,
@@ -317,7 +309,6 @@ export class WxMediaController {
   })
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('get-material')
-  @CatchError()
   async getMaterial(@Body() body: MediaIdDTO): Promise<any> {
     const data = await this.wxMediaService.getMaterial(body);
     return data;
@@ -333,7 +324,6 @@ export class WxMediaController {
   })
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('delete-material')
-  @CatchError()
   async delMaterial(@Body() body: MediaIdDTO): Promise<any> {
     const data = await this.wxMediaService.delMaterial(body);
     return data;
@@ -349,7 +339,6 @@ export class WxMediaController {
   })
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('get-material-count')
-  @CatchError()
   async getMaterialCount(@Body() body: AppIdDTO): Promise<any> {
     const data = await this.wxMediaService.getMaterialCount(body);
     return data;
@@ -365,7 +354,6 @@ export class WxMediaController {
   })
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('batch-get-material')
-  @CatchError()
   async batchGetMaterial(@Body() body: BatchGetMaterialDTO): Promise<any> {
     const data = await this.wxMediaService.batchGetMaterial(body);
     return data;

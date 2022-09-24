@@ -48,7 +48,6 @@ export class BasicController {
   })
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('get-swiper')
-  @CatchError()
   async getSwiper(@Body() body: GetEnabledSwiperDTO): Promise<any> {
     const response = await this.basicService.getSwiper(body);
     return response;
@@ -64,7 +63,6 @@ export class BasicController {
   })
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('get-area')
-  @CatchError()
   async getArea(@Body() body: GetAreaDTO): Promise<any> {
     const response = await this.basicService.getArea(body);
     return response;

@@ -59,7 +59,6 @@ export class CustomerController {
   })
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('login-by-wechat')
-  @CatchError()
   async loginByWeChat(
     @Headers() headers,
     @Session() session,
@@ -103,7 +102,6 @@ export class CustomerController {
   })
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('bind-phone-and-email')
-  @CatchError()
   async bindPhoneAndEmail(
     @Session() session,
     @Body() body: BindPhoneAndEmailDTO,
@@ -123,7 +121,6 @@ export class CustomerController {
   })
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('set-address')
-  @CatchError()
   async setAddress(
     @Session() session,
     @Body() body: CreateOrUpdateAddressDTO,
@@ -143,7 +140,6 @@ export class CustomerController {
   })
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('get-address')
-  @CatchError()
   async getAddress(
     @Session() session,
     @Body() body: GetAddressDTO,
@@ -163,7 +159,6 @@ export class CustomerController {
   })
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('set-cart-item')
-  @CatchError()
   async setCartItem(
     @Session() session,
     @Body() body: CreateOrUpdateCartItemDTO,
@@ -183,7 +178,6 @@ export class CustomerController {
   })
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('update-cart-item-status')
-  @CatchError()
   async updateCartItemStatus(
     @Session() session,
     @Body() body: UpdateCartItemStatusDTO,
@@ -206,7 +200,6 @@ export class CustomerController {
   })
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('get-session')
-  @CatchError()
   async getSession(@Headers() headers, @Session() session): Promise<any> {
     let { user } = session;
     let { authToken } = session;
@@ -238,7 +231,6 @@ export class CustomerController {
   })
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('get-carts')
-  @CatchError()
   async getCart(
     @Session() session,
     @Body() body: GetCustomerDTO,
@@ -260,7 +252,6 @@ export class CustomerController {
   })
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('get-customer')
-  @CatchError()
   async getCustomer(
     @Session() session,
     @Body() body: GetCustomerDTO,

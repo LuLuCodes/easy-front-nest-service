@@ -57,7 +57,6 @@ export class OssController {
     },
   })
   // @UseInterceptors(FilesInterceptor('files'))
-  @CatchError()
   async uploadTemporaryMaterial(
     @UploadedFiles() files: Array<Express.Multer.File>,
     @Body() body: any,

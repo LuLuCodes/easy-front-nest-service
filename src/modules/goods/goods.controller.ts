@@ -46,7 +46,6 @@ export class GoodsController {
   })
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('get-goods-spu')
-  @CatchError()
   async getGoodsSpu(
     @Session() session,
     @Body() body: GetGoodsSpuDTO,
@@ -65,7 +64,6 @@ export class GoodsController {
   })
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('get-goods-detail')
-  @CatchError()
   async getGoodsSpuDetail(
     @Session() session,
     @Body() body: GetGoodsSpuDTO,
@@ -84,7 +82,6 @@ export class GoodsController {
   })
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('get-goods-group-by-code')
-  @CatchError()
   async getGoodsGroupByCode(
     @Session() session,
     @Body() body: GetGoodsGroupByCodeDTO,
@@ -103,7 +100,6 @@ export class GoodsController {
   })
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('get-group-goods-limit')
-  @CatchError()
   async getGroupGoodsLimit(
     @Session() session,
     @Body() body: GetGoodsGroupByCodeDTO,

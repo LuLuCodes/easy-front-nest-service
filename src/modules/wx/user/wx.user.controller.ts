@@ -50,7 +50,6 @@ export class WxUserController {
   })
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('get-authorize-url')
-  @CatchError()
   async getAuthorizeUrl(@Body() body: GetAuthorizeUrlDTO): Promise<any> {
     const data = await this.wxUserService.getAuthorizeUrl(body);
     return data;
@@ -66,7 +65,6 @@ export class WxUserController {
   })
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('get-sns-access-token')
-  @CatchError()
   async getSnsAccessToken(@Body() body: GetSnsAccessTokenDTO): Promise<any> {
     const data = await this.wxUserService.getSnsAccessToken(body);
     return data;
@@ -82,7 +80,6 @@ export class WxUserController {
   })
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('check-access-token')
-  @CatchError()
   async checkAccessToken(@Body() body: CheckAccessTokenDTO): Promise<any> {
     const data = await this.wxUserService.checkAccessToken(body);
     return data;
@@ -98,7 +95,6 @@ export class WxUserController {
   })
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('refresh-access-token')
-  @CatchError()
   async refreshAccessToken(@Body() body: RefreshTokenDTO): Promise<any> {
     const data = await this.wxUserService.refreshAccessToken(body);
     return data;
@@ -114,7 +110,6 @@ export class WxUserController {
   })
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('get-user-info')
-  @CatchError()
   async getUserInfo(@Body() body: GetUserInfoDTO): Promise<any> {
     const data = await this.wxUserService.getUserInfo(body);
     return data;

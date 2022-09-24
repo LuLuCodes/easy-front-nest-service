@@ -42,7 +42,6 @@ export class WxBasicController {
   })
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('get-access-token')
-  @CatchError()
   async getAccessToken(@Body() body: AppIdDTO): Promise<any> {
     const data = await this.wxBasicService.getAccessToken(body);
     return data;
@@ -58,7 +57,6 @@ export class WxBasicController {
   })
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('get-api-domain-ip')
-  @CatchError()
   async getApiDomainIp(@Body() body: AppIdDTO): Promise<any> {
     const data = await this.wxBasicService.getApiDomainIp(body);
     return data;
@@ -74,7 +72,6 @@ export class WxBasicController {
   })
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('get-callback-ip')
-  @CatchError()
   async getCallbackIp(@Body() body: AppIdDTO): Promise<any> {
     const data = await this.wxBasicService.getCallbackIp(body);
     return data;
@@ -90,7 +87,6 @@ export class WxBasicController {
   })
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('net-check')
-  @CatchError()
   async netCheck(@Body() body: NetCheckDTO): Promise<any> {
     const data = await this.wxBasicService.netCheck(body);
     return data;
@@ -101,7 +97,6 @@ export class WxBasicController {
     description: '消息通知',
   })
   @Get('notify-message/:appId')
-  @CatchError()
   async notifyMessage(@Query() query: any, @Param() param: any): Promise<any> {
     return await this.wxBasicService.checkSignature({
       appId: param.appId,
@@ -119,7 +114,6 @@ export class WxBasicController {
   })
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('clear-quota')
-  @CatchError()
   async clearQuota(@Body() body: AppIdDTO): Promise<any> {
     const data = await this.wxBasicService.clearQuota(body);
     return data;
@@ -135,7 +129,6 @@ export class WxBasicController {
   })
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('get-auto-reply-rules')
-  @CatchError()
   async getAutoReplyRules(@Body() body: AppIdDTO): Promise<any> {
     const data = await this.wxBasicService.getAutoReplyRules(body);
     return data;

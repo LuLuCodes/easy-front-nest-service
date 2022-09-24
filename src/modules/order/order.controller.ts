@@ -56,7 +56,6 @@ export class OrderController {
   })
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('add-order')
-  @CatchError()
   async addOrder(@Session() session, @Body() body: AddOrderDTO): Promise<any> {
     const { user } = session;
     const response = await this.orderService.addOrder(body, user);
@@ -73,7 +72,6 @@ export class OrderController {
   })
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('pay-order')
-  @CatchError()
   async payOrder(@Session() session, @Body() body: PayOrderDTO): Promise<any> {
     const { user } = session;
     const response = await this.orderService.payOrder(body, user);
@@ -90,7 +88,6 @@ export class OrderController {
   })
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('query-pay-result')
-  @CatchError()
   async queryPayResult(
     @Session() session,
     @Body() body: QueryPayResultDTO,
@@ -110,7 +107,6 @@ export class OrderController {
   })
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('add-order-from-cart')
-  @CatchError()
   async addOrderFromCart(
     @Session() session,
     @Body() body: AddOrderFromCartDTO,
@@ -121,7 +117,6 @@ export class OrderController {
   }
 
   @Post('wx-pay-callback')
-  @CatchError()
   async wxPayCallback(@Body() body): Promise<any> {
     const response = await this.orderService.wxPayCallback(body);
     return response;
@@ -137,7 +132,6 @@ export class OrderController {
   })
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('cancel-order')
-  @CatchError()
   async cancelOrder(
     @Session() session,
     @Body() body: CancelOrderDTO,
@@ -157,7 +151,6 @@ export class OrderController {
   })
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('get-order')
-  @CatchError()
   async getOrderList(
     @Session() session,
     @Body() body: GetOrderDTO,

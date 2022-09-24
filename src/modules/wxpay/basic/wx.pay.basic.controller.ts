@@ -43,7 +43,6 @@ export class WxPayBasicController {
   })
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('get-plat-cert')
-  @CatchError()
   async getPlatCert(@Body() body: MchIdDTO): Promise<any> {
     const data = await this.wxPayBasicService.getPlatCert(body);
     return data;

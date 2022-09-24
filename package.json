@@ -1,7 +1,7 @@
 {
   "name": "easy-front-nest-service",
-  "version": "2.0.0",
-  "description": "基于nestjs v8的后端API Service框架",
+  "version": "3.0.0",
+  "description": "基于nestjs v9的后端API Service框架",
   "author": "",
   "private": true,
   "license": "UNLICENSED",
@@ -83,7 +83,6 @@
     "sequelize-typescript": "^2.1.3",
     "sequelize-typescript-generator": "^8.4.4",
     "stacktrace-js": "^2.0.2",
-    "swagger-ui-express": "^4.5.0",
     "uuid": "^9.0.0",
     "webpack": "^5.74.0"
   },
