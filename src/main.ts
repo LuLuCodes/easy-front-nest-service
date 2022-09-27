@@ -113,12 +113,10 @@ async function bootstrap() {
     }),
   );
   RedisLock.init({
-    socket: {
-      host: config.get('redis.host'),
-      port: config.get('redis.port'),
-    },
+    host: config.get('redis.host'),
+    port: config.get('redis.port'),
     password: config.get('redis.password'),
-    database: config.get('cache.redis_db'),
+    db: config.get('redis.cache_db_index'),
   });
   app.useGlobalFilters(new AllExceptionsFilter());
   app.useGlobalFilters(new HttpExceptionFilter());

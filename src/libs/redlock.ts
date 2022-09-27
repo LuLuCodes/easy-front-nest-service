@@ -2,7 +2,7 @@
  * @Author: leyi leyi@myun.info
  * @Date: 2021-09-22 21:55:56
  * @LastEditors: leyi leyi@myun.info
- * @LastEditTime: 2022-09-24 11:31:11
+ * @LastEditTime: 2022-09-27 21:03:42
  * @FilePath: /easy-front-nest-service/src/libs/redlock.ts
  * @Description:
  *
@@ -44,7 +44,7 @@ export class RedisLock {
       return null;
     }
     try {
-      return await this.redlock.lock([key], lock_time);
+      return await this.redlock.acquire([key], lock_time);
     } catch (error) {
       console.error(`redlock lock error: ${error.message}`);
     }
