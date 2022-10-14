@@ -137,7 +137,12 @@
       "json",
       "ts"
     ],
-    "rootDir": "src",
+    "rootDir": "./",
+    "moduleNameMapper": {
+      "@config/(.*)": "<rootDir>/src/config/$1",
+      "@service/(.*)": "<rootDir>/src/service/$1",
+      "@libs/(.*)": "<rootDir>/src/libs/$1"
+    },
     "testRegex": ".*\\.spec\\.ts$",
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
