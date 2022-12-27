@@ -1,3 +1,13 @@
+/*
+ * @Author: leyi leyi@myun.info
+ * @Date: 2021-11-25 17:08:33
+ * @LastEditors: leyi leyi@myun.info
+ * @LastEditTime: 2022-12-27 13:33:38
+ * @FilePath: /easy-front-nest-service/src/guard/auth.guard.ts
+ * @Description:
+ *
+ * Copyright (c) 2022 by leyi leyi@myun.info, All Rights Reserved.
+ */
 import {
   Injectable,
   CanActivate,
@@ -21,6 +31,14 @@ export class AuthGuard implements CanActivate {
     const { session, headers } = request;
     let { user } = session;
     let { authToken } = session;
+
+    if (headers['x-from-swagger'] === 'swagger') {
+      return true;
+    }
+    // 如果白名单里面有的url就不拦截
+    if (this.hasUrl(this.configService.get('while_list.token'), request.url)) {
+      return true;
+    }
     if (headers['x-auth-token']) {
       authToken = headers['x-auth-token'];
       user = await this.cacheService.get(
@@ -32,13 +50,6 @@ export class AuthGuard implements CanActivate {
       } else {
         throw new HttpException('用户未登录', HttpStatus.UNAUTHORIZED);
       }
-    }
-    if (headers['x-from-swagger'] === 'swagger') {
-      return true;
-    }
-    // 如果白名单里面有的url就不拦截
-    if (this.hasUrl(this.configService.get('while_list.token'), request.url)) {
-      return true;
     }
     if (!authToken) {
       throw new HttpException('缺少authToken', HttpStatus.UNAUTHORIZED);
