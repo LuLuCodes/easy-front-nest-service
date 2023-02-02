@@ -81,7 +81,7 @@
     "rxjs": "^7.8.0",
     "sequelize": "^6.28.0",
     "sequelize-typescript": "^2.1.5",
-    "sequelize-typescript-generator": "^9.0.3",
+    "easy-front-sequelize-generator": "^1.0.3",
     "stacktrace-js": "^2.0.2",
     "uuid": "^9.0.0"
   },

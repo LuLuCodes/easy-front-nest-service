@@ -14,7 +14,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     function verb(n) { return function (v) { return step([n, v]); }; }
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
+        while (g && (g = 0, op[0] && (_ = 0)), _) try {
             if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
             if (y = 0, t) op = [op[0] & 2, t.value];
             switch (op[0]) {
@@ -36,11 +36,20 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-var sequelize_typescript_generator_1 = require("sequelize-typescript-generator");
+/*
+ * @Author: leyi leyi@myun.info
+ * @Date: 2022-09-07 09:17:35
+ * @LastEditors: leyi leyi@myun.info
+ * @LastEditTime: 2023-02-02 14:07:16
+ * @FilePath: /easy-front-nest-service/db-tools/index.ts
+ * @Description:
+ *
+ * Copyright (c) 2023 by ${git_name_email}, All Rights Reserved.
+ */
+var easy_front_sequelize_generator_1 = require("easy-front-sequelize-generator");
 var path_1 = require("path");
 var dotenv = require("dotenv");
-var CodeConversion_1 = require("./CodeConversion");
-dotenv.config({ path: path_1.resolve(__dirname, '../src/.env') });
+dotenv.config({ path: (0, path_1.resolve)(__dirname, '../src/.env') });
 (function () { return __awaiter(void 0, void 0, void 0, function () {
     var config, dialect, builder, err_1;
     return __generator(this, function (_a) {
@@ -60,23 +69,29 @@ dotenv.config({ path: path_1.resolve(__dirname, '../src/.env') });
                         "case": {
                             model: 'PASCAL',
                             column: 'LOWER'
+                        },
+                        timestamps: true,
+                        paranoid: true,
+                        aliasFields: {
+                            deletedAt: 'deleted_at',
+                            createdAt: 'created_at',
+                            updatedAt: 'updated_at'
                         }
                     },
                     output: {
                         clean: true,
-                        outDir: path_1.resolve(__dirname, '../src/models')
+                        outDir: (0, path_1.resolve)(__dirname, '../src/models')
                     },
                     strict: false
                 };
-                dialect = new sequelize_typescript_generator_1.DialectMySQL();
-                builder = new sequelize_typescript_generator_1.ModelBuilder(config, dialect);
+                dialect = new easy_front_sequelize_generator_1.DialectMySQL();
+                builder = new easy_front_sequelize_generator_1.ModelBuilder(config, dialect);
                 _a.label = 1;
             case 1:
                 _a.trys.push([1, 3, , 4]);
                 return [4 /*yield*/, builder.build()];
             case 2:
                 _a.sent();
-                CodeConversion_1.CodeConversion.run();
                 return [3 /*break*/, 4];
             case 3:
                 err_1 = _a.sent();

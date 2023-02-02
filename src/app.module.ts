@@ -95,64 +95,62 @@ import while_list from '@config/white-list';
           retryDelay: 2000, // 连接重试尝试之间的延迟(ms)
           logQueryParameters: true,
           define: {
-            defaultScope: {
-              where: {
-                deleted: 0,
-              },
-            },
             hooks: {
               beforeCreate(attributes: any, options: any) {
                 const { fields } = options;
-                const now = Date.now();
                 if (
-                  !attributes.dataValues.create_time &&
-                  fields.indexOf('create_time') !== -1
+                  !attributes.dataValues.creator_id &&
+                  fields.includes('creator_id')
                 ) {
-                  attributes.dataValues.create_time = now;
+                  attributes.dataValues.creator_id = 1;
                 }
                 if (
-                  !attributes.dataValues.update_time &&
-                  fields.indexOf('update_time') !== -1
+                  !attributes.dataValues.modifier_id &&
+                  fields.includes('modifier_id')
                 ) {
-                  attributes.dataValues.update_time = now;
+                  attributes.dataValues.modifier_id = 1;
                 }
                 // 注入app_id
                 // attributes.dataValues.app_id = configService.get('app.app_id');
               },
               beforeBulkCreate(instances: any, options: any) {
                 const { fields } = options;
-                const now = Date.now();
                 for (const instance of instances) {
                   if (
-                    !instance.dataValues.create_time &&
-                    fields.indexOf('create_time') !== -1
+                    !instance.dataValues.creator_id &&
+                    fields.includes('creator_id')
                   ) {
-                    instance.dataValues.create_time = now;
+                    instance.dataValues.creator_id = 1;
                   }
                   if (
-                    !instance.dataValues.update_time &&
-                    fields.indexOf('update_time') !== -1
+                    !instance.dataValues.modifier_id &&
+                    fields.includes('modifier_id')
                   ) {
-                    instance.dataValues.update_time = now;
+                    instance.dataValues.modifier_id = 1;
                   }
                   // 注入app_id
                   // instance.dataValues.app_id = configService.get('app.app_id');
                 }
               },
               beforeUpdate(instance: any, options: any) {
+                console.log(instance);
+                console.log(options);
                 const { fields } = options;
-                const now = Date.now();
                 if (
-                  !instance.dataValues.create_time &&
-                  fields.indexOf('update_time') !== -1
+                  !instance.dataValues.modifier_id &&
+                  fields.includes('modifier_id')
                 ) {
-                  instance.dataValues.update_time = now;
+                  instance.dataValues.modifier_id = 1;
                 }
+                delete instance.dataValues.creator_id;
               },
               beforeBulkUpdate(options: any) {
+                console.log(options);
                 const { attributes, fields } = options;
-                fields.push('update_time');
-                attributes.update_time = Date.now();
+                if (!attributes.modifier_id && fields.includes('modifier_id')) {
+                  attributes.modifier_id = 1;
+                }
+                delete attributes.creator_id;
               },
             },
           },
@@ -195,7 +193,6 @@ import while_list from '@config/white-list';
     GoodsModule,
     OrderModule,
     BasicModule,
-    // CloudInitModule, // 云端全局变量初始化
     InitModule,
     ScheduleModule.forRoot(),
   ],

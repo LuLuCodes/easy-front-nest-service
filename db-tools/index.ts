@@ -1,11 +1,20 @@
+/*
+ * @Author: leyi leyi@myun.info
+ * @Date: 2022-09-07 09:17:35
+ * @LastEditors: leyi leyi@myun.info
+ * @LastEditTime: 2023-02-02 14:07:16
+ * @FilePath: /easy-front-nest-service/db-tools/index.ts
+ * @Description:
+ *
+ * Copyright (c) 2023 by ${git_name_email}, All Rights Reserved.
+ */
 import {
   IConfig,
   ModelBuilder,
   DialectMySQL,
-} from 'sequelize-typescript-generator';
+} from 'easy-front-sequelize-generator';
 import { resolve } from 'path';
 import * as dotenv from 'dotenv';
-import { CodeConversion } from './CodeConversion';
 
 dotenv.config({ path: resolve(__dirname, '../src/.env') });
 
@@ -25,6 +34,13 @@ dotenv.config({ path: resolve(__dirname, '../src/.env') });
         model: 'PASCAL',
         column: 'LOWER',
       },
+      timestamps: true,
+      paranoid: true,
+      aliasFields: {
+        deletedAt: 'deleted_at',
+        createdAt: 'created_at',
+        updatedAt: 'updated_at',
+      },
     },
     output: {
       clean: true,
@@ -39,7 +55,6 @@ dotenv.config({ path: resolve(__dirname, '../src/.env') });
 
   try {
     await builder.build();
-    CodeConversion.run();
   } catch (err) {
     console.error(err);
     process.exit(1);
