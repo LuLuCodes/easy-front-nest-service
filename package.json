@@ -1,6 +1,6 @@
 {
   "name": "easy-front-nest-service",
-  "version": "3.0.0",
+  "version": "4.0.0",
   "description": "基于nestjs v9的后端API Service框架",
   "author": "",
   "private": true,
@@ -23,7 +23,7 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "db": "node db-tools/index.js",
+    "db": "node sequelize-generator/index.js",
     "cz": "git-cz"
   },
   "dependencies": {

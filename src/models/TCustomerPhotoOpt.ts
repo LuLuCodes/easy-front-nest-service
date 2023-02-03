@@ -63,7 +63,7 @@ export class TCustomerPhotoOpt extends Model {
   })
   opt_type!: number;
 
-  @Column({ type: DataType.BIGINT, comment: '操作人' })
+  @Column({ type: DataType.BIGINT, comment: '创建人' })
   @Index({
     name: 'idx_opt_customer_id',
     using: 'BTREE',

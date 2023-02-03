@@ -40,8 +40,8 @@ exports.__esModule = true;
  * @Author: leyi leyi@myun.info
  * @Date: 2022-09-07 09:17:35
  * @LastEditors: leyi leyi@myun.info
- * @LastEditTime: 2023-02-02 14:07:16
- * @FilePath: /easy-front-nest-service/db-tools/index.ts
+ * @LastEditTime: 2023-02-02 19:14:34
+ * @FilePath: /easy-front-nest-service/sequelize-generator/index.ts
  * @Description:
  *
  * Copyright (c) 2023 by ${git_name_email}, All Rights Reserved.

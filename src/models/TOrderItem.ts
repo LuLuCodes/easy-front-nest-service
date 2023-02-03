@@ -92,7 +92,7 @@ export class TOrderItem extends Model {
 
   @Column({
     type: DataType.BIGINT,
-    comment: '三方采购操作人',
+    comment: '三方采购创建人',
     defaultValue: '0',
   })
   @Index({

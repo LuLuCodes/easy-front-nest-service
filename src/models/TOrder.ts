@@ -521,7 +521,7 @@ export class TOrder extends Model {
 
   @Column({
     type: DataType.BIGINT,
-    comment: '三方原单号填充地址操作人',
+    comment: '三方原单号填充地址创建人',
     defaultValue: '0',
   })
   from_cps_sync_address_id?: number;

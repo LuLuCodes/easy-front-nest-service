@@ -34,6 +34,6 @@
       "@filter/*": ["./src/filter/*"]
     },
   },
-  "exclude": ["node_modules", "api", "db-tools"],
-  "include": ["src/**/*", "test/**/*", ".eslintrc.js", "commitlint.config.js", ".cz-config.js"]
+  "exclude": ["node_modules", "api"],
+  "include": ["src/**/*", "test/**/*", ".eslintrc.js", "commitlint.config.js", ".cz-config.js", "sequelize-generator"]
 }
