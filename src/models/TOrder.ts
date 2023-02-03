@@ -36,12 +36,12 @@ export class TOrder extends Model {
 
   @Column({ type: DataType.STRING(36), comment: '用户code' })
   @Index({
-    name: 'idx_customer_cdoe',
+    name: 'idx_customer_code',
     using: 'BTREE',
     order: 'ASC',
     unique: false,
   })
-  customer_cdoe!: string;
+  customer_code!: string;
 
   @Column({ type: DataType.BIGINT, comment: '优惠券主键', defaultValue: '0' })
   @Index({ name: 'idx_coupon_id', using: 'BTREE', order: 'ASC', unique: false })
@@ -121,6 +121,13 @@ export class TOrder extends Model {
     defaultValue: '0',
   })
   order_status?: number;
+
+  @Column({
+    type: DataType.TINYINT,
+    comment: '订单取消状态：0->未取消；1->已取消；',
+    defaultValue: '0',
+  })
+  cancel_status?: number;
 
   @Column({
     type: DataType.TINYINT,

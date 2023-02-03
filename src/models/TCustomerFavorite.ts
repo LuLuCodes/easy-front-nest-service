@@ -41,12 +41,12 @@ export class TCustomerFavorite extends Model {
 
   @Column({ type: DataType.STRING(36), comment: '用户code' })
   @Index({
-    name: 'idx_customer_cdoe',
+    name: 'idx_customer_code',
     using: 'BTREE',
     order: 'ASC',
     unique: false,
   })
-  customer_cdoe!: string;
+  customer_code!: string;
 
   @Column({
     type: DataType.TINYINT,
@@ -60,7 +60,7 @@ export class TCustomerFavorite extends Model {
     unique: false,
   })
   @Index({
-    name: 'idx_customer_cdoe',
+    name: 'idx_customer_code',
     using: 'BTREE',
     order: 'ASC',
     unique: false,

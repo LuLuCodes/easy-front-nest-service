@@ -94,10 +94,10 @@ CREATE TABLE `t_account_platform` (
 -- ----------------------------
 DROP TABLE IF EXISTS `t_customer`;
 CREATE TABLE `t_customer` (
-  `id` varchar(36) NOT NULL COMMENT '用户主键',
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '用户主键',
   `app_id` int NOT NULL DEFAULT '10000' COMMENT '应用id',
   `account_code` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '账户code',
-  `customer_cdoe` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '用户code',
+  `customer_code` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '用户code',
   `gender` tinyint NOT NULL DEFAULT '0' COMMENT '性别：0 未知， 1男， 1 女',
   `birthday` date DEFAULT NULL COMMENT '生日',
   `nick` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '昵称',
@@ -113,7 +113,7 @@ CREATE TABLE `t_customer` (
   `modifier_id` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
   PRIMARY KEY (`id`),
   KEY `idx_account_code` (`account_code`),
-  KEY `idx_customer_cdoe` (`customer_cdoe`),
+  KEY `idx_customer_code` (`customer_code`),
   KEY `idx_gender` (`gender`),
   KEY `idx_nick` (`nick`),
   KEY `idx_name` (`name`),
@@ -128,7 +128,7 @@ CREATE TABLE `t_customer_address` (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '用户地址主键(自增)',
   `app_id` int NOT NULL DEFAULT '10000' COMMENT '应用id',
   `account_code` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '账户code',
-  `customer_cdoe` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '用户code',
+  `customer_code` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '用户code',
   `pcd_code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '省市区编码',
   `pcd_desc` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '省市区',
   `address` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '街道，xx路',
@@ -144,7 +144,7 @@ CREATE TABLE `t_customer_address` (
   `modifier_id` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
   PRIMARY KEY (`id`),
   KEY `idx_account_code` (`account_code`, `sort_no`),
-  KEY `idx_customer_cdoe` (`customer_cdoe`, `sort_no`)
+  KEY `idx_customer_code` (`customer_code`, `sort_no`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='用户地址表';
 
 -- ----------------------------
@@ -155,7 +155,7 @@ CREATE TABLE `t_customer_favorite` (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '用户收藏主键(自增)',
   `app_id` int NOT NULL DEFAULT '10000' COMMENT '应用id',
   `account_code` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '账户code',
-  `customer_cdoe` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '用户code',
+  `customer_code` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '用户code',
   `target_type` tinyint NOT NULL DEFAULT '0' COMMENT '收藏类型，0商品，1品牌',
   `target_id` bigint NOT NULL DEFAULT '0' COMMENT '如果target_type=0，则是商品ID，如果target_type=1，则是品牌ID',
   `extra` varchar(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '一些附加信息',
@@ -167,7 +167,7 @@ CREATE TABLE `t_customer_favorite` (
   `modifier_id` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
   PRIMARY KEY (`id`),
   KEY `idx_account_code` (`account_code`, `target_type`),
-  KEY `idx_customer_cdoe` (`customer_cdoe`, `target_type`)
+  KEY `idx_customer_code` (`customer_code`, `target_type`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='用户收藏表';
 
 -- ----------------------------
@@ -197,7 +197,7 @@ CREATE TABLE `t_customer_relation` (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '用户关系主键(自增)',
   `app_id` int NOT NULL DEFAULT '10000' COMMENT '应用id',
   `account_code` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '账户code',
-  `customer_cdoe` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '用户code',
+  `customer_code` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '用户code',
   `inviter_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '邀请人ID',
   `sub_path` varchar(4000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '层级路径',
   `enabled` tinyint(1) NOT NULL DEFAULT '1' COMMENT '0 禁用, 1 可用',
@@ -208,7 +208,7 @@ CREATE TABLE `t_customer_relation` (
   `modifier_id` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
   PRIMARY KEY (`id`),
   KEY `idx_account_code` (`account_code`),
-  KEY `idx_customer_cdoe` (`customer_cdoe`),
+  KEY `idx_customer_code` (`customer_code`),
   KEY `idx_inviter_id` (`inviter_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='用户关系(上下级关系)表';
 

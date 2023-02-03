@@ -18,9 +18,14 @@ import {
   comment: '用户表',
 })
 export class TCustomer extends Model {
-  @Column({ primaryKey: true, type: DataType.STRING(36), comment: '用户主键' })
+  @Column({
+    primaryKey: true,
+    autoIncrement: true,
+    type: DataType.BIGINT,
+    comment: '用户主键',
+  })
   @Index({ name: 'PRIMARY', using: 'BTREE', order: 'ASC', unique: true })
-  id!: string;
+  id?: number;
 
   @Column({ type: DataType.INTEGER, comment: '应用id', defaultValue: '10000' })
   app_id?: number;
@@ -36,12 +41,12 @@ export class TCustomer extends Model {
 
   @Column({ type: DataType.STRING(36), comment: '用户code' })
   @Index({
-    name: 'idx_customer_cdoe',
+    name: 'idx_customer_code',
     using: 'BTREE',
     order: 'ASC',
     unique: false,
   })
-  customer_cdoe!: string;
+  customer_code!: string;
 
   @Column({
     type: DataType.TINYINT,

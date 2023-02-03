@@ -402,6 +402,9 @@ CREATE TABLE `t_product_group` (
   `deleted_at` datetime DEFAULT NULL COMMENT '删除时间',
   `creator_id` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
   `modifier_id` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `idx_group_name` (`group_name`,`sort_no`),
+  KEY `idx_sort` (`sort_no`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='商品分组表';
 
 -- ----------------------------

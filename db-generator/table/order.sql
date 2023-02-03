@@ -46,7 +46,7 @@ CREATE TABLE `t_cart_item` (
   `id` bigint NOT NULL COMMENT '购物车条目主键',
   `app_id` int NOT NULL DEFAULT '10000' COMMENT '应用id',
   `account_code` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '账户code',
-  `customer_cdoe` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '用户code',
+  `customer_code` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '用户code',
   `product_id` bigint NOT NULL DEFAULT '0' COMMENT '商品主键',
   `product_sn` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '货号',
   `sku_id` bigint NOT NULL DEFAULT '0' COMMENT '商品SKU主键',
@@ -64,7 +64,7 @@ CREATE TABLE `t_cart_item` (
   `modifier_id` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
   PRIMARY KEY (`id`),
   KEY `idx_account_code` (`account_code`),
-  KEY `idx_customer_cdoe` (`customer_cdoe`)
+  KEY `idx_customer_code` (`customer_code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='购物车表';
 
 -- ----------------------------
@@ -112,7 +112,7 @@ CREATE TABLE `t_order` (
   `id` bigint NOT NULL COMMENT '订单主键',
   `app_id` int NOT NULL DEFAULT '10000' COMMENT '应用id',
   `account_code` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '账户code',
-  `customer_cdoe` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '用户code',
+  `customer_code` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '用户code',
   `coupon_id` bigint NOT NULL DEFAULT '0' COMMENT '优惠券主键',
   `order_sn` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '订单编号',
   `total_amount` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '订单总金额',
@@ -125,6 +125,7 @@ CREATE TABLE `t_order` (
   `pay_type` tinyint(1) NOT NULL DEFAULT '0' COMMENT '支付方式：0->未支付；1->支付宝；2->微信',
   `source_type` tinyint(1) NOT NULL DEFAULT '0' COMMENT '订单来源：0->PC订单；1->app订单',
   `order_status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '订单状态：0->待付款；1->待发货；2->部分发货；3->已发货；4->已完成；5->已关闭；6->无效订单',
+  `cancel_status` tinyint NOT NULL DEFAULT '0' COMMENT '订单取消状态：0->未取消；1->已取消；',
   `order_type` tinyint(1) NOT NULL DEFAULT '0' COMMENT '订单类型：0->正常订单；1->秒杀订单',
   `delivery_company` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '物流公司(配送方式)',
   `delivery_sn` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '物流单号',
@@ -159,7 +160,7 @@ CREATE TABLE `t_order` (
   `modifier_id` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
   PRIMARY KEY (`id`),
   KEY `idx_account_code` (`account_code`),
-  KEY `idx_customer_cdoe` (`customer_cdoe`),
+  KEY `idx_customer_code` (`customer_code`),
   KEY `idx_coupon_id` (`coupon_id`),
   KEY `idx_order_sn` (`order_sn`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='订单表';
