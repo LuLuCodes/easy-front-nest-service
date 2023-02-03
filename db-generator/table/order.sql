@@ -242,4 +242,136 @@ CREATE TABLE `t_order_return_apply` (
   KEY `idx_order_sn` (`order_sn`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='订单退货申请';
 
+-- ----------------------------
+-- Table structure for t_order_pay_log
+-- ----------------------------
+DROP TABLE IF EXISTS `t_order_pay_log`;
+CREATE TABLE `t_order_pay_log` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '系统编码',
+  `app_id` int NOT NULL DEFAULT '10000' COMMENT '应用id',
+  `order_id` bigint NOT NULL DEFAULT '0' COMMENT '订单系统编码',
+  `pay_type` tinyint NOT NULL DEFAULT '0' COMMENT '支付类型 （1->支付宝；2->微信；3->钱包余额）',
+  `trade_no` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '第三方支付流水号（唯一、退款用，余额支付可存guid）',
+  `pay_amount` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '支付金额',
+  `trade_amount` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '三方流水账面金额',
+  `pay_time` datetime NOT NULL COMMENT '第三方支付成功时间',
+  `buyer_no` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '备注用户支付的账号，仅后期查账用（支付宝、微信账号，余额支付可存钱包id）',
+  `remark` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '备注',
+  `enabled` tinyint(1) NOT NULL DEFAULT '1' COMMENT '0 禁用, 1 可用',
+  `created_at` datetime NOT NULL COMMENT '创建时间',
+  `updated_at` datetime NOT NULL COMMENT '更新时间',
+  `deleted_at` datetime DEFAULT NULL COMMENT '删除时间',
+  `creator_id` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
+  `modifier_id` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `idx_order_id` (`order_id`),
+  KEY `idx_trade_no` (`trade_no`)
+) ENGINE=InnoDB AUTO_INCREMENT=464 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='订单支付记录表';
+
+-- ----------------------------
+-- Table structure for t_order_delivery
+-- ----------------------------
+DROP TABLE IF EXISTS `t_order_delivery`;
+CREATE TABLE `t_order_delivery` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '发货单主键',
+  `app_id` int NOT NULL DEFAULT '10000' COMMENT '应用id',
+  `delivery_code` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '系统发货单号',
+  `feed_id` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '三方发货结果ID',
+  `seller_id` bigint NOT NULL DEFAULT '0' COMMENT '发货单归属企业',
+  `shop_id` bigint NOT NULL DEFAULT '0' COMMENT '发货单归属店铺',
+  `pack_type` int NOT NULL DEFAULT '0' COMMENT '分包类型（0正常包裹）',
+  `pack_attribute` int NOT NULL DEFAULT '0' COMMENT '包裹属性（0普通 1带电）',
+  `inter_type` int NOT NULL DEFAULT '0' COMMENT '国际物流类型（1.第三方物流）',
+  `inter_company_id` int NOT NULL DEFAULT '0' COMMENT '国际第三方物流（1云途物流）',
+  `track_sn` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '跟踪码',
+  `pack_weight` int NOT NULL DEFAULT '0' COMMENT '重量（克）',
+  `in_weight` int NOT NULL DEFAULT '0' COMMENT '入库重量（克）',
+  `out_weight` int NOT NULL DEFAULT '0' COMMENT '出库重量（克）',
+  `pack_long` int NOT NULL DEFAULT '0' COMMENT '长（cm）',
+  `pack_wide` int NOT NULL DEFAULT '0' COMMENT '宽（cm）',
+  `pack_high` int NOT NULL DEFAULT '0' COMMENT '高（cm）',
+  `delivery_time` datetime DEFAULT NULL COMMENT '发货日期',
+  `purchase_const` decimal(18,2) NOT NULL DEFAULT '0.00' COMMENT '采购成本',
+  `total_count` int NOT NULL DEFAULT '0' COMMENT '发货数量',
+  `receiver_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '收货人姓名',
+  `receiver_country` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '收货人国家',
+  `receiver_detail_address` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '详细地址',
+  `receiver_detail_address2` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '详细地址2',
+  `receiver_detail_address3` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '详细地址3',
+  `receiver_phone` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '收货人电话',
+  `receiver_pcd_code` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '收货人邮编',
+  `receiver_pcd_desc` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '收货人省份直辖市',
+  `customs_sn` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '海关编码',
+  `added_tax` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '增值税号',
+  `eu_tax` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '欧盟税号',
+  `note` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '备注',
+  `if_photo` int NOT NULL DEFAULT '0' COMMENT '是否拍照',
+  `if_reinforce` int NOT NULL DEFAULT '0' COMMENT '是否加固',
+  `if_paper` int NOT NULL DEFAULT '0' COMMENT '是否换纸盒子',
+  `confirm_status` int NOT NULL DEFAULT '0' COMMENT '对账状态（0未对账 10已对账）',
+  `confirm_time` datetime DEFAULT NULL COMMENT '对账时间',
+  `confirm_user` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '对账人',
+  `confirm_const` decimal(18,2) NOT NULL DEFAULT '0.00' COMMENT '对账仓库费用',
+  `pack_status` int NOT NULL DEFAULT '0' COMMENT '货单状态（0待入库 1已入库 10已出库）',
+  `pack_status_intime` datetime DEFAULT NULL COMMENT '货单入库时间',
+  `pack_status_inuser` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '货单入库人',
+  `pack_status_outtime` datetime DEFAULT NULL COMMENT '货单出库时间',
+  `pack_status_outuser` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '货单出库人',
+  `inter_transport_code` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '国际物流运输方式',
+  `inter_transport_name` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '国际物流运输方式',
+  `inter_company_sn` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '国际第三方物流快递单号',
+  `inter_company_fee` decimal(18,2) NOT NULL DEFAULT '0.00' COMMENT '国际第三方物流快递预收运费',
+  `inter_company_realfee` decimal(18,2) NOT NULL DEFAULT '0.00' COMMENT '国际第三方物流快递结算总运费',
+  `inter_company_ini_realfee` decimal(18,2) NOT NULL DEFAULT '0.00' COMMENT '国际第三方物流快递结算总运费(初始)',
+  `inter_company_realfee_time` datetime DEFAULT NULL COMMENT '国际第三方物流快递结算总运费时间',
+  `inter_company_feestatus` int NOT NULL DEFAULT '0' COMMENT '国际第三方物流快递运费结算状态（0未结算 10已结算）',
+  `inter_company_weight` int NOT NULL DEFAULT '0' COMMENT '国际第三方物流快递结算重量',
+  `inter_company_freight` decimal(18,2) NOT NULL DEFAULT '0.00' COMMENT '国际第三方物流快递结算运费',
+  `inter_company_gas` decimal(18,2) NOT NULL DEFAULT '0.00' COMMENT '国际第三方物流快递结算燃油费',
+  `inter_company_gh` decimal(18,2) NOT NULL DEFAULT '0.00' COMMENT '国际第三方物流快递结算挂号费',
+  `inter_company_deal` decimal(18,2) NOT NULL DEFAULT '0.00' COMMENT '国际第三方物流快递结算处理费',
+  `inter_company_other` decimal(18,2) NOT NULL DEFAULT '0.00' COMMENT '国际第三方物流快递结算其他费',
+  `delivery_company_id` bigint NOT NULL DEFAULT '0' COMMENT '物流公司编码',
+  `delivery_company_name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '物流公司名称',
+  `delivery_sn` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '物流单号',
+  `direct_order_status` tinyint NOT NULL DEFAULT '0' COMMENT '易递友换单状态 10成功，其他失败',
+  `ori_delivery_sn` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '易递友换单前原始物流单号',
+  `ori_delivery_company_name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '易递友换单前原始物流公司名称',
+  `order_id` bigint NOT NULL DEFAULT '0' COMMENT '订单编号',
+  `enabled` tinyint(1) NOT NULL DEFAULT '1' COMMENT '0 禁用, 1 可用',
+  `created_at` datetime NOT NULL COMMENT '创建时间',
+  `updated_at` datetime NOT NULL COMMENT '更新时间',
+  `deleted_at` datetime DEFAULT NULL COMMENT '删除时间',
+  `creator_id` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
+  `modifier_id` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `idx_delivery_company_id` (`delivery_company_id`),
+  KEY `idx_order_id` (`order_id`),
+  KEY `idx_delivery_code` (`delivery_code`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='订单发货单表';
+
+-- ----------------------------
+-- Table structure for t_order_delivery_item
+-- ----------------------------
+DROP TABLE IF EXISTS `t_order_delivery_item`;
+CREATE TABLE `t_order_delivery_item` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '发货单明细主键',
+  `app_id` int NOT NULL DEFAULT '10000' COMMENT '应用id',
+  `delivery_id` bigint NOT NULL DEFAULT '0' COMMENT '发货单主键',
+  `order_id` bigint NOT NULL DEFAULT '0' COMMENT '订单编号',
+  `order_item_id` bigint NOT NULL DEFAULT '0' COMMENT '订单明细主键',
+  `quantity` int NOT NULL DEFAULT '0' COMMENT '发货数量',
+  `del_sku_weight` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '称重商品最终发货sku总重量（克）',
+  `enabled` tinyint(1) NOT NULL DEFAULT '1' COMMENT '0 禁用, 1 可用',
+  `created_at` datetime NOT NULL COMMENT '创建时间',
+  `updated_at` datetime NOT NULL COMMENT '更新时间',
+  `deleted_at` datetime DEFAULT NULL COMMENT '删除时间',
+  `creator_id` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
+  `modifier_id` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `idx_delivery_id` (`delivery_id`),
+  KEY `idx_order_id` (`order_id`),
+  KEY `idx_ order_item_id` (`order_item_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 SET FOREIGN_KEY_CHECKS = 1;

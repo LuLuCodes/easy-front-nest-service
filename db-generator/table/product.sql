@@ -382,4 +382,47 @@ CREATE TABLE `t_sku_ladder` (
   KEY `idx_sku_id` (`sku_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='商品(SKU)阶梯价格表(只针对同SKU)';
 
+-- ----------------------------
+-- Table structure for t_product_group
+-- ----------------------------
+DROP TABLE IF EXISTS `t_product_group`;
+CREATE TABLE `t_product_group` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '分组主键',
+  `app_id` int NOT NULL DEFAULT '10000' COMMENT '应用id',
+  `group_name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '分组名称',
+  `sale_channel_ids` json DEFAULT NULL COMMENT '销售渠道(JSON [{"id":1（0代表全网）,"name":"渠道1"}])',
+  `josn_remark` text COLLATE utf8mb4_unicode_ci COMMENT 'json备注',
+  `position_code` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '显示位置',
+  `group_desc` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '分组描述',
+  `album_pics` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '分组画册，限制为5张，以逗号分割',
+  `sort_no` int NOT NULL DEFAULT '0' COMMENT '排序',
+  `enabled` tinyint(1) DEFAULT '1' COMMENT '是否启用 1:启用',
+  `created_at` datetime NOT NULL COMMENT '创建时间',
+  `updated_at` datetime NOT NULL COMMENT '更新时间',
+  `deleted_at` datetime DEFAULT NULL COMMENT '删除时间',
+  `creator_id` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
+  `modifier_id` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='商品分组表';
+
+-- ----------------------------
+-- Table structure for t_product_group_relation
+-- ----------------------------
+DROP TABLE IF EXISTS `t_product_group_relation`;
+CREATE TABLE `t_product_group_relation` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '关系主键',
+  `app_id` int NOT NULL DEFAULT '10000' COMMENT '应用id',
+  `group_id` bigint NOT NULL DEFAULT '0' COMMENT '关系主键',
+  `product_id` bigint NOT NULL DEFAULT '0' COMMENT '商品主键',
+  `sort_no` int NOT NULL DEFAULT '0' COMMENT '排序',
+  `enabled` tinyint(1) DEFAULT '1' COMMENT '是否启用 1:启用',
+  `created_at` datetime NOT NULL COMMENT '创建时间',
+  `updated_at` datetime NOT NULL COMMENT '更新时间',
+  `deleted_at` datetime DEFAULT NULL COMMENT '删除时间',
+  `creator_id` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
+  `modifier_id` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `idx_group_id` (`group_id`),
+  KEY `idx_product_id` (`product_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='商品分组关系表';
+
 SET FOREIGN_KEY_CHECKS = 1;

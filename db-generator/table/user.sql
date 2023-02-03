@@ -212,4 +212,80 @@ CREATE TABLE `t_customer_relation` (
   KEY `idx_inviter_id` (`inviter_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='用户关系(上下级关系)表';
 
+-- ----------------------------
+-- Table structure for t_customer_wallet
+-- ----------------------------
+DROP TABLE IF EXISTS `t_customer_wallet`;
+CREATE TABLE `t_customer_wallet` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '系统编码',
+  `app_id` int NOT NULL DEFAULT '10000' COMMENT '应用id',
+  `customer_id` bigint NOT NULL DEFAULT '0' COMMENT '用户id',
+  `amount` decimal(18,4) NOT NULL DEFAULT '0.0000' COMMENT '钱包余额',
+  `out_frozen_amount` decimal(18,4) NOT NULL DEFAULT '0.0000' COMMENT '出账冻结',
+  `in_frozen_amount` decimal(18,4) NOT NULL DEFAULT '0.0000' COMMENT '进帐冻结',
+  `point` decimal(18,4) NOT NULL DEFAULT '0.0000' COMMENT '积分',
+  `out_frozen_point` decimal(18,4) NOT NULL DEFAULT '0.0000' COMMENT '出账冻结',
+  `in_frozen_point` decimal(18,4) NOT NULL DEFAULT '0.0000' COMMENT '出账冻结',
+  `point2` decimal(18,4) NOT NULL DEFAULT '0.0000' COMMENT '积分2',
+  `out_frozen_point2` decimal(18,4) NOT NULL DEFAULT '0.0000' COMMENT '出账冻结',
+  `in_frozen_point2` decimal(18,4) NOT NULL DEFAULT '0.0000' COMMENT '出账冻结',
+  `enabled` tinyint(1) NOT NULL DEFAULT '1' COMMENT '0 禁用, 1 可用',
+  `created_at` datetime NOT NULL COMMENT '创建时间',
+  `updated_at` datetime NOT NULL COMMENT '更新时间',
+  `deleted_at` datetime DEFAULT NULL COMMENT '删除时间',
+  `creator_id` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
+  `modifier_id` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE KEY `customer_id_UNIQUE` (`customer_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='用户钱包表';
+
+-- ----------------------------
+-- Table structure for t_customer_wallet_log
+-- ----------------------------
+DROP TABLE IF EXISTS `t_customer_wallet_log`;
+CREATE TABLE `t_customer_wallet_log` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '系统编码',
+  `app_id` int NOT NULL DEFAULT '10000' COMMENT '应用id',
+  `wallet_id` bigint NOT NULL DEFAULT '0' COMMENT '钱包编码',
+  `amount` decimal(18,4) NOT NULL DEFAULT '0.0000' COMMENT '流水金额（正号增加，负号减少）',
+  `log_type` int NOT NULL DEFAULT '0' COMMENT '流水类型（1奖励 2提现 3退款……）',
+  `log_title` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '流水标题',
+  `log_desc` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '内容描述',
+  `source_type` int NOT NULL DEFAULT '0' COMMENT '来源（1订单，2充值单，3提现单，4豆豆转账）',
+  `source_id` bigint NOT NULL DEFAULT '0' COMMENT '来源编码（1订单编码，2充值单编码，3提现单编码，4豆豆流水账号）',
+  `enabled` tinyint(1) NOT NULL DEFAULT '1' COMMENT '0 禁用, 1 可用',
+  `created_at` datetime NOT NULL COMMENT '创建时间',
+  `updated_at` datetime NOT NULL COMMENT '更新时间',
+  `deleted_at` datetime DEFAULT NULL COMMENT '删除时间',
+  `creator_id` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
+  `modifier_id` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `idx_wallet_id` (`wallet_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='用户钱包流水表';
+
+-- ----------------------------
+-- Table structure for t_customer_profit
+-- ----------------------------
+DROP TABLE IF EXISTS `t_customer_profit`;
+CREATE TABLE `t_customer_profit` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '系统编码',
+  `app_id` int NOT NULL DEFAULT '10000' COMMENT '应用id',
+  `customer_id` bigint NOT NULL DEFAULT '0' COMMENT '用户id',
+  `profit_status` int NOT NULL DEFAULT '0' COMMENT '分佣状态（0初始冻结中，10已结算）',
+  `profit_type` int NOT NULL DEFAULT '0' COMMENT '分佣类型（100级差自购省  200级差奖励  300爆单奖励）',
+  `profit_amount` decimal(18,2) NOT NULL DEFAULT '0.00' COMMENT '分佣金额',
+  `settle_time` datetime DEFAULT NULL COMMENT '结算到钱包时间',
+  `source_type` int NOT NULL DEFAULT '0' COMMENT '来源（1订单奖励）',
+  `source_id` bigint NOT NULL DEFAULT '0' COMMENT '来源系统编码',
+  `sort_no` int NOT NULL DEFAULT (0) COMMENT '排序',
+  `enabled` tinyint(1) NOT NULL DEFAULT '1' COMMENT '0 禁用, 1 可用',
+  `created_at` datetime NOT NULL COMMENT '创建时间',
+  `updated_at` datetime NOT NULL COMMENT '更新时间',
+  `deleted_at` datetime DEFAULT NULL COMMENT '删除时间',
+  `creator_id` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
+  `modifier_id` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `idx_customer_id` (`customer_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='分佣表';
+
 SET FOREIGN_KEY_CHECKS = 1;
