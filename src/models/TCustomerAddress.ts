@@ -10,7 +10,11 @@ import {
 
 @Table({
   tableName: 't_customer_address',
-  timestamps: false,
+  timestamps: true,
+  paranoid: true,
+  deletedAt: 'deleted_at',
+  createdAt: 'created_at',
+  updatedAt: 'updated_at',
   comment: '用户地址表',
 })
 export class TCustomerAddress extends Model {
@@ -23,28 +27,26 @@ export class TCustomerAddress extends Model {
   @Index({ name: 'PRIMARY', using: 'BTREE', order: 'ASC', unique: true })
   id?: number;
 
-  @Column({
-    allowNull: true,
-    type: DataType.INTEGER,
-    comment: '应用id',
-    defaultValue: '10000',
-  })
+  @Column({ type: DataType.INTEGER, comment: '应用id', defaultValue: '10000' })
   app_id?: number;
 
-  @Column({ type: DataType.BIGINT, comment: '用户id', defaultValue: '0' })
+  @Column({ type: DataType.STRING(36), comment: '账户code' })
   @Index({
-    name: 'idx_customer_id',
+    name: 'idx_account_code',
     using: 'BTREE',
     order: 'ASC',
     unique: false,
   })
-  customer_id?: number;
+  account_code!: string;
 
-  @Column({ type: DataType.STRING(100), comment: '收货人姓名' })
-  name!: string;
-
-  @Column({ type: DataType.STRING(32), comment: '收货人电话' })
-  phone!: string;
+  @Column({ type: DataType.STRING(36), comment: '用户code' })
+  @Index({
+    name: 'idx_customer_cdoe',
+    using: 'BTREE',
+    order: 'ASC',
+    unique: false,
+  })
+  customer_cdoe!: string;
 
   @Column({ type: DataType.STRING(50), comment: '省市区编码' })
   pcd_code!: string;
@@ -52,26 +54,31 @@ export class TCustomerAddress extends Model {
   @Column({ type: DataType.STRING(255), comment: '省市区' })
   pcd_desc!: string;
 
-  @Column({ allowNull: true, type: DataType.STRING(255), comment: '详细地址' })
-  address?: string;
+  @Column({ type: DataType.STRING(255), comment: '街道，xx路' })
+  address!: string;
 
-  @Column({
-    allowNull: true,
-    type: DataType.INTEGER,
-    comment: '排序',
-    defaultValue: '0',
+  @Column({ type: DataType.STRING(255), comment: '门牌号' })
+  house_number!: string;
+
+  @Column({ type: DataType.INTEGER, comment: '排序', defaultValue: '0' })
+  @Index({
+    name: 'idx_account_code',
+    using: 'BTREE',
+    order: 'ASC',
+    unique: false,
   })
-  sort?: number;
-
-  @Column({
-    allowNull: true,
-    type: DataType.STRING(50),
-    comment: '标签：家，公司',
+  @Index({
+    name: 'idx_customer_cdoe',
+    using: 'BTREE',
+    order: 'ASC',
+    unique: false,
   })
-  tags?: string;
+  sort_no?: number;
+
+  @Column({ type: DataType.STRING(50), comment: '标签：家，公司' })
+  tags!: string;
 
   @Column({
-    allowNull: true,
     type: DataType.TINYINT,
     comment: '是否默认地址',
     defaultValue: '0',
@@ -80,20 +87,23 @@ export class TCustomerAddress extends Model {
 
   @Column({
     type: DataType.TINYINT,
-    comment: '是否逻辑删除 1:已删除',
-    defaultValue: '0',
+    comment: '0 禁用, 1 可用',
+    defaultValue: '1',
   })
-  deleted?: number;
+  enabled?: number;
 
   @Column({ type: DataType.DATE, comment: '创建时间' })
-  create_time!: Date;
+  created_at!: Date;
 
   @Column({ type: DataType.DATE, comment: '更新时间' })
-  update_time!: Date;
+  updated_at!: Date;
 
-  @Column({ type: DataType.BIGINT, comment: '创建人' })
-  creator_id!: number;
+  @Column({ allowNull: true, type: DataType.DATE, comment: '删除时间' })
+  deleted_at?: Date;
 
-  @Column({ type: DataType.BIGINT, comment: '修改人' })
-  modifier_id!: number;
+  @Column({ type: DataType.BIGINT, comment: '创建人', defaultValue: '1' })
+  creator_id?: number;
+
+  @Column({ type: DataType.BIGINT, comment: '修改人', defaultValue: '1' })
+  modifier_id?: number;
 }

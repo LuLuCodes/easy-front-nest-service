@@ -10,7 +10,11 @@ import {
 
 @Table({
   tableName: 't_customer_relation',
-  timestamps: false,
+  timestamps: true,
+  paranoid: true,
+  deletedAt: 'deleted_at',
+  createdAt: 'created_at',
+  updatedAt: 'updated_at',
   comment: '用户关系(上下级关系)表',
 })
 export class TCustomerRelation extends Model {
@@ -23,62 +27,58 @@ export class TCustomerRelation extends Model {
   @Index({ name: 'PRIMARY', using: 'BTREE', order: 'ASC', unique: true })
   id?: number;
 
-  @Column({
-    allowNull: true,
-    type: DataType.INTEGER,
-    comment: '应用id',
-    defaultValue: '10000',
-  })
+  @Column({ type: DataType.INTEGER, comment: '应用id', defaultValue: '10000' })
   app_id?: number;
 
-  @Column({ type: DataType.BIGINT, comment: '用户id' })
+  @Column({ type: DataType.STRING(36), comment: '账户code' })
   @Index({
-    name: 'idx_customer_id',
+    name: 'idx_account_code',
     using: 'BTREE',
     order: 'ASC',
     unique: false,
   })
-  customer_id!: number;
+  account_code!: string;
 
-  @Column({ type: DataType.BIGINT, comment: '邀请人用户主键' })
+  @Column({ type: DataType.STRING(36), comment: '用户code' })
+  @Index({
+    name: 'idx_customer_cdoe',
+    using: 'BTREE',
+    order: 'ASC',
+    unique: false,
+  })
+  customer_cdoe!: string;
+
+  @Column({ type: DataType.STRING(36), comment: '邀请人ID' })
   @Index({
     name: 'idx_inviter_id',
     using: 'BTREE',
     order: 'ASC',
     unique: false,
   })
-  inviter_id!: number;
+  inviter_id!: string;
 
-  @Column({ allowNull: true, type: DataType.STRING(500), comment: '邀请备注' })
-  invite_remark?: string;
-
-  @Column({ allowNull: true, type: DataType.STRING(4000), comment: '层级路径' })
-  sub_path?: string;
+  @Column({ type: DataType.STRING(4000), comment: '层级路径' })
+  sub_path!: string;
 
   @Column({
-    allowNull: true,
     type: DataType.TINYINT,
-    comment: '是否启用 1:启用',
-    defaultValue: '0',
+    comment: '0 禁用, 1 可用',
+    defaultValue: '1',
   })
   enabled?: number;
 
-  @Column({
-    type: DataType.TINYINT,
-    comment: '是否逻辑删除 1:已删除',
-    defaultValue: '0',
-  })
-  deleted?: number;
-
   @Column({ type: DataType.DATE, comment: '创建时间' })
-  create_time!: Date;
+  created_at!: Date;
 
   @Column({ type: DataType.DATE, comment: '更新时间' })
-  update_time!: Date;
+  updated_at!: Date;
 
-  @Column({ type: DataType.BIGINT, comment: '创建人' })
-  creator_id!: number;
+  @Column({ allowNull: true, type: DataType.DATE, comment: '删除时间' })
+  deleted_at?: Date;
 
-  @Column({ type: DataType.BIGINT, comment: '修改人' })
-  modifier_id!: number;
+  @Column({ type: DataType.BIGINT, comment: '创建人', defaultValue: '1' })
+  creator_id?: number;
+
+  @Column({ type: DataType.BIGINT, comment: '修改人', defaultValue: '1' })
+  modifier_id?: number;
 }

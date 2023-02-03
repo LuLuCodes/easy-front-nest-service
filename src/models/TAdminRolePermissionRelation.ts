@@ -9,20 +9,20 @@ import {
 } from 'sequelize-typescript';
 
 @Table({
-  tableName: 't_order_setting',
+  tableName: 't_admin_role_permission_relation',
   timestamps: true,
   paranoid: true,
   deletedAt: 'deleted_at',
   createdAt: 'created_at',
   updatedAt: 'updated_at',
-  comment: '订单设置表',
+  comment: '后台用户角色和权限关系表',
 })
-export class TOrderSetting extends Model {
+export class TAdminRolePermissionRelation extends Model {
   @Column({
     primaryKey: true,
     autoIncrement: true,
-    type: DataType.INTEGER,
-    comment: '订单设置主键',
+    type: DataType.BIGINT,
+    comment: '关系主键',
   })
   @Index({ name: 'PRIMARY', using: 'BTREE', order: 'ASC', unique: true })
   id?: number;
@@ -30,40 +30,11 @@ export class TOrderSetting extends Model {
   @Column({ type: DataType.INTEGER, comment: '应用id', defaultValue: '10000' })
   app_id?: number;
 
-  @Column({
-    type: DataType.INTEGER,
-    comment: '秒杀订单超时关闭时间(分)',
-    defaultValue: '0',
-  })
-  flash_order_overtime?: number;
+  @Column({ type: DataType.BIGINT, comment: '角色主键', defaultValue: '0' })
+  role_id?: number;
 
-  @Column({
-    type: DataType.INTEGER,
-    comment: '正常订单超时时间(分)',
-    defaultValue: '0',
-  })
-  normal_order_overtime?: number;
-
-  @Column({
-    type: DataType.INTEGER,
-    comment: '发货后自动确认收货时间（天）',
-    defaultValue: '0',
-  })
-  confirm_overtime?: number;
-
-  @Column({
-    type: DataType.INTEGER,
-    comment: '自动完成交易时间，不能申请售后（天）',
-    defaultValue: '0',
-  })
-  finish_overtime?: number;
-
-  @Column({
-    type: DataType.INTEGER,
-    comment: '订单完成后自动好评时间（天）',
-    defaultValue: '0',
-  })
-  comment_overtime?: number;
+  @Column({ type: DataType.BIGINT, comment: '权限主键', defaultValue: '0' })
+  permission_id?: number;
 
   @Column({
     type: DataType.TINYINT,

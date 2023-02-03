@@ -10,25 +10,19 @@ import {
 
 @Table({
   tableName: 't_product_category',
-  timestamps: false,
+  timestamps: true,
+  paranoid: true,
+  deletedAt: 'deleted_at',
+  createdAt: 'created_at',
+  updatedAt: 'updated_at',
   comment: '基础-类目表',
 })
 export class TProductCategory extends Model {
-  @Column({
-    primaryKey: true,
-    autoIncrement: true,
-    type: DataType.BIGINT,
-    comment: '类目主键',
-  })
+  @Column({ primaryKey: true, type: DataType.BIGINT, comment: '类目主键' })
   @Index({ name: 'PRIMARY', using: 'BTREE', order: 'ASC', unique: true })
-  id?: number;
+  id!: number;
 
-  @Column({
-    allowNull: true,
-    type: DataType.INTEGER,
-    comment: '应用id',
-    defaultValue: '10000',
-  })
+  @Column({ type: DataType.INTEGER, comment: '应用id', defaultValue: '10000' })
   app_id?: number;
 
   @Column({
@@ -57,18 +51,8 @@ export class TProductCategory extends Model {
 
   @Column({
     type: DataType.INTEGER,
-    comment: '类别来源（0平台后台 1商家后台 2店铺shop）',
-    defaultValue: '0',
-  })
-  source_type?: number;
-
-  @Column({ type: DataType.BIGINT, comment: '类别来源编码', defaultValue: '0' })
-  source_id?: number;
-
-  @Column({
-    type: DataType.INTEGER,
     comment: '类目级别：0->1级；1->2级',
-    defaultValue: '1',
+    defaultValue: '0',
   })
   @Index({ name: 'idx_level', using: 'BTREE', order: 'ASC', unique: false })
   level?: number;
@@ -76,8 +60,8 @@ export class TProductCategory extends Model {
   @Column({ type: DataType.INTEGER, comment: '商品数量', defaultValue: '0' })
   product_count?: number;
 
-  @Column({ allowNull: true, type: DataType.STRING(64), comment: '商品单位' })
-  product_unit?: string;
+  @Column({ type: DataType.STRING(64), comment: '商品单位' })
+  product_unit!: string;
 
   @Column({
     type: DataType.TINYINT,
@@ -86,20 +70,20 @@ export class TProductCategory extends Model {
   })
   nav_status?: number;
 
-  @Column({ allowNull: true, type: DataType.STRING(500), comment: '类目描述' })
-  category_desc?: string;
+  @Column({ type: DataType.STRING(500), comment: '类目描述' })
+  category_desc!: string;
 
   @Column({ type: DataType.STRING(500), comment: '类目图片url' })
   pic_url!: string;
 
   @Column({
-    type: DataType.STRING(4000),
+    type: DataType.STRING(2000),
     comment: '分类地址{pid}-{child_id}-...',
   })
   sub_path!: string;
 
-  @Column({ allowNull: true, type: DataType.STRING(255), comment: '关键字' })
-  keywords?: string;
+  @Column({ type: DataType.STRING(255), comment: '关键字' })
+  keywords!: string;
 
   @Column({ type: DataType.INTEGER, comment: '排序', defaultValue: '0' })
   @Index({
@@ -111,38 +95,27 @@ export class TProductCategory extends Model {
   @Index({ name: 'idx_level', using: 'BTREE', order: 'ASC', unique: false })
   @Index({ name: 'idx_pid', using: 'BTREE', order: 'ASC', unique: false })
   @Index({ name: 'idx_sort', using: 'BTREE', order: 'ASC', unique: false })
-  sort?: number;
+  sort_no?: number;
 
   @Column({
     type: DataType.TINYINT,
-    comment: '是否启用 1:启用',
-    defaultValue: '0',
+    comment: '0 禁用, 1 可用',
+    defaultValue: '1',
   })
   enabled?: number;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING(100),
-    comment: '自定义类别三方淘宝编码',
-  })
-  cps_cid?: string;
-
   @Column({ type: DataType.DATE, comment: '创建时间' })
-  create_time!: Date;
+  created_at!: Date;
 
   @Column({ type: DataType.DATE, comment: '更新时间' })
-  update_time!: Date;
+  updated_at!: Date;
 
-  @Column({
-    type: DataType.TINYINT,
-    comment: '是否逻辑删除 1:已删除',
-    defaultValue: '0',
-  })
-  deleted?: number;
+  @Column({ allowNull: true, type: DataType.DATE, comment: '删除时间' })
+  deleted_at?: Date;
 
-  @Column({ type: DataType.BIGINT, comment: '创建人' })
-  creator_id!: number;
+  @Column({ type: DataType.BIGINT, comment: '创建人', defaultValue: '1' })
+  creator_id?: number;
 
-  @Column({ type: DataType.BIGINT, comment: '修改人' })
-  modifier_id!: number;
+  @Column({ type: DataType.BIGINT, comment: '修改人', defaultValue: '1' })
+  modifier_id?: number;
 }

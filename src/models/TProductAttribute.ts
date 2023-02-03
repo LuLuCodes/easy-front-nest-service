@@ -10,7 +10,11 @@ import {
 
 @Table({
   tableName: 't_product_attribute',
-  timestamps: false,
+  timestamps: true,
+  paranoid: true,
+  deletedAt: 'deleted_at',
+  createdAt: 'created_at',
+  updatedAt: 'updated_at',
   comment: '商品属性表',
 })
 export class TProductAttribute extends Model {
@@ -23,95 +27,80 @@ export class TProductAttribute extends Model {
   @Index({ name: 'PRIMARY', using: 'BTREE', order: 'ASC', unique: true })
   id?: number;
 
-  @Column({
-    allowNull: true,
-    type: DataType.INTEGER,
-    comment: '应用id',
-    defaultValue: '10000',
-  })
+  @Column({ type: DataType.INTEGER, comment: '应用id', defaultValue: '10000' })
   app_id?: number;
 
-  @Column({ type: DataType.INTEGER, comment: '商品属性分类主键' })
+  @Column({
+    type: DataType.INTEGER,
+    comment: '商品属性分类主键',
+    defaultValue: '0',
+  })
   @Index({
     name: 'idx_product_attribute_category_id_sort',
     using: 'BTREE',
     order: 'ASC',
     unique: false,
   })
-  product_attribute_category_id!: number;
+  product_attribute_category_id?: number;
 
   @Column({ type: DataType.STRING(64), comment: '商品属性名称' })
   attribute_name!: string;
 
   @Column({
-    allowNull: true,
     type: DataType.TINYINT,
-    comment: '属性选择类型：0->输入框；1->单选；2->多选',
+    comment: '属性选择类型：0->唯一；1->单选；2->多选',
     defaultValue: '0',
   })
   select_type?: number;
 
   @Column({
-    allowNull: true,
     type: DataType.TINYINT,
-    comment: '属性录入方式(暂不需要)：0->手工录入；1->从列表中选取',
+    comment: '属性录入方式：0->手工录入；1->从列表中选取',
     defaultValue: '0',
   })
   input_type?: number;
 
   @Column({
-    allowNull: true,
     type: DataType.STRING(255),
     comment: 'input_type是1时生效，可选值列表，以逗号隔开',
   })
-  input_list?: string;
+  input_list!: string;
 
   @Column({
-    allowNull: true,
     type: DataType.TINYINT,
     comment: '是否支持手动新增；0->不支持；1->支持',
     defaultValue: '0',
   })
   hand_add_status?: number;
 
-  @Column({
-    allowNull: true,
-    type: DataType.INTEGER,
-    comment: '排序',
-    defaultValue: '0',
-  })
+  @Column({ type: DataType.INTEGER, comment: '排序', defaultValue: '0' })
   @Index({
     name: 'idx_product_attribute_category_id_sort',
     using: 'BTREE',
     order: 'ASC',
     unique: false,
   })
-  sort?: number;
+  sort_no?: number;
 
   @Column({
-    allowNull: true,
     type: DataType.TINYINT,
-    comment: '是否启用 1:启用',
-    defaultValue: '0',
+    comment: '0 禁用, 1 可用',
+    defaultValue: '1',
   })
   enabled?: number;
 
   @Column({ type: DataType.DATE, comment: '创建时间' })
-  create_time!: Date;
+  created_at!: Date;
 
   @Column({ type: DataType.DATE, comment: '更新时间' })
-  update_time!: Date;
+  updated_at!: Date;
 
-  @Column({
-    type: DataType.TINYINT,
-    comment: '是否逻辑删除 1:已删除',
-    defaultValue: '0',
-  })
-  deleted?: number;
+  @Column({ allowNull: true, type: DataType.DATE, comment: '删除时间' })
+  deleted_at?: Date;
 
-  @Column({ type: DataType.BIGINT, comment: '创建人' })
-  creator_id!: number;
+  @Column({ type: DataType.BIGINT, comment: '创建人', defaultValue: '1' })
+  creator_id?: number;
 
-  @Column({ type: DataType.BIGINT, comment: '修改人' })
-  modifier_id!: number;
+  @Column({ type: DataType.BIGINT, comment: '修改人', defaultValue: '1' })
+  modifier_id?: number;
 }

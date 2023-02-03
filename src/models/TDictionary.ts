@@ -8,7 +8,15 @@ import {
   ForeignKey,
 } from 'sequelize-typescript';
 
-@Table({ tableName: 't_dictionary', timestamps: false, comment: '基础-字典表' })
+@Table({
+  tableName: 't_dictionary',
+  timestamps: true,
+  paranoid: true,
+  deletedAt: 'deleted_at',
+  createdAt: 'created_at',
+  updatedAt: 'updated_at',
+  comment: '基础-字典表',
+})
 export class TDictionary extends Model {
   @Column({
     primaryKey: true,
@@ -19,12 +27,7 @@ export class TDictionary extends Model {
   @Index({ name: 'PRIMARY', using: 'BTREE', order: 'ASC', unique: true })
   id?: number;
 
-  @Column({
-    allowNull: true,
-    type: DataType.INTEGER,
-    comment: '应用id',
-    defaultValue: '10000',
-  })
+  @Column({ type: DataType.INTEGER, comment: '应用id', defaultValue: '10000' })
   app_id?: number;
 
   @Column({ type: DataType.STRING(50), comment: '字典名称' })
@@ -33,38 +36,31 @@ export class TDictionary extends Model {
   @Column({ type: DataType.STRING(50), comment: '字典key' })
   field_key!: string;
 
-  @Column({ type: DataType.STRING(1000), comment: '字典value' })
+  @Column({ type: DataType.STRING(255), comment: '字典value' })
   field_value!: string;
-
-  @Column({
-    type: DataType.TINYINT,
-    comment: '是否是系统变量',
-    defaultValue: '1',
-  })
-  is_system?: number;
-
-  @Column({ allowNull: true, type: DataType.STRING(1000), comment: '备注' })
-  remark?: string;
 
   @Column({ type: DataType.INTEGER, comment: '排序', defaultValue: '0' })
   sort_no?: number;
 
   @Column({
     type: DataType.TINYINT,
-    comment: '是否逻辑删除 1:已删除',
-    defaultValue: '0',
+    comment: '0 禁用, 1 可用',
+    defaultValue: '1',
   })
-  deleted?: number;
+  enabled?: number;
 
   @Column({ type: DataType.DATE, comment: '创建时间' })
-  create_time!: Date;
+  created_at!: Date;
 
   @Column({ type: DataType.DATE, comment: '更新时间' })
-  update_time!: Date;
+  updated_at!: Date;
 
-  @Column({ type: DataType.BIGINT, comment: '创建人' })
-  creator_id!: number;
+  @Column({ allowNull: true, type: DataType.DATE, comment: '删除时间' })
+  deleted_at?: Date;
 
-  @Column({ type: DataType.BIGINT, comment: '修改人' })
-  modifier_id!: number;
+  @Column({ type: DataType.BIGINT, comment: '创建人', defaultValue: '1' })
+  creator_id?: number;
+
+  @Column({ type: DataType.BIGINT, comment: '修改人', defaultValue: '1' })
+  modifier_id?: number;
 }

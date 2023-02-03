@@ -10,7 +10,11 @@ import {
 
 @Table({
   tableName: 't_admin_role',
-  timestamps: false,
+  timestamps: true,
+  paranoid: true,
+  deletedAt: 'deleted_at',
+  createdAt: 'created_at',
+  updatedAt: 'updated_at',
   comment: '后台用户角色表',
 })
 export class TAdminRole extends Model {
@@ -23,23 +27,17 @@ export class TAdminRole extends Model {
   @Index({ name: 'PRIMARY', using: 'BTREE', order: 'ASC', unique: true })
   id?: number;
 
-  @Column({
-    allowNull: true,
-    type: DataType.INTEGER,
-    comment: '应用id',
-    defaultValue: '10000',
-  })
+  @Column({ type: DataType.INTEGER, comment: '应用id', defaultValue: '10000' })
   app_id?: number;
 
   @Column({ type: DataType.STRING(100), comment: '名称' })
   @Index({ name: 'idx_role_name', using: 'BTREE', order: 'ASC', unique: false })
   role_name!: string;
 
-  @Column({ allowNull: true, type: DataType.STRING(500), comment: '描述' })
-  desc?: string;
+  @Column({ type: DataType.STRING(500), comment: '描述' })
+  desc!: string;
 
   @Column({
-    allowNull: true,
     type: DataType.INTEGER,
     comment: '后台用户数量',
     defaultValue: '0',
@@ -64,30 +62,27 @@ export class TAdminRole extends Model {
   is_system?: number;
 
   @Column({ type: DataType.INTEGER, comment: '是否客服', defaultValue: '0' })
-  is_customer_ser?: number;
-
-  @Column({ type: DataType.STRING(50), comment: '创建人姓名' })
-  username!: string;
-
-  @Column({ type: DataType.TINYINT, comment: '0 可用, 1 禁用' })
-  status!: number;
+  is_customer_service?: number;
 
   @Column({
     type: DataType.TINYINT,
-    comment: '是否逻辑删除 1:已删除',
-    defaultValue: '0',
+    comment: '0 禁用, 1 可用',
+    defaultValue: '1',
   })
-  deleted?: number;
+  enabled?: number;
 
   @Column({ type: DataType.DATE, comment: '创建时间' })
-  create_time!: Date;
+  created_at!: Date;
 
   @Column({ type: DataType.DATE, comment: '更新时间' })
-  update_time!: Date;
+  updated_at!: Date;
 
-  @Column({ type: DataType.BIGINT, comment: '创建人' })
-  creator_id!: number;
+  @Column({ allowNull: true, type: DataType.DATE, comment: '删除时间' })
+  deleted_at?: Date;
 
-  @Column({ type: DataType.BIGINT, comment: '修改人' })
-  modifier_id!: number;
+  @Column({ type: DataType.BIGINT, comment: '创建人', defaultValue: '1' })
+  creator_id?: number;
+
+  @Column({ type: DataType.BIGINT, comment: '修改人', defaultValue: '1' })
+  modifier_id?: number;
 }

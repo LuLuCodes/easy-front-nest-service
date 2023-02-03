@@ -8,7 +8,15 @@ import {
   ForeignKey,
 } from 'sequelize-typescript';
 
-@Table({ tableName: 't_admin', timestamps: false, comment: '后台用户表' })
+@Table({
+  tableName: 't_admin',
+  timestamps: true,
+  paranoid: true,
+  deletedAt: 'deleted_at',
+  createdAt: 'created_at',
+  updatedAt: 'updated_at',
+  comment: '后台用户表',
+})
 export class TAdmin extends Model {
   @Column({
     primaryKey: true,
@@ -50,40 +58,26 @@ export class TAdmin extends Model {
   @Column({ allowNull: true, type: DataType.DATE, comment: '最后登录时间' })
   last_login_time?: Date;
 
-  @Column({
-    type: DataType.INTEGER,
-    comment: '是否默认住账号',
-    defaultValue: '0',
-  })
-  is_default?: number;
-
-  @Column({ allowNull: true, type: DataType.STRING(30), comment: '邮箱' })
+  @Column({ type: DataType.STRING(30), comment: '邮箱' })
   @Index({ name: 'idx_email', using: 'BTREE', order: 'ASC', unique: false })
-  email?: string;
+  email!: string;
 
-  @Column({ allowNull: true, type: DataType.STRING(15), comment: '手机号' })
+  @Column({ type: DataType.STRING(15), comment: '手机号' })
   @Index({ name: 'idx_phone', using: 'BTREE', order: 'ASC', unique: false })
-  phone?: string;
+  phone!: string;
 
   @Column({ type: DataType.STRING(30), comment: '用户名' })
   @Index({ name: 'idx_username', using: 'BTREE', order: 'ASC', unique: false })
   username!: string;
 
-  @Column({ allowNull: true, type: DataType.STRING(500), comment: '头像' })
-  icon?: string;
+  @Column({ type: DataType.STRING(500), comment: '头像' })
+  icon!: string;
 
-  @Column({ allowNull: true, type: DataType.STRING(200), comment: '昵称' })
-  nick_name?: string;
+  @Column({ type: DataType.STRING(200), comment: '昵称' })
+  nick_name!: string;
 
-  @Column({ allowNull: true, type: DataType.STRING(500), comment: '备注信息' })
-  note?: string;
-
-  @Column({
-    allowNull: true,
-    type: DataType.STRING(500),
-    comment: '管理员管理的销售渠道[1,3……]',
-  })
-  sale_channel_ids?: string;
+  @Column({ type: DataType.STRING(500), comment: '备注信息' })
+  note!: string;
 
   @Column({ type: DataType.STRING(32), comment: '密码' })
   password!: string;
@@ -91,28 +85,26 @@ export class TAdmin extends Model {
   @Column({ type: DataType.STRING(32), comment: '密码盐' })
   password_salt!: string;
 
-  @Column({ type: DataType.STRING(50), comment: '创建人姓名' })
-  createname!: string;
-
-  @Column({ type: DataType.TINYINT, comment: '0 可用, 1 禁用, 2 注销' })
-  status!: number;
-
   @Column({
+    allowNull: true,
     type: DataType.TINYINT,
-    comment: '是否逻辑删除 1:已删除',
-    defaultValue: '0',
+    comment: '0 禁用, 1 可用, 2 注销',
+    defaultValue: '1',
   })
-  deleted?: number;
+  enabled?: number;
 
   @Column({ type: DataType.DATE, comment: '创建时间' })
-  create_time!: Date;
+  created_at!: Date;
 
   @Column({ type: DataType.DATE, comment: '更新时间' })
-  update_time!: Date;
+  updated_at!: Date;
 
-  @Column({ type: DataType.BIGINT, comment: '创建人' })
-  creator_id!: number;
+  @Column({ allowNull: true, type: DataType.DATE, comment: '删除时间' })
+  deleted_at?: Date;
 
-  @Column({ type: DataType.BIGINT, comment: '修改人' })
-  modifier_id!: number;
+  @Column({ type: DataType.BIGINT, comment: '创建人', defaultValue: '1' })
+  creator_id?: number;
+
+  @Column({ type: DataType.BIGINT, comment: '修改人', defaultValue: '1' })
+  modifier_id?: number;
 }

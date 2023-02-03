@@ -10,7 +10,11 @@ import {
 
 @Table({
   tableName: 't_spu_ladder',
-  timestamps: false,
+  timestamps: true,
+  paranoid: true,
+  deletedAt: 'deleted_at',
+  createdAt: 'created_at',
+  updatedAt: 'updated_at',
   comment: '商品(SPU)阶梯价格表(只针对同SPU)',
 })
 export class TSpuLadder extends Model {
@@ -23,22 +27,17 @@ export class TSpuLadder extends Model {
   @Index({ name: 'PRIMARY', using: 'BTREE', order: 'ASC', unique: true })
   id?: number;
 
-  @Column({
-    allowNull: true,
-    type: DataType.INTEGER,
-    comment: '应用id',
-    defaultValue: '10000',
-  })
+  @Column({ type: DataType.INTEGER, comment: '应用id', defaultValue: '10000' })
   app_id?: number;
 
-  @Column({ type: DataType.BIGINT, comment: '商品主键' })
+  @Column({ type: DataType.BIGINT, comment: '商品主键', defaultValue: '0' })
   @Index({
     name: 'idx_product_id',
     using: 'BTREE',
     order: 'ASC',
     unique: false,
   })
-  product_id!: number;
+  product_id?: number;
 
   @Column({
     type: DataType.INTEGER,
@@ -62,29 +61,24 @@ export class TSpuLadder extends Model {
   price?: string;
 
   @Column({
-    allowNull: true,
     type: DataType.TINYINT,
-    comment: '是否启用 1:启用',
-    defaultValue: '0',
+    comment: '0 禁用, 1 可用',
+    defaultValue: '1',
   })
   enabled?: number;
 
   @Column({ type: DataType.DATE, comment: '创建时间' })
-  create_time!: Date;
+  created_at!: Date;
 
   @Column({ type: DataType.DATE, comment: '更新时间' })
-  update_time!: Date;
+  updated_at!: Date;
 
-  @Column({
-    type: DataType.TINYINT,
-    comment: '是否逻辑删除 1:已删除',
-    defaultValue: '0',
-  })
-  deleted?: number;
+  @Column({ allowNull: true, type: DataType.DATE, comment: '删除时间' })
+  deleted_at?: Date;
 
-  @Column({ type: DataType.BIGINT, comment: '创建人' })
-  creator_id!: number;
+  @Column({ type: DataType.BIGINT, comment: '创建人', defaultValue: '1' })
+  creator_id?: number;
 
-  @Column({ type: DataType.BIGINT, comment: '修改人' })
-  modifier_id!: number;
+  @Column({ type: DataType.BIGINT, comment: '修改人', defaultValue: '1' })
+  modifier_id?: number;
 }

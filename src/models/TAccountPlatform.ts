@@ -10,7 +10,11 @@ import {
 
 @Table({
   tableName: 't_account_platform',
-  timestamps: false,
+  timestamps: true,
+  paranoid: true,
+  deletedAt: 'deleted_at',
+  createdAt: 'created_at',
+  updatedAt: 'updated_at',
   comment: '第三方用户信息',
 })
 export class TAccountPlatform extends Model {
@@ -54,61 +58,42 @@ export class TAccountPlatform extends Model {
 
   @Column({
     type: DataType.TINYINT,
-    comment: '平台类型 0-未知,1-微信公众号 2-微信小程序 3-微信开放平台',
+    comment: '平台类型 0:未知,1:wechat',
     defaultValue: '0',
   })
   type?: number;
 
-  @Column({
-    allowNull: true,
-    type: DataType.TINYINT,
-    comment: '性别：0 未知， 1男， 2 女',
-    defaultValue: '0',
-  })
-  gender?: number;
-
   @Column({ type: DataType.STRING(60), comment: '昵称' })
-  nick_name!: string;
+  nickname!: string;
 
   @Column({ type: DataType.STRING(255), comment: '头像' })
-  avatar_url!: string;
+  avatar!: string;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING(64),
-    comment: '微信登录openid',
-  })
-  wx_openid?: string;
+  @Column({ type: DataType.STRING(64), comment: '微信登录openid' })
+  weixin_openid!: string;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING(100),
-    comment: '微信登录unionid',
-  })
-  @Index({
-    name: 'idx_wx_unionid',
-    using: 'BTREE',
-    order: 'ASC',
-    unique: false,
-  })
-  wx_unionid?: string;
+  @Column({ type: DataType.STRING(100), comment: '微信登录unionid' })
+  weixin_unionid!: string;
 
   @Column({
     type: DataType.TINYINT,
-    comment: '是否逻辑删除 1:已删除',
-    defaultValue: '0',
+    comment: '0 禁用, 1 可用, 2 注销',
+    defaultValue: '1',
   })
-  deleted?: number;
+  enabled?: number;
 
   @Column({ type: DataType.DATE, comment: '创建时间' })
-  create_time!: Date;
+  created_at!: Date;
 
   @Column({ type: DataType.DATE, comment: '更新时间' })
-  update_time!: Date;
+  updated_at!: Date;
 
-  @Column({ type: DataType.BIGINT, comment: '创建人' })
-  creator_id!: number;
+  @Column({ allowNull: true, type: DataType.DATE, comment: '删除时间' })
+  deleted_at?: Date;
 
-  @Column({ type: DataType.BIGINT, comment: '修改人' })
-  modifier_id!: number;
+  @Column({ type: DataType.BIGINT, comment: '创建人', defaultValue: '1' })
+  creator_id?: number;
+
+  @Column({ type: DataType.BIGINT, comment: '修改人', defaultValue: '1' })
+  modifier_id?: number;
 }
