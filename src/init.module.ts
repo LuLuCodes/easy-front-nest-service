@@ -33,7 +33,6 @@ export class InitModule implements OnModuleInit {
       attributes: ['id', 'wx_appid', 'wx_appsecret', 'wx_token'],
       where: {
         enabled: 1,
-        deleted: 0,
         wx_appid: {
           [Op.not]: null,
         },
@@ -64,7 +63,6 @@ export class InitModule implements OnModuleInit {
       attributes: ['id', 'wx_miniprogram_appid', 'wx_miniprogram_appsecret'],
       where: {
         enabled: 1,
-        deleted: 0,
         wx_miniprogram_appid: {
           [Op.not]: null,
         },
@@ -106,7 +104,6 @@ export class InitModule implements OnModuleInit {
       ],
       where: {
         enabled: 1,
-        deleted: 0,
         wx_pay_mchid: {
           [Op.not]: null,
         },

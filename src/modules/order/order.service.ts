@@ -404,7 +404,6 @@ export class OrderService {
           pay_time: success_time,
           buyer_no: payer.openid,
           creator_id: customer_id,
-          deleted: 0,
         },
         { transaction: t },
       );
@@ -491,7 +490,6 @@ export class OrderService {
             pay_time: success_time,
             buyer_no: payer.openid,
             creator_id: 1,
-            deleted: 0,
           },
           { transaction: t },
         );

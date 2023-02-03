@@ -403,7 +403,6 @@ export class CustomerService {
       customer_id,
       inviter_id: superiors_customer_id,
       enabled: 1,
-      deleted: 0,
       creator_id: customer_id,
     });
     return;
