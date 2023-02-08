@@ -76,5 +76,5 @@ export class TSkuCustomerPrice extends Model {
   deleted_at?: Date;
 
   @Column({ type: DataType.BIGINT, comment: '修改人', defaultValue: '1' })
-  modifier_id?: number;
+  updated_by?: number;
 }

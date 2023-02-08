@@ -157,7 +157,7 @@ export class OrderService {
           pay_amount: total_amount,
           pay_type: PAY_TYPE.UNKONW,
           order_status: ORDER_STATUS.WAIT_PAY,
-          creator_id: customer_id,
+          created_by: customer_id,
           note: note || '',
         };
         if (address) {
@@ -183,7 +183,7 @@ export class OrderService {
             sku_sp_data,
             price,
             quantity,
-            creator_id: customer_id,
+            created_by: customer_id,
           },
           { transaction: t },
         );
@@ -403,7 +403,7 @@ export class OrderService {
           pay_amount: payer_total,
           pay_time: success_time,
           buyer_no: payer.openid,
-          creator_id: customer_id,
+          created_by: customer_id,
         },
         { transaction: t },
       );
@@ -489,7 +489,7 @@ export class OrderService {
             pay_amount: payer_total,
             pay_time: success_time,
             buyer_no: payer.openid,
-            creator_id: 1,
+            created_by: 1,
           },
           { transaction: t },
         );
@@ -601,7 +601,7 @@ export class OrderService {
           sku_sp_data,
           price,
           quantity: cart_quantity,
-          creator_id: customer_id,
+          created_by: customer_id,
         });
       }
       const result = await this.sequelize.transaction(async (t) => {
@@ -617,7 +617,7 @@ export class OrderService {
           receiver_pcd_code: address.pcd_code,
           receiver_pcd_desc: address.pcd_desc,
           receiver_detail_address: address.address,
-          creator_id: customer_id,
+          created_by: customer_id,
           note: note || '',
         };
         const order = await this.tOrder.create(order_data, {

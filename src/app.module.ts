@@ -99,16 +99,16 @@ import while_list from '@config/white-list';
               beforeCreate(attributes: any, options: any) {
                 const { fields } = options;
                 if (
-                  !attributes.dataValues.creator_id &&
-                  fields.includes('creator_id')
+                  !attributes.dataValues.created_by &&
+                  fields.includes('created_by')
                 ) {
-                  attributes.dataValues.creator_id = 1;
+                  attributes.dataValues.created_by = 1;
                 }
                 if (
-                  !attributes.dataValues.modifier_id &&
-                  fields.includes('modifier_id')
+                  !attributes.dataValues.updated_by &&
+                  fields.includes('updated_by')
                 ) {
-                  attributes.dataValues.modifier_id = 1;
+                  attributes.dataValues.updated_by = 1;
                 }
                 // 注入app_id
                 // attributes.dataValues.app_id = configService.get('app.app_id');
@@ -117,16 +117,16 @@ import while_list from '@config/white-list';
                 const { fields } = options;
                 for (const instance of instances) {
                   if (
-                    !instance.dataValues.creator_id &&
-                    fields.includes('creator_id')
+                    !instance.dataValues.created_by &&
+                    fields.includes('created_by')
                   ) {
-                    instance.dataValues.creator_id = 1;
+                    instance.dataValues.created_by = 1;
                   }
                   if (
-                    !instance.dataValues.modifier_id &&
-                    fields.includes('modifier_id')
+                    !instance.dataValues.updated_by &&
+                    fields.includes('updated_by')
                   ) {
-                    instance.dataValues.modifier_id = 1;
+                    instance.dataValues.updated_by = 1;
                   }
                   // 注入app_id
                   // instance.dataValues.app_id = configService.get('app.app_id');
@@ -137,20 +137,20 @@ import while_list from '@config/white-list';
                 console.log(options);
                 const { fields } = options;
                 if (
-                  !instance.dataValues.modifier_id &&
-                  fields.includes('modifier_id')
+                  !instance.dataValues.updated_by &&
+                  fields.includes('updated_by')
                 ) {
-                  instance.dataValues.modifier_id = 1;
+                  instance.dataValues.updated_by = 1;
                 }
-                delete instance.dataValues.creator_id;
+                delete instance.dataValues.created_by;
               },
               beforeBulkUpdate(options: any) {
                 console.log(options);
                 const { attributes, fields } = options;
-                if (!attributes.modifier_id && fields.includes('modifier_id')) {
-                  attributes.modifier_id = 1;
+                if (!attributes.updated_by && fields.includes('updated_by')) {
+                  attributes.updated_by = 1;
                 }
-                delete attributes.creator_id;
+                delete attributes.created_by;
               },
             },
           },

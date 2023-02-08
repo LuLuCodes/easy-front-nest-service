@@ -2,7 +2,7 @@
  * @Author: leyi leyi@myun.info
  * @Date: 2022-09-07 09:17:35
  * @LastEditors: leyi leyi@myun.info
- * @LastEditTime: 2023-02-02 19:14:34
+ * @LastEditTime: 2023-02-08 17:30:14
  * @FilePath: /easy-front-nest-service/sequelize-generator/index.ts
  * @Description:
  *

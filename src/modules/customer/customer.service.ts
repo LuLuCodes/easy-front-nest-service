@@ -69,14 +69,14 @@ export class CustomerService {
           {
             account_code: uuid(),
             status: 1,
-            creator_id: 1,
+            created_by: 1,
           },
           { transaction: t },
         );
         await this.tAccountPlatform.create(
           {
             account_code: accout.account_code,
-            creator_id: accout.id,
+            created_by: accout.id,
             type,
             wx_openid,
             wx_unionid,
@@ -89,7 +89,7 @@ export class CustomerService {
             account_code: accout.account_code,
             customer_code: uuid(),
             level: 0,
-            creator_id: accout.id,
+            created_by: accout.id,
             ...extra_info,
           },
           { transaction: t },
@@ -129,7 +129,7 @@ export class CustomerService {
         await this.tAccountPlatform.update(
           {
             ...extra_info,
-            creator_id: accout.id,
+            created_by: accout.id,
           },
           {
             where: { id: platform_accout.id },
@@ -139,7 +139,7 @@ export class CustomerService {
         await this.tCustomer.update(
           {
             ...extra_info,
-            creator_id: accout.id,
+            created_by: accout.id,
           },
           {
             where: { account_code: platform_accout.account_code },
@@ -168,7 +168,7 @@ export class CustomerService {
         last_login_time: Date.now(),
         last_login_ip: headers['x-real-ip'] || '',
         user_agent: headers['user-agent'],
-        creator_id: result.accout_id,
+        created_by: result.accout_id,
       });
       return result;
     }
@@ -191,7 +191,7 @@ export class CustomerService {
 
     account.phone = phone;
     account.email = email;
-    account.creator_id = user.id;
+    account.created_by = user.id;
     await account.save();
     return;
   }
@@ -199,7 +199,7 @@ export class CustomerService {
   async setAddress(requestBody: CreateOrUpdateAddressDTO, user) {
     const { id } = requestBody;
     const body: any = { ...requestBody };
-    body.creator_id = user.id;
+    body.created_by = user.id;
     body.customer_id = user.customer_id;
 
     const [attribute, created] = await this.tCustomerAddress.findOrCreate({
@@ -268,7 +268,7 @@ export class CustomerService {
     }
     const { sku_sale_price } = row;
     const body: any = { ...requestBody };
-    body.creator_id = user.id;
+    body.created_by = user.id;
     body.customer_id = customer_id;
     body.price = sku_sale_price;
     const [attribute, created] = await this.tCartItem.findOrCreate({
@@ -312,7 +312,7 @@ export class CustomerService {
   ): Promise<any> {
     const { customer_id } = user;
     const { cart_item_id_list, ...others } = requestBody;
-    const body: any = { ...others, creator_id: user.id };
+    const body: any = { ...others, created_by: user.id };
 
     const [affected_num] = await this.tCartItem.update(body, {
       where: { customer_id, id: { [Op.in]: cart_item_id_list } },
@@ -403,7 +403,7 @@ export class CustomerService {
       customer_id,
       inviter_id: superiors_customer_id,
       enabled: 1,
-      creator_id: customer_id,
+      created_by: customer_id,
     });
     return;
   }

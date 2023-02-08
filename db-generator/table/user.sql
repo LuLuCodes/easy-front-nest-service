@@ -34,8 +34,8 @@ CREATE TABLE `t_account` (
   `created_at` datetime NOT NULL COMMENT '创建时间',
   `updated_at` datetime NOT NULL COMMENT '更新时间',
   `deleted_at` datetime DEFAULT NULL COMMENT '删除时间',
-  `creator_id` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
-  `modifier_id` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
+  `created_by` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
+  `updated_by` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
   PRIMARY KEY (`id`),
   KEY `idx_account_code` (`account_code`),
   KEY `idx_email` (`email`),
@@ -57,8 +57,8 @@ CREATE TABLE `t_account_login_log` (
   `created_at` datetime NOT NULL COMMENT '创建时间',
   `updated_at` datetime NOT NULL COMMENT '更新时间',
   `deleted_at` datetime DEFAULT NULL COMMENT '删除时间',
-  `creator_id` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
-  `modifier_id` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
+  `created_by` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
+  `updated_by` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
   PRIMARY KEY (`id`),
   KEY `idx_account_code` (`account_code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='用户登录日志表';
@@ -82,8 +82,8 @@ CREATE TABLE `t_account_platform` (
   `created_at` datetime NOT NULL COMMENT '创建时间',
   `updated_at` datetime NOT NULL COMMENT '更新时间',
   `deleted_at` datetime DEFAULT NULL COMMENT '删除时间',
-  `creator_id` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
-  `modifier_id` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
+  `created_by` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
+  `updated_by` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
   PRIMARY KEY (`id`),
   KEY `idx_account_code` (`account_code`),
   KEY `idx_platform_id` (`platform_id`)
@@ -109,8 +109,8 @@ CREATE TABLE `t_customer` (
   `created_at` datetime NOT NULL COMMENT '创建时间',
   `updated_at` datetime NOT NULL COMMENT '更新时间',
   `deleted_at` datetime DEFAULT NULL COMMENT '删除时间',
-  `creator_id` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
-  `modifier_id` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
+  `created_by` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
+  `updated_by` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
   PRIMARY KEY (`id`),
   KEY `idx_account_code` (`account_code`),
   KEY `idx_customer_code` (`customer_code`),
@@ -140,8 +140,8 @@ CREATE TABLE `t_customer_address` (
   `created_at` datetime NOT NULL COMMENT '创建时间',
   `updated_at` datetime NOT NULL COMMENT '更新时间',
   `deleted_at` datetime DEFAULT NULL COMMENT '删除时间',
-  `creator_id` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
-  `modifier_id` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
+  `created_by` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
+  `updated_by` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
   PRIMARY KEY (`id`),
   KEY `idx_account_code` (`account_code`, `sort_no`),
   KEY `idx_customer_code` (`customer_code`, `sort_no`)
@@ -163,8 +163,8 @@ CREATE TABLE `t_customer_favorite` (
   `created_at` datetime NOT NULL COMMENT '创建时间',
   `updated_at` datetime NOT NULL COMMENT '更新时间',
   `deleted_at` datetime DEFAULT NULL COMMENT '删除时间',
-  `creator_id` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
-  `modifier_id` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
+  `created_by` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
+  `updated_by` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
   PRIMARY KEY (`id`),
   KEY `idx_account_code` (`account_code`, `target_type`),
   KEY `idx_customer_code` (`customer_code`, `target_type`)
@@ -183,8 +183,8 @@ CREATE TABLE `t_customer_level` (
   `created_at` datetime NOT NULL COMMENT '创建时间',
   `updated_at` datetime NOT NULL COMMENT '更新时间',
   `deleted_at` datetime DEFAULT NULL COMMENT '删除时间',
-  `creator_id` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
-  `modifier_id` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
+  `created_by` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
+  `updated_by` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
   PRIMARY KEY (`id`),
   KEY `idx_customer_level_name` (`customer_level_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='用户等级表';
@@ -204,8 +204,8 @@ CREATE TABLE `t_customer_relation` (
   `created_at` datetime NOT NULL COMMENT '创建时间',
   `updated_at` datetime NOT NULL COMMENT '更新时间',
   `deleted_at` datetime DEFAULT NULL COMMENT '删除时间',
-  `creator_id` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
-  `modifier_id` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
+  `created_by` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
+  `updated_by` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
   PRIMARY KEY (`id`),
   KEY `idx_account_code` (`account_code`),
   KEY `idx_customer_code` (`customer_code`),
@@ -233,8 +233,8 @@ CREATE TABLE `t_customer_wallet` (
   `created_at` datetime NOT NULL COMMENT '创建时间',
   `updated_at` datetime NOT NULL COMMENT '更新时间',
   `deleted_at` datetime DEFAULT NULL COMMENT '删除时间',
-  `creator_id` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
-  `modifier_id` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
+  `created_by` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
+  `updated_by` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE KEY `customer_id_UNIQUE` (`customer_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='用户钱包表';
@@ -257,8 +257,8 @@ CREATE TABLE `t_customer_wallet_log` (
   `created_at` datetime NOT NULL COMMENT '创建时间',
   `updated_at` datetime NOT NULL COMMENT '更新时间',
   `deleted_at` datetime DEFAULT NULL COMMENT '删除时间',
-  `creator_id` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
-  `modifier_id` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
+  `created_by` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
+  `updated_by` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
   PRIMARY KEY (`id`) USING BTREE,
   KEY `idx_wallet_id` (`wallet_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='用户钱包流水表';
@@ -282,8 +282,8 @@ CREATE TABLE `t_customer_profit` (
   `created_at` datetime NOT NULL COMMENT '创建时间',
   `updated_at` datetime NOT NULL COMMENT '更新时间',
   `deleted_at` datetime DEFAULT NULL COMMENT '删除时间',
-  `creator_id` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
-  `modifier_id` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
+  `created_by` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
+  `updated_by` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
   PRIMARY KEY (`id`) USING BTREE,
   KEY `idx_customer_id` (`customer_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='分佣表';

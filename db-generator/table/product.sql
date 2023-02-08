@@ -41,8 +41,8 @@ CREATE TABLE `t_product_brand` (
   `created_at` datetime NOT NULL COMMENT '创建时间',
   `updated_at` datetime NOT NULL COMMENT '更新时间',
   `deleted_at` datetime DEFAULT NULL COMMENT '删除时间',
-  `creator_id` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
-  `modifier_id` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
+  `created_by` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
+  `updated_by` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
   PRIMARY KEY (`id`),
   KEY `idx_brand_name` (`brand_name`),
   KEY `idx_sort` (`sort_no`)
@@ -71,8 +71,8 @@ CREATE TABLE `t_product_category` (
   `created_at` datetime NOT NULL COMMENT '创建时间',
   `updated_at` datetime NOT NULL COMMENT '更新时间',
   `deleted_at` datetime DEFAULT NULL COMMENT '删除时间',
-  `creator_id` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
-  `modifier_id` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
+  `created_by` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
+  `updated_by` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
   PRIMARY KEY (`id`),
   KEY `idx_pid` (`pid`, `sort_no`),
   KEY `idx_category_name` (`category_name`, `sort_no`),
@@ -94,8 +94,8 @@ CREATE TABLE `t_product_attribute_category` (
   `created_at` datetime NOT NULL COMMENT '创建时间',
   `updated_at` datetime NOT NULL COMMENT '更新时间',
   `deleted_at` datetime DEFAULT NULL COMMENT '删除时间',
-  `creator_id` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
-  `modifier_id` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
+  `created_by` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
+  `updated_by` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='商品属性分类表';
 
@@ -117,8 +117,8 @@ CREATE TABLE `t_product_attribute` (
   `created_at` datetime NOT NULL COMMENT '创建时间',
   `updated_at` datetime NOT NULL COMMENT '更新时间',
   `deleted_at` datetime DEFAULT NULL COMMENT '删除时间',
-  `creator_id` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
-  `modifier_id` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
+  `created_by` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
+  `updated_by` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
   PRIMARY KEY (`id`),
   KEY `idx_product_attribute_category_id_sort` (`product_attribute_category_id`, `sort_no`)
 )  ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='商品属性表';
@@ -137,8 +137,8 @@ CREATE TABLE `t_product_attribute_value` (
   `created_at` datetime NOT NULL COMMENT '创建时间',
   `updated_at` datetime NOT NULL COMMENT '更新时间',
   `deleted_at` datetime DEFAULT NULL COMMENT '删除时间',
-  `creator_id` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
-  `modifier_id` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
+  `created_by` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
+  `updated_by` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
   PRIMARY KEY (`id`),
   KEY `idx_product_id` (`product_id`),
   KEY `idx_product_attribute_id` (`product_id`, `product_attribute_id`)
@@ -157,8 +157,8 @@ CREATE TABLE `t_product_category_attribute_relation` (
   `created_at` datetime NOT NULL COMMENT '创建时间',
   `updated_at` datetime NOT NULL COMMENT '更新时间',
   `deleted_at` datetime DEFAULT NULL COMMENT '删除时间',
-  `creator_id` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
-  `modifier_id` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
+  `created_by` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
+  `updated_by` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
   PRIMARY KEY (`id`),
   KEY `idx_product_category_id` (`product_category_id`),
   KEY `idx_product_attribute_id` (`product_attribute_id`)
@@ -215,8 +215,8 @@ CREATE TABLE `t_product_spu` (
   `created_at` datetime NOT NULL COMMENT '创建时间',
   `updated_at` datetime NOT NULL COMMENT '更新时间',
   `deleted_at` datetime DEFAULT NULL COMMENT '删除时间',
-  `creator_id` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
-  `modifier_id` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
+  `created_by` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
+  `updated_by` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
   PRIMARY KEY (`id`),
   KEY `idx_spu_name` (`spu_name`),
   KEY `idx_brand_id` (`brand_id`),
@@ -250,8 +250,8 @@ CREATE TABLE `t_product_sku` (
   `created_at` datetime NOT NULL COMMENT '创建时间',
   `updated_at` datetime NOT NULL COMMENT '更新时间',
   `deleted_at` datetime DEFAULT NULL COMMENT '删除时间',
-  `creator_id` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
-  `modifier_id` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
+  `created_by` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
+  `updated_by` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
   PRIMARY KEY (`id`),
   KEY `idx_product_id` (`product_id`),
   KEY `idx_sku_code` (`sku_code`)
@@ -272,8 +272,8 @@ CREATE TABLE `t_spu_customer_price` (
   `created_at` datetime NOT NULL COMMENT '创建时间',
   `updated_at` datetime NOT NULL COMMENT '更新时间',
   `deleted_at` datetime DEFAULT NULL COMMENT '删除时间',
-  `creator_id` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
-  `modifier_id` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
+  `created_by` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
+  `updated_by` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
   PRIMARY KEY (`id`),
   KEY `idx_product_id` (`product_id`),
   KEY `idx_customer_level_id` (`product_id`, `customer_level_id`)
@@ -294,7 +294,7 @@ CREATE TABLE `t_sku_customer_price` (
   `created_at` datetime NOT NULL COMMENT '创建时间',
   `updated_at` datetime NOT NULL COMMENT '更新时间',
   `deleted_at` datetime DEFAULT NULL COMMENT '删除时间',
-  `modifier_id` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
+  `updated_by` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
   PRIMARY KEY (`id`),
   KEY `idx_sku_id` (`sku_id`),
   KEY `idx_customer_level_id` (`sku_id`, `customer_level_id`)
@@ -314,8 +314,8 @@ CREATE TABLE `t_spu_full_reduction` (
   `created_at` datetime NOT NULL COMMENT '创建时间',
   `updated_at` datetime NOT NULL COMMENT '更新时间',
   `deleted_at` datetime DEFAULT NULL COMMENT '删除时间',
-  `creator_id` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
-  `modifier_id` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
+  `created_by` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
+  `updated_by` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
   PRIMARY KEY (`id`),
   KEY `idx_product_id` (`product_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='商品(SPU)满减表(只针对同SPU)';
@@ -334,8 +334,8 @@ CREATE TABLE `t_sku_full_reduction` (
   `created_at` datetime NOT NULL COMMENT '创建时间',
   `updated_at` datetime NOT NULL COMMENT '更新时间',
   `deleted_at` datetime DEFAULT NULL COMMENT '删除时间',
-  `creator_id` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
-  `modifier_id` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
+  `created_by` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
+  `updated_by` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
   PRIMARY KEY (`id`),
   KEY `idx_sku_id` (`sku_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='商品(SKU)满减表(只针对同SKU)';
@@ -355,8 +355,8 @@ CREATE TABLE `t_spu_ladder` (
   `created_at` datetime NOT NULL COMMENT '创建时间',
   `updated_at` datetime NOT NULL COMMENT '更新时间',
   `deleted_at` datetime DEFAULT NULL COMMENT '删除时间',
-  `creator_id` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
-  `modifier_id` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
+  `created_by` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
+  `updated_by` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
   PRIMARY KEY (`id`),
   KEY `idx_product_id` (`product_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='商品(SPU)阶梯价格表(只针对同SPU)';
@@ -376,8 +376,8 @@ CREATE TABLE `t_sku_ladder` (
   `created_at` datetime NOT NULL COMMENT '创建时间',
   `updated_at` datetime NOT NULL COMMENT '更新时间',
   `deleted_at` datetime DEFAULT NULL COMMENT '删除时间',
-  `creator_id` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
-  `modifier_id` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
+  `created_by` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
+  `updated_by` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
   PRIMARY KEY (`id`),
   KEY `idx_sku_id` (`sku_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='商品(SKU)阶梯价格表(只针对同SKU)';
@@ -400,8 +400,8 @@ CREATE TABLE `t_product_group` (
   `created_at` datetime NOT NULL COMMENT '创建时间',
   `updated_at` datetime NOT NULL COMMENT '更新时间',
   `deleted_at` datetime DEFAULT NULL COMMENT '删除时间',
-  `creator_id` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
-  `modifier_id` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
+  `created_by` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
+  `updated_by` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
   PRIMARY KEY (`id`) USING BTREE,
   KEY `idx_group_name` (`group_name`,`sort_no`),
   KEY `idx_sort` (`sort_no`)
@@ -421,8 +421,8 @@ CREATE TABLE `t_product_group_relation` (
   `created_at` datetime NOT NULL COMMENT '创建时间',
   `updated_at` datetime NOT NULL COMMENT '更新时间',
   `deleted_at` datetime DEFAULT NULL COMMENT '删除时间',
-  `creator_id` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
-  `modifier_id` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
+  `created_by` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
+  `updated_by` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
   PRIMARY KEY (`id`) USING BTREE,
   KEY `idx_group_id` (`group_id`),
   KEY `idx_product_id` (`product_id`)

@@ -85,8 +85,8 @@ export class TCustomerWalletLog extends Model {
   deleted_at?: Date;
 
   @Column({ type: DataType.BIGINT, comment: '创建人', defaultValue: '1' })
-  creator_id?: number;
+  created_by?: number;
 
   @Column({ type: DataType.BIGINT, comment: '修改人', defaultValue: '1' })
-  modifier_id?: number;
+  updated_by?: number;
 }

@@ -37,8 +37,8 @@ CREATE TABLE `t_area` (
   `created_at` datetime NOT NULL COMMENT '创建时间',
   `updated_at` datetime NOT NULL COMMENT '更新时间',
   `deleted_at` datetime DEFAULT NULL COMMENT '删除时间',
-  `creator_id` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
-  `modifier_id` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
+  `created_by` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
+  `updated_by` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
   PRIMARY KEY (`id`),
   KEY `idx_level_sort` (`level`, `sort_no`),
   KEY `idx_parent_code_sort` (`parent_code`, `sort_no`),
@@ -57,8 +57,8 @@ CREATE TABLE `t_db_info` (
   `created_at` datetime NOT NULL COMMENT '创建时间',
   `updated_at` datetime NOT NULL COMMENT '更新时间',
   `deleted_at` datetime DEFAULT NULL COMMENT '删除时间',
-  `creator_id` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
-  `modifier_id` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
+  `created_by` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
+  `updated_by` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='数据库版本号';
 
@@ -77,8 +77,8 @@ CREATE TABLE `t_dictionary` (
   `created_at` datetime NOT NULL COMMENT '创建时间',
   `updated_at` datetime NOT NULL COMMENT '更新时间',
   `deleted_at` datetime DEFAULT NULL COMMENT '删除时间',
-  `creator_id` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
-  `modifier_id` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
+  `created_by` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
+  `updated_by` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='基础-字典表';
 
@@ -100,8 +100,8 @@ CREATE TABLE `t_swiper` (
   `created_at` datetime NOT NULL COMMENT '创建时间',
   `updated_at` datetime NOT NULL COMMENT '更新时间',
   `deleted_at` datetime DEFAULT NULL COMMENT '删除时间',
-  `creator_id` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
-  `modifier_id` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
+  `created_by` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
+  `updated_by` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
   PRIMARY KEY (`id`),
   KEY `idx_position_sort` (`position`, `sort_no`),
   KEY `idx_swiper_name_sort` (`swiper_name`, `sort_no`)
@@ -125,8 +125,8 @@ CREATE TABLE `t_feight_template` (
   `created_at` datetime NOT NULL COMMENT '创建时间',
   `updated_at` datetime NOT NULL COMMENT '更新时间',
   `deleted_at` datetime DEFAULT NULL COMMENT '删除时间',
-  `creator_id` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
-  `modifier_id` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
+  `created_by` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
+  `updated_by` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='运费模版表';
 
@@ -162,8 +162,8 @@ CREATE TABLE `t_third_platform_config` (
   `created_at` datetime NOT NULL COMMENT '创建时间',
   `updated_at` datetime NOT NULL COMMENT '更新时间',
   `deleted_at` datetime DEFAULT NULL COMMENT '删除时间',
-  `creator_id` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
-  `modifier_id` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
+  `created_by` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
+  `updated_by` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='三方平台配置';
 
@@ -180,8 +180,8 @@ CREATE TABLE `t_delivery_company` (
   `created_at` datetime NOT NULL COMMENT '创建时间',
   `updated_at` datetime NOT NULL COMMENT '更新时间',
   `deleted_at` datetime DEFAULT NULL COMMENT '删除时间',
-  `creator_id` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
-  `modifier_id` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
+  `created_by` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
+  `updated_by` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COLLATE=utf8mb4_unicode_ci;
 

@@ -33,8 +33,8 @@ CREATE TABLE `t_order_setting` (
   `created_at` datetime NOT NULL COMMENT '创建时间',
   `updated_at` datetime NOT NULL COMMENT '更新时间',
   `deleted_at` datetime DEFAULT NULL COMMENT '删除时间',
-  `creator_id` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
-  `modifier_id` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
+  `created_by` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
+  `updated_by` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='订单设置表';
 
@@ -60,8 +60,8 @@ CREATE TABLE `t_cart_item` (
   `created_at` datetime NOT NULL COMMENT '创建时间',
   `updated_at` datetime NOT NULL COMMENT '更新时间',
   `deleted_at` datetime DEFAULT NULL COMMENT '删除时间',
-  `creator_id` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
-  `modifier_id` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
+  `created_by` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
+  `updated_by` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
   PRIMARY KEY (`id`),
   KEY `idx_account_code` (`account_code`),
   KEY `idx_customer_code` (`customer_code`)
@@ -95,8 +95,8 @@ CREATE TABLE `t_order_item` (
   `created_at` datetime NOT NULL COMMENT '创建时间',
   `updated_at` datetime NOT NULL COMMENT '更新时间',
   `deleted_at` datetime DEFAULT NULL COMMENT '删除时间',
-  `creator_id` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
-  `modifier_id` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
+  `created_by` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
+  `updated_by` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
   PRIMARY KEY (`id`),
   KEY `idx_order_id` (`order_id`),
   KEY `idx_product_id` (`product_id`),
@@ -156,8 +156,8 @@ CREATE TABLE `t_order` (
   `created_at` datetime NOT NULL COMMENT '创建时间',
   `updated_at` datetime NOT NULL COMMENT '更新时间',
   `deleted_at` datetime DEFAULT NULL COMMENT '删除时间',
-  `creator_id` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
-  `modifier_id` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
+  `created_by` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
+  `updated_by` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
   PRIMARY KEY (`id`),
   KEY `idx_account_code` (`account_code`),
   KEY `idx_customer_code` (`customer_code`),
@@ -180,8 +180,8 @@ CREATE TABLE `t_order_operate_history` (
   `created_at` datetime NOT NULL COMMENT '创建时间',
   `updated_at` datetime NOT NULL COMMENT '更新时间',
   `deleted_at` datetime DEFAULT NULL COMMENT '删除时间',
-  `creator_id` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
-  `modifier_id` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
+  `created_by` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
+  `updated_by` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='订单操作历史记录';
 
@@ -198,8 +198,8 @@ CREATE TABLE `t_order_return_reason` (
   `created_at` datetime NOT NULL COMMENT '创建时间',
   `updated_at` datetime NOT NULL COMMENT '更新时间',
   `deleted_at` datetime DEFAULT NULL COMMENT '删除时间',
-  `creator_id` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
-  `modifier_id` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
+  `created_by` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
+  `updated_by` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='退货原因表';
 
@@ -236,8 +236,8 @@ CREATE TABLE `t_order_return_apply` (
   `created_at` datetime NOT NULL COMMENT '创建时间',
   `updated_at` datetime NOT NULL COMMENT '更新时间',
   `deleted_at` datetime DEFAULT NULL COMMENT '删除时间',
-  `creator_id` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
-  `modifier_id` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
+  `created_by` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
+  `updated_by` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
   PRIMARY KEY (`id`),
   KEY `idx_order_id` (`order_id`),
   KEY `idx_order_sn` (`order_sn`)
@@ -262,8 +262,8 @@ CREATE TABLE `t_order_pay_log` (
   `created_at` datetime NOT NULL COMMENT '创建时间',
   `updated_at` datetime NOT NULL COMMENT '更新时间',
   `deleted_at` datetime DEFAULT NULL COMMENT '删除时间',
-  `creator_id` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
-  `modifier_id` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
+  `created_by` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
+  `updated_by` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
   PRIMARY KEY (`id`) USING BTREE,
   KEY `idx_order_id` (`order_id`),
   KEY `idx_trade_no` (`trade_no`)
@@ -343,8 +343,8 @@ CREATE TABLE `t_order_delivery` (
   `created_at` datetime NOT NULL COMMENT '创建时间',
   `updated_at` datetime NOT NULL COMMENT '更新时间',
   `deleted_at` datetime DEFAULT NULL COMMENT '删除时间',
-  `creator_id` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
-  `modifier_id` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
+  `created_by` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
+  `updated_by` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
   PRIMARY KEY (`id`) USING BTREE,
   KEY `idx_delivery_company_id` (`delivery_company_id`),
   KEY `idx_order_id` (`order_id`),
@@ -367,8 +367,8 @@ CREATE TABLE `t_order_delivery_item` (
   `created_at` datetime NOT NULL COMMENT '创建时间',
   `updated_at` datetime NOT NULL COMMENT '更新时间',
   `deleted_at` datetime DEFAULT NULL COMMENT '删除时间',
-  `creator_id` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
-  `modifier_id` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
+  `created_by` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
+  `updated_by` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
   PRIMARY KEY (`id`) USING BTREE,
   KEY `idx_delivery_id` (`delivery_id`),
   KEY `idx_order_id` (`order_id`),
