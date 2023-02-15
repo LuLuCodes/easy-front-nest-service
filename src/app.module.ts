@@ -102,13 +102,15 @@ import while_list from '@config/white-list';
                   !attributes.dataValues.created_by &&
                   fields.includes('created_by')
                 ) {
-                  attributes.dataValues.created_by = 1;
+                  // attributes.dataValues.created_by = 1;
+                  throw new Error(`缺少created_by字段`);
                 }
                 if (
                   !attributes.dataValues.updated_by &&
                   fields.includes('updated_by')
                 ) {
-                  attributes.dataValues.updated_by = 1;
+                  attributes.dataValues.updated_by =
+                    attributes.dataValues.created_by;
                 }
                 // 注入app_id
                 // attributes.dataValues.app_id = configService.get('app.app_id');
@@ -120,27 +122,30 @@ import while_list from '@config/white-list';
                     !instance.dataValues.created_by &&
                     fields.includes('created_by')
                   ) {
-                    instance.dataValues.created_by = 1;
+                    // instance.dataValues.created_by = 1;
+                    throw new Error(`缺少created_by字段`);
                   }
                   if (
                     !instance.dataValues.updated_by &&
                     fields.includes('updated_by')
                   ) {
-                    instance.dataValues.updated_by = 1;
+                    instance.dataValues.updated_by =
+                      instance.dataValues.created_by;
                   }
                   // 注入app_id
                   // instance.dataValues.app_id = configService.get('app.app_id');
                 }
               },
               beforeUpdate(instance: any, options: any) {
-                console.log(instance);
-                console.log(options);
+                // console.log(instance);
+                // console.log(options);
                 const { fields } = options;
                 if (
                   !instance.dataValues.updated_by &&
                   fields.includes('updated_by')
                 ) {
-                  instance.dataValues.updated_by = 1;
+                  // instance.dataValues.updated_by = 1;
+                  throw new Error(`缺少updated_by字段`);
                 }
                 delete instance.dataValues.created_by;
               },
@@ -148,7 +153,8 @@ import while_list from '@config/white-list';
                 console.log(options);
                 const { attributes, fields } = options;
                 if (!attributes.updated_by && fields.includes('updated_by')) {
-                  attributes.updated_by = 1;
+                  // attributes.updated_by = 1;
+                  throw new Error(`缺少updated_by字段`);
                 }
                 delete attributes.created_by;
               },
