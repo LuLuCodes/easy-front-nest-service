@@ -2,7 +2,7 @@ import * as dotenv from 'dotenv';
 import * as path from 'path';
 
 if (process.env.NODE_ENV === 'development') {
-  dotenv.config({ path: path.resolve(__dirname, '../../../src/.env') });
+  dotenv.config({ path: path.resolve(__dirname, '../../src/.env') });
 } else {
   dotenv.config({ path: path.resolve(__dirname, '../.env') });
 }
