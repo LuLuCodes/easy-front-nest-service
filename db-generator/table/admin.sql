@@ -41,8 +41,8 @@ CREATE TABLE `t_admin` (
   `created_at` datetime NOT NULL COMMENT '创建时间',
   `updated_at` datetime NOT NULL COMMENT '更新时间',
   `deleted_at` datetime DEFAULT NULL COMMENT '删除时间',
-  `created_by` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
-  `updated_by` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
+  `created_by` bigint NOT NULL COMMENT '创建人',
+  `updated_by` bigint NOT NULL COMMENT '修改人',
   PRIMARY KEY (`id`),
   KEY `idx_email` (`email`),
   KEY `idx_phone` (`phone`),
@@ -63,8 +63,8 @@ CREATE TABLE `t_admin_login_log` (
   `created_at` datetime NOT NULL COMMENT '创建时间',
   `updated_at` datetime NOT NULL COMMENT '更新时间',
   `deleted_at` datetime DEFAULT NULL COMMENT '删除时间',
-  `created_by` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
-  `updated_by` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
+  `created_by` bigint NOT NULL COMMENT '创建人',
+  `updated_by` bigint NOT NULL COMMENT '修改人',
   PRIMARY KEY (`id`),
   KEY `idx_admin_code` (`admin_code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='后台用户登录日志表';
@@ -82,8 +82,8 @@ CREATE TABLE `t_admin_permission_relation` (
   `created_at` datetime NOT NULL COMMENT '创建时间',
   `updated_at` datetime NOT NULL COMMENT '更新时间',
   `deleted_at` datetime DEFAULT NULL COMMENT '删除时间',
-  `created_by` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
-  `updated_by` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
+  `created_by` bigint NOT NULL COMMENT '创建人',
+  `updated_by` bigint NOT NULL COMMENT '修改人',
   PRIMARY KEY (`id`),
   KEY `idx_admin_code` (`admin_code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='后台用户和权限关系表(除角色中定义的权限以外的加减权限)';
@@ -101,8 +101,8 @@ CREATE TABLE `t_admin_role_relation` (
   `created_at` datetime NOT NULL COMMENT '创建时间',
   `updated_at` datetime NOT NULL COMMENT '更新时间',
   `deleted_at` datetime DEFAULT NULL COMMENT '删除时间',
-  `created_by` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
-  `updated_by` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
+  `created_by` bigint NOT NULL COMMENT '创建人',
+  `updated_by` bigint NOT NULL COMMENT '修改人',
   PRIMARY KEY (`id`),
   KEY `idx_admin_code` (`admin_code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='后台用户和角色关系表';
@@ -131,8 +131,8 @@ CREATE TABLE `t_admin_menu` (
   `created_at` datetime NOT NULL COMMENT '创建时间',
   `updated_at` datetime NOT NULL COMMENT '更新时间',
   `deleted_at` datetime DEFAULT NULL COMMENT '删除时间',
-  `created_by` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
-  `updated_by` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
+  `created_by` bigint NOT NULL COMMENT '创建人',
+  `updated_by` bigint NOT NULL COMMENT '修改人',
   PRIMARY KEY (`id`) USING BTREE,
   KEY `idx_parent_id` (`parent_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COLLATE=utf8mb4_0900_ai_ci COMMENT='后台菜单表';
@@ -154,8 +154,8 @@ CREATE TABLE `t_admin_permission` (
   `created_at` datetime NOT NULL COMMENT '创建时间',
   `updated_at` datetime NOT NULL COMMENT '更新时间',
   `deleted_at` datetime DEFAULT NULL COMMENT '删除时间',
-  `created_by` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
-  `updated_by` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
+  `created_by` bigint NOT NULL COMMENT '创建人',
+  `updated_by` bigint NOT NULL COMMENT '修改人',
   PRIMARY KEY (`id`),
   KEY `idx_parent_id` (`parent_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='后台用户权限表';
@@ -178,8 +178,8 @@ CREATE TABLE `t_admin_role` (
   `created_at` datetime NOT NULL COMMENT '创建时间',
   `updated_at` datetime NOT NULL COMMENT '更新时间',
   `deleted_at` datetime DEFAULT NULL COMMENT '删除时间',
-  `created_by` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
-  `updated_by` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
+  `created_by` bigint NOT NULL COMMENT '创建人',
+  `updated_by` bigint NOT NULL COMMENT '修改人',
   PRIMARY KEY (`id`),
   KEY `idx_role_name` (`role_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='后台用户角色表';
@@ -197,8 +197,8 @@ CREATE TABLE `t_admin_role_permission_relation` (
   `created_at` datetime NOT NULL COMMENT '创建时间',
   `updated_at` datetime NOT NULL COMMENT '更新时间',
   `deleted_at` datetime DEFAULT NULL COMMENT '删除时间',
-  `created_by` bigint NOT NULL DEFAULT '1' COMMENT '创建人',
-  `updated_by` bigint NOT NULL DEFAULT '1' COMMENT '修改人',
+  `created_by` bigint NOT NULL COMMENT '创建人',
+  `updated_by` bigint NOT NULL COMMENT '修改人',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='后台用户角色和权限关系表';
 
