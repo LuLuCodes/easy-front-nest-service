@@ -143,31 +143,37 @@ import while_list from '@config/white-list';
                 }
               },
               beforeUpdate(instance: any, options: any) {
+                console.log(options);
                 const { fields } = options;
                 if (
                   !instance.dataValues.updated_by &&
                   fields.includes('updated_by')
                 ) {
-                  // instance.dataValues.updated_by = 1;
                   throw new Error(`缺少updated_by字段`);
                 }
                 delete instance.dataValues.created_by;
               },
               beforeBulkUpdate(options: any) {
-                console.log(options);
                 const { attributes, fields } = options;
                 if (!attributes.updated_by) {
-                  // attributes.updated_by = 1;
                   throw new Error(`缺少updated_by字段`);
+                }
+                if (fields.includes('deleted_by')) {
+                  delete attributes.updated_at;
                 }
                 delete attributes.created_by;
               },
               async afterBulkDestroy(options: any) {
-                options.updated_by = options.deleted_by;
-                delete options.deleted_by;
                 await options.model.update(
-                  { updated_by: options.updated_by },
-                  { where: options.where, paranoid: false, hook: false },
+                  {
+                    updated_by: options.deleted_by,
+                    deleted_by: options.deleted_by,
+                  },
+                  {
+                    where: options.where,
+                    paranoid: false,
+                    transaction: options.transaction,
+                  },
                 );
               },
             },
