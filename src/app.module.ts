@@ -17,6 +17,7 @@ import { CronTaskService } from '@service/cron-task.service';
 import { MqClientService } from '@service/mq.client.service';
 import { HttpService } from '@service/http.service';
 
+import { DBModule } from './db.module';
 import { InitModule } from './init.module';
 import { WxModule } from './modules/wx/wx.module';
 import { MpModule } from './modules/mp/mp.module';
@@ -202,6 +203,7 @@ import while_list from '@config/white-list';
     BullModule.registerQueue({
       name: 'api-log',
     }),
+    DBModule,
     WxModule,
     MpModule,
     WxPayModule,

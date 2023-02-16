@@ -2,7 +2,6 @@ import { Module, OnModuleInit } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CacheService } from '@service/cache.service';
 import { InjectModel } from '@nestjs/sequelize';
-import { DBModule } from './db.module';
 import { CacheKey } from '@config/global';
 import { Op } from 'sequelize';
 import { TThirdPlatformConfig } from '@models/TThirdPlatformConfig';
@@ -13,7 +12,7 @@ import * as fs from 'fs';
 import { resolve } from 'path';
 
 @Module({
-  imports: [DBModule, ConfigModule],
+  imports: [ConfigModule],
   providers: [CacheService],
 })
 export class InitModule implements OnModuleInit {

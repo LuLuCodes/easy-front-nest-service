@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, Global } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
 import {
   TAdmin,
@@ -36,6 +36,7 @@ import {
   TThirdPlatformConfig,
 } from '@models/index';
 
+@Global()
 @Module({
   imports: [
     SequelizeModule.forFeature([
