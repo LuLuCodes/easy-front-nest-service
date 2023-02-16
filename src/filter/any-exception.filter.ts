@@ -37,8 +37,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     logger.error(logFormat);
 
     const errorResponse = ErrorResponse(ResponseCode.SYS_ERROR, message);
-
-    response.status(status);
+    response.status(200);
     response.header('Content-Type', 'application/json; charset=utf-8');
     response.send(errorResponse);
   }

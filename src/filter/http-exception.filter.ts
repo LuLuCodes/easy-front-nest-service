@@ -1,3 +1,13 @@
+/*
+ * @Author: leyi leyi@myun.info
+ * @Date: 2021-09-22 21:55:56
+ * @LastEditors: leyi leyi@myun.info
+ * @LastEditTime: 2023-02-16 21:05:29
+ * @FilePath: /easy-front-nest-service/src/filter/http-exception.filter.ts
+ * @Description:
+ *
+ * Copyright (c) 2023 by ${git_name_email}, All Rights Reserved.
+ */
 import {
   ExceptionFilter,
   Catch,
@@ -31,11 +41,8 @@ export class HttpExceptionFilter implements ExceptionFilter {
     Response: ${exception.toString()} \n  <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     `;
     logger.error(logFormat);
-
-    const errorResponse = ErrorResponse(ResponseCode.SYS_ERROR, message);
-
     response.status(status);
     response.header('Content-Type', 'application/json; charset=utf-8');
-    response.send(errorResponse);
+    response.send(message);
   }
 }
