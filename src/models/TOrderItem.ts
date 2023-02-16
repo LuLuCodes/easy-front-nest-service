@@ -132,9 +132,9 @@ export class TOrderItem extends Model {
   @Column({ allowNull: true, type: DataType.DATE, comment: '删除时间' })
   deleted_at?: Date;
 
-  @Column({ type: DataType.BIGINT, comment: '创建人', defaultValue: '1' })
-  created_by?: number;
+  @Column({ type: DataType.BIGINT, comment: '创建人' })
+  created_by!: number;
 
-  @Column({ type: DataType.BIGINT, comment: '修改人', defaultValue: '1' })
-  updated_by?: number;
+  @Column({ type: DataType.BIGINT, comment: '修改人' })
+  updated_by!: number;
 }
