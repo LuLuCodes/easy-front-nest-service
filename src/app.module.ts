@@ -136,9 +136,12 @@ import while_list from '@config/white-list';
                   // instance.dataValues.app_id = configService.get('app.app_id');
                 }
               },
+              beforeBulkDestroy(options: any) {
+                if (!options.deleted_by) {
+                  throw new Error(`缺少deleted_by字段`);
+                }
+              },
               beforeUpdate(instance: any, options: any) {
-                // console.log(instance);
-                // console.log(options);
                 const { fields } = options;
                 if (
                   !instance.dataValues.updated_by &&
@@ -152,11 +155,19 @@ import while_list from '@config/white-list';
               beforeBulkUpdate(options: any) {
                 console.log(options);
                 const { attributes, fields } = options;
-                if (!attributes.updated_by && fields.includes('updated_by')) {
+                if (!attributes.updated_by) {
                   // attributes.updated_by = 1;
                   throw new Error(`缺少updated_by字段`);
                 }
                 delete attributes.created_by;
+              },
+              async afterBulkDestroy(options: any) {
+                options.updated_by = options.deleted_by;
+                delete options.deleted_by;
+                await options.model.update(
+                  { updated_by: options.updated_by },
+                  { where: options.where, paranoid: false, hook: false },
+                );
               },
             },
           },
