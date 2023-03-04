@@ -268,12 +268,12 @@ const createDTO = async (
     };
     columnsMetadata.push(columnMetadata);
   }
-  const createDTOName = `Create${dbModelName.slice(1)}DTO`;
+  const addDTOName = `Add${dbModelName.slice(1)}DTO`;
   const updateDTOName = `Update${dbModelName.slice(1)}DTO`;
   const getDTOName = `Get${dbModelName.slice(1)}DTO`;
   const delDTOName = `Delete${dbModelName.slice(1)}DTO`;
 
-  let createDTOContent = `export class ${createDTOName} extends BaseDTO {}`;
+  let addDTOContent = `export class ${addDTOName} extends BaseDTO {}`;
   let updateDTOContent = `export class ${updateDTOName} extends BaseDTO {}`;
   let getDTOContent = `export class ${getDTOName} extends QueryDTO {}`;
   let delDTOContent = `export class ${delDTOName} extends BaseDTO {}`;
@@ -297,10 +297,7 @@ const createDTO = async (
     };`;
 
     if (!primaryKey && !immutableColumnsDTO.includes(name)) {
-      createDTOContent = createDTOContent.replace(
-        /}$/,
-        `  ${columnDTOContent}\n}`,
-      );
+      addDTOContent = addDTOContent.replace(/}$/, `  ${columnDTOContent}\n}`);
     }
 
     updateDTOContent = updateDTOContent.replace(
@@ -322,16 +319,16 @@ const createDTO = async (
   }
 
   dtoFileContent = `${dtoFileContent}
-                    ${createDTOContent} 
+                    ${addDTOContent} 
                     ${updateDTOContent}
                     ${getDTOContent}
                     ${delDTOContent}`;
   fs.writeFileSync(dtoFullPath, dtoFileContent, 'utf8');
-  return { createDTOName, updateDTOName, getDTOName, delDTOName };
+  return { addDTOName, updateDTOName, getDTOName, delDTOName };
 };
 
 const createControlFun = async ({
-  createDTOName,
+  addDTOName,
   updateDTOName,
   getDTOName,
   delDTOName,
@@ -352,10 +349,10 @@ const createControlFun = async ({
 
   if (controllerFileContent.includes(`${moduleName}.dto`)) {
     const regex = new RegExp(`}(\\s*)from\\s*['"].*${moduleName}\\.dto['"]`);
-    if (!controllerFileContent.includes(createDTOName)) {
+    if (!controllerFileContent.includes(addDTOName)) {
       controllerFileContent = controllerFileContent.replace(
         regex,
-        `,${createDTOName} $&`,
+        `,${addDTOName} $&`,
       );
     }
     if (!controllerFileContent.includes(updateDTOName)) {
@@ -378,41 +375,39 @@ const createControlFun = async ({
     }
   } else {
     controllerFileContent = `import {
-        ${createDTOName}, ${updateDTOName}, ${getDTOName}, ${delDTOName}
+        ${addDTOName}, ${updateDTOName}, ${getDTOName}, ${delDTOName}
       } from './${moduleName}.dto';\n\n${controllerFileContent}`;
   }
 
   const regex = /(\s*})(\s*)$/;
   if (
-    !controllerFileContent.includes(
-      `async ${createDTOName.replace('DTO', '')}(`,
-    )
+    !controllerFileContent.includes(`async ${addDTOName.replace('DTO', '')}(`)
   ) {
-    const createFun = `
+    const addFun = `
     @ApiOperation({
-      summary: '${createDTOName.replace('DTO', '')}',
-      description: '${createDTOName.replace('DTO', '')}',
+      summary: '${addDTOName.replace('DTO', '')}',
+      description: '${addDTOName.replace('DTO', '')}',
     })
     @ApiBody({
       description: '请求参数',
-      type: ${createDTOName},
+      type: ${addDTOName},
     })
     @UsePipes(new ValidationPipe({ transform: true }))
-    @Post('${convertToSnakeCase(createDTOName.replace('DTO', ''), '-')}')
-    async ${lowerCaseFirstLetter(createDTOName.replace('DTO', ''))}(
+    @Post('${convertToSnakeCase(addDTOName.replace('DTO', ''), '-')}')
+    async ${lowerCaseFirstLetter(addDTOName.replace('DTO', ''))}(
       @Session() session,
-      @Body() body: ${createDTOName},
+      @Body() body: ${addDTOName},
     ): Promise<any> {
       const { user } = session;
       const response = await this.${moduleName}Service.${lowerCaseFirstLetter(
-      createDTOName.replace('DTO', ''),
+      addDTOName.replace('DTO', ''),
     )}(body, user);
       return response;
     }`;
 
     controllerFileContent = controllerFileContent.replace(
       regex,
-      `\n\n${createFun}\n$1$2`,
+      `\n\n${addFun}\n$1$2`,
     );
   }
 
@@ -516,7 +511,7 @@ const createControlFun = async ({
 
 const createServiceFun = async ({
   dbModelName,
-  createDTOName,
+  addDTOName,
   updateDTOName,
   getDTOName,
   delDTOName,
@@ -537,10 +532,10 @@ const createServiceFun = async ({
 
   if (serivceFileContent.includes(`${moduleName}.dto`)) {
     const regex = new RegExp(`}(\\s*)from\\s*['"].*${moduleName}\\.dto['"]`);
-    if (!serivceFileContent.includes(createDTOName)) {
+    if (!serivceFileContent.includes(addDTOName)) {
       serivceFileContent = serivceFileContent.replace(
         regex,
-        `,${createDTOName} $&`,
+        `,${addDTOName} $&`,
       );
     }
     if (!serivceFileContent.includes(updateDTOName)) {
@@ -563,7 +558,7 @@ const createServiceFun = async ({
     }
   } else {
     serivceFileContent = `import {
-        ${createDTOName}, ${updateDTOName}, ${getDTOName}, ${delDTOName}
+        ${addDTOName}, ${updateDTOName}, ${getDTOName}, ${delDTOName}
       } from './${moduleName}.dto';\n\n${serivceFileContent}`;
   }
 
@@ -591,24 +586,24 @@ const createServiceFun = async ({
   regex = /(\s*})(\s*)$/;
   if (
     !serivceFileContent.includes(
-      `async ${lowerCaseFirstLetter(createDTOName.replace('DTO', ''))}(`,
+      `async ${lowerCaseFirstLetter(addDTOName.replace('DTO', ''))}(`,
     )
   ) {
-    const createFun = `
+    const addFun = `
     async ${lowerCaseFirstLetter(
-      createDTOName.replace('DTO', ''),
-    )}(requestBody: ${createDTOName}, user:any): Promise<any> {
-      const create_data = {...requestBody, created_by: user.customer_id};
+      addDTOName.replace('DTO', ''),
+    )}(requestBody: ${addDTOName}, user:any): Promise<any> {
+      const add_data = {...requestBody, created_by: user.customer_id ?? 1};
       const attribute = await this.${lowerCaseFirstLetter(
         dbModelName,
-      )}.create(create_data);
+      )}.create(add_data);
         return { id: attribute.id };
     }
     `;
 
     serivceFileContent = serivceFileContent.replace(
       regex,
-      `\n\n${createFun}\n$1$2`,
+      `\n\n${addFun}\n$1$2`,
     );
   }
 
@@ -622,8 +617,8 @@ const createServiceFun = async ({
       updateDTOName.replace('DTO', ''),
     )}(requestBody: ${updateDTOName}, user:any): Promise<any> {
       const {id, ...otherRequestBody} = requestBody
-      const update_data = {...otherRequestBody, updated_by: user.customer_id};
-      const attribute = await this.${lowerCaseFirstLetter(dbModelName)}.update(
+      const update_data = {...otherRequestBody, updated_by: user.customer_id ?? 1};
+      await this.${lowerCaseFirstLetter(dbModelName)}.update(
         update_data,
         {
           where: {
@@ -676,8 +671,9 @@ const createServiceFun = async ({
     )}(requestBody: ${delDTOName}, user:any): Promise<any> {
       const { id } = requestBody
       const row = await this.${lowerCaseFirstLetter(dbModelName)}.destroy({
-        where: { id },    
-      });
+        where: { id },
+        deleted_by: user.customer_id ?? 1,
+      } as any);
       return row;  
     }
     `;
@@ -733,10 +729,12 @@ export async function run() {
   // console.log(`dtoFullPath:`, dtoFullPath);
   // console.log(`serviceFullPath:`, serviceFullPath);
 
-  const { createDTOName, updateDTOName, getDTOName, delDTOName } =
-    await createDTO(dbModelName, dtoFullPath);
+  const { addDTOName, updateDTOName, getDTOName, delDTOName } = await createDTO(
+    dbModelName,
+    dtoFullPath,
+  );
   await createControlFun({
-    createDTOName,
+    addDTOName,
     updateDTOName,
     getDTOName,
     delDTOName,
@@ -745,7 +743,7 @@ export async function run() {
 
   await createServiceFun({
     dbModelName,
-    createDTOName,
+    addDTOName,
     updateDTOName,
     getDTOName,
     delDTOName,

@@ -216,7 +216,7 @@ var getColumnValidator = function (columnName, columnComment, columnType, column
     return '';
 };
 var createDTO = function (dbModelName, dtoFullPath) { return __awaiter(void 0, void 0, void 0, function () {
-    var realTableName, immutableColumnsDTO, sequelize, query, columns, columnsMetadata, _i, columns_1, column, columnMetadata, createDTOName, updateDTOName, getDTOName, delDTOName, createDTOContent, updateDTOContent, getDTOContent, delDTOContent, _a, columnsMetadata_1, columnMetadata, name_1, type, allowNull, primaryKey, comment, defaultValue, dtoColumnType, columnRequired, columnDTOContent, dtoFileContent;
+    var realTableName, immutableColumnsDTO, sequelize, query, columns, columnsMetadata, _i, columns_1, column, columnMetadata, addDTOName, updateDTOName, getDTOName, delDTOName, addDTOContent, updateDTOContent, getDTOContent, delDTOContent, _a, columnsMetadata_1, columnMetadata, name_1, type, allowNull, primaryKey, comment, defaultValue, dtoColumnType, columnRequired, columnDTOContent, dtoFileContent;
     var _b;
     return __generator(this, function (_c) {
         switch (_c.label) {
@@ -260,11 +260,11 @@ var createDTO = function (dbModelName, dtoFullPath) { return __awaiter(void 0, v
                     };
                     columnsMetadata.push(columnMetadata);
                 }
-                createDTOName = "Create".concat(dbModelName.slice(1), "DTO");
+                addDTOName = "Add".concat(dbModelName.slice(1), "DTO");
                 updateDTOName = "Update".concat(dbModelName.slice(1), "DTO");
                 getDTOName = "Get".concat(dbModelName.slice(1), "DTO");
                 delDTOName = "Delete".concat(dbModelName.slice(1), "DTO");
-                createDTOContent = "export class ".concat(createDTOName, " extends BaseDTO {}");
+                addDTOContent = "export class ".concat(addDTOName, " extends BaseDTO {}");
                 updateDTOContent = "export class ".concat(updateDTOName, " extends BaseDTO {}");
                 getDTOContent = "export class ".concat(getDTOName, " extends QueryDTO {}");
                 delDTOContent = "export class ".concat(delDTOName, " extends BaseDTO {}");
@@ -279,7 +279,7 @@ var createDTO = function (dbModelName, dtoFullPath) { return __awaiter(void 0, v
                             ? 'number'
                             : dtoColumnType), ";");
                     if (!primaryKey && !immutableColumnsDTO.includes(name_1)) {
-                        createDTOContent = createDTOContent.replace(/}$/, "  ".concat(columnDTOContent, "\n}"));
+                        addDTOContent = addDTOContent.replace(/}$/, "  ".concat(columnDTOContent, "\n}"));
                     }
                     updateDTOContent = updateDTOContent.replace(/}$/, "  ".concat(columnDTOContent, "\n}"));
                     getDTOContent = getDTOContent.replace(/}$/, "  ".concat(columnDTOContent, "\n}"));
@@ -295,16 +295,16 @@ var createDTO = function (dbModelName, dtoFullPath) { return __awaiter(void 0, v
                 if (!dtoFileContent) {
                     dtoFileContent = "".concat(template_1.DTOTemplate);
                 }
-                dtoFileContent = "".concat(dtoFileContent, "\n                    ").concat(createDTOContent, " \n                    ").concat(updateDTOContent, "\n                    ").concat(getDTOContent, "\n                    ").concat(delDTOContent);
+                dtoFileContent = "".concat(dtoFileContent, "\n                    ").concat(addDTOContent, " \n                    ").concat(updateDTOContent, "\n                    ").concat(getDTOContent, "\n                    ").concat(delDTOContent);
                 fs.writeFileSync(dtoFullPath, dtoFileContent, 'utf8');
-                return [2 /*return*/, { createDTOName: createDTOName, updateDTOName: updateDTOName, getDTOName: getDTOName, delDTOName: delDTOName }];
+                return [2 /*return*/, { addDTOName: addDTOName, updateDTOName: updateDTOName, getDTOName: getDTOName, delDTOName: delDTOName }];
         }
     });
 }); };
 var createControlFun = function (_a) {
-    var createDTOName = _a.createDTOName, updateDTOName = _a.updateDTOName, getDTOName = _a.getDTOName, delDTOName = _a.delDTOName, controllerFullPath = _a.controllerFullPath;
+    var addDTOName = _a.addDTOName, updateDTOName = _a.updateDTOName, getDTOName = _a.getDTOName, delDTOName = _a.delDTOName, controllerFullPath = _a.controllerFullPath;
     return __awaiter(void 0, void 0, void 0, function () {
-        var controllerFileContent, moduleName, regex_1, regex, createFun, updateFun, getFun, delFun;
+        var controllerFileContent, moduleName, regex_1, regex, addFun, updateFun, getFun, delFun;
         return __generator(this, function (_b) {
             if (!(0, fs_extra_1.pathExists)(controllerFullPath)) {
                 throw new Error('controller file not exists');
@@ -319,8 +319,8 @@ var createControlFun = function (_a) {
             moduleName = "".concat(controllerFullPath.split('/').pop().split('.')[0]);
             if (controllerFileContent.includes("".concat(moduleName, ".dto"))) {
                 regex_1 = new RegExp("}(\\s*)from\\s*['\"].*".concat(moduleName, "\\.dto['\"]"));
-                if (!controllerFileContent.includes(createDTOName)) {
-                    controllerFileContent = controllerFileContent.replace(regex_1, ",".concat(createDTOName, " $&"));
+                if (!controllerFileContent.includes(addDTOName)) {
+                    controllerFileContent = controllerFileContent.replace(regex_1, ",".concat(addDTOName, " $&"));
                 }
                 if (!controllerFileContent.includes(updateDTOName)) {
                     controllerFileContent = controllerFileContent.replace(regex_1, ",".concat(updateDTOName, " $&"));
@@ -333,12 +333,12 @@ var createControlFun = function (_a) {
                 }
             }
             else {
-                controllerFileContent = "import {\n        ".concat(createDTOName, ", ").concat(updateDTOName, ", ").concat(getDTOName, ", ").concat(delDTOName, "\n      } from './").concat(moduleName, ".dto';\n\n").concat(controllerFileContent);
+                controllerFileContent = "import {\n        ".concat(addDTOName, ", ").concat(updateDTOName, ", ").concat(getDTOName, ", ").concat(delDTOName, "\n      } from './").concat(moduleName, ".dto';\n\n").concat(controllerFileContent);
             }
             regex = /(\s*})(\s*)$/;
-            if (!controllerFileContent.includes("async ".concat(createDTOName.replace('DTO', ''), "("))) {
-                createFun = "\n    @ApiOperation({\n      summary: '".concat(createDTOName.replace('DTO', ''), "',\n      description: '").concat(createDTOName.replace('DTO', ''), "',\n    })\n    @ApiBody({\n      description: '\u8BF7\u6C42\u53C2\u6570',\n      type: ").concat(createDTOName, ",\n    })\n    @UsePipes(new ValidationPipe({ transform: true }))\n    @Post('").concat(convertToSnakeCase(createDTOName.replace('DTO', ''), '-'), "')\n    async ").concat(lowerCaseFirstLetter(createDTOName.replace('DTO', '')), "(\n      @Session() session,\n      @Body() body: ").concat(createDTOName, ",\n    ): Promise<any> {\n      const { user } = session;\n      const response = await this.").concat(moduleName, "Service.").concat(lowerCaseFirstLetter(createDTOName.replace('DTO', '')), "(body, user);\n      return response;\n    }");
-                controllerFileContent = controllerFileContent.replace(regex, "\n\n".concat(createFun, "\n$1$2"));
+            if (!controllerFileContent.includes("async ".concat(addDTOName.replace('DTO', ''), "("))) {
+                addFun = "\n    @ApiOperation({\n      summary: '".concat(addDTOName.replace('DTO', ''), "',\n      description: '").concat(addDTOName.replace('DTO', ''), "',\n    })\n    @ApiBody({\n      description: '\u8BF7\u6C42\u53C2\u6570',\n      type: ").concat(addDTOName, ",\n    })\n    @UsePipes(new ValidationPipe({ transform: true }))\n    @Post('").concat(convertToSnakeCase(addDTOName.replace('DTO', ''), '-'), "')\n    async ").concat(lowerCaseFirstLetter(addDTOName.replace('DTO', '')), "(\n      @Session() session,\n      @Body() body: ").concat(addDTOName, ",\n    ): Promise<any> {\n      const { user } = session;\n      const response = await this.").concat(moduleName, "Service.").concat(lowerCaseFirstLetter(addDTOName.replace('DTO', '')), "(body, user);\n      return response;\n    }");
+                controllerFileContent = controllerFileContent.replace(regex, "\n\n".concat(addFun, "\n$1$2"));
             }
             if (!controllerFileContent.includes("async ".concat(updateDTOName.replace('DTO', ''), "("))) {
                 updateFun = "\n    @ApiOperation({\n      summary: '".concat(updateDTOName.replace('DTO', ''), "',\n      description: '").concat(updateDTOName.replace('DTO', ''), "',\n    })\n    @ApiBody({\n      description: '\u8BF7\u6C42\u53C2\u6570',\n      type: ").concat(updateDTOName, ",\n    })\n    @UsePipes(new ValidationPipe({ transform: true }))\n    @Post('").concat(convertToSnakeCase(updateDTOName.replace('DTO', ''), '-'), "')\n    async ").concat(lowerCaseFirstLetter(updateDTOName.replace('DTO', '')), "(\n      @Session() session,\n      @Body() body: ").concat(updateDTOName, ",\n    ): Promise<any> {\n      const { user } = session;\n      const response = await this.").concat(moduleName, "Service.").concat(lowerCaseFirstLetter(updateDTOName.replace('DTO', '')), "(body, user);\n      return response;\n    }");
@@ -358,9 +358,9 @@ var createControlFun = function (_a) {
     });
 };
 var createServiceFun = function (_a) {
-    var dbModelName = _a.dbModelName, createDTOName = _a.createDTOName, updateDTOName = _a.updateDTOName, getDTOName = _a.getDTOName, delDTOName = _a.delDTOName, serviceFullPath = _a.serviceFullPath;
+    var dbModelName = _a.dbModelName, addDTOName = _a.addDTOName, updateDTOName = _a.updateDTOName, getDTOName = _a.getDTOName, delDTOName = _a.delDTOName, serviceFullPath = _a.serviceFullPath;
     return __awaiter(void 0, void 0, void 0, function () {
-        var serivceFileContent, moduleName, regex_2, regex_3, regex, newArg, createFun, updateFun, getFun, getFun;
+        var serivceFileContent, moduleName, regex_2, regex_3, regex, newArg, addFun, updateFun, getFun, getFun;
         return __generator(this, function (_b) {
             if (!(0, fs_extra_1.pathExists)(serviceFullPath)) {
                 throw new Error('controller file not exists');
@@ -375,8 +375,8 @@ var createServiceFun = function (_a) {
             moduleName = "".concat(serviceFullPath.split('/').pop().split('.')[0]);
             if (serivceFileContent.includes("".concat(moduleName, ".dto"))) {
                 regex_2 = new RegExp("}(\\s*)from\\s*['\"].*".concat(moduleName, "\\.dto['\"]"));
-                if (!serivceFileContent.includes(createDTOName)) {
-                    serivceFileContent = serivceFileContent.replace(regex_2, ",".concat(createDTOName, " $&"));
+                if (!serivceFileContent.includes(addDTOName)) {
+                    serivceFileContent = serivceFileContent.replace(regex_2, ",".concat(addDTOName, " $&"));
                 }
                 if (!serivceFileContent.includes(updateDTOName)) {
                     serivceFileContent = serivceFileContent.replace(regex_2, ",".concat(updateDTOName, " $&"));
@@ -389,7 +389,7 @@ var createServiceFun = function (_a) {
                 }
             }
             else {
-                serivceFileContent = "import {\n        ".concat(createDTOName, ", ").concat(updateDTOName, ", ").concat(getDTOName, ", ").concat(delDTOName, "\n      } from './").concat(moduleName, ".dto';\n\n").concat(serivceFileContent);
+                serivceFileContent = "import {\n        ".concat(addDTOName, ", ").concat(updateDTOName, ", ").concat(getDTOName, ", ").concat(delDTOName, "\n      } from './").concat(moduleName, ".dto';\n\n").concat(serivceFileContent);
             }
             if (serivceFileContent.includes("} from '@models/index")) {
                 regex_3 = new RegExp("}(\\s*)from\\s*['\"].*@models/index['\"]");
@@ -406,12 +406,12 @@ var createServiceFun = function (_a) {
                 serivceFileContent = serivceFileContent.replace(regex, "$1 ".concat(newArg, ")$2"));
             }
             regex = /(\s*})(\s*)$/;
-            if (!serivceFileContent.includes("async ".concat(lowerCaseFirstLetter(createDTOName.replace('DTO', '')), "("))) {
-                createFun = "\n    async ".concat(lowerCaseFirstLetter(createDTOName.replace('DTO', '')), "(requestBody: ").concat(createDTOName, ", user:any): Promise<any> {\n      const create_data = {...requestBody, created_by: user.customer_id};\n      const attribute = await this.").concat(lowerCaseFirstLetter(dbModelName), ".create(create_data);\n        return { id: attribute.id };\n    }\n    ");
-                serivceFileContent = serivceFileContent.replace(regex, "\n\n".concat(createFun, "\n$1$2"));
+            if (!serivceFileContent.includes("async ".concat(lowerCaseFirstLetter(addDTOName.replace('DTO', '')), "("))) {
+                addFun = "\n    async ".concat(lowerCaseFirstLetter(addDTOName.replace('DTO', '')), "(requestBody: ").concat(addDTOName, ", user:any): Promise<any> {\n      const add_data = {...requestBody, created_by: user.customer_id ?? 1};\n      const attribute = await this.").concat(lowerCaseFirstLetter(dbModelName), ".create(add_data);\n        return { id: attribute.id };\n    }\n    ");
+                serivceFileContent = serivceFileContent.replace(regex, "\n\n".concat(addFun, "\n$1$2"));
             }
             if (!serivceFileContent.includes("async ".concat(lowerCaseFirstLetter(updateDTOName.replace('DTO', '')), "("))) {
-                updateFun = "\n    async ".concat(lowerCaseFirstLetter(updateDTOName.replace('DTO', '')), "(requestBody: ").concat(updateDTOName, ", user:any): Promise<any> {\n      const {id, ...otherRequestBody} = requestBody\n      const update_data = {...otherRequestBody, updated_by: user.customer_id};\n      const attribute = await this.").concat(lowerCaseFirstLetter(dbModelName), ".update(\n        update_data,\n        {\n          where: {\n            id,\n          },\n        });\n        return { id };\n      }\n    ");
+                updateFun = "\n    async ".concat(lowerCaseFirstLetter(updateDTOName.replace('DTO', '')), "(requestBody: ").concat(updateDTOName, ", user:any): Promise<any> {\n      const {id, ...otherRequestBody} = requestBody\n      const update_data = {...otherRequestBody, updated_by: user.customer_id ?? 1};\n      await this.").concat(lowerCaseFirstLetter(dbModelName), ".update(\n        update_data,\n        {\n          where: {\n            id,\n          },\n        });\n        return { id };\n      }\n    ");
                 serivceFileContent = serivceFileContent.replace(regex, "\n\n".concat(updateFun, "\n$1$2"));
             }
             if (!serivceFileContent.includes("async ".concat(lowerCaseFirstLetter(getDTOName.replace('DTO', '')), "("))) {
@@ -419,7 +419,7 @@ var createServiceFun = function (_a) {
                 serivceFileContent = serivceFileContent.replace(regex, "\n\n".concat(getFun, "\n$1$2"));
             }
             if (!serivceFileContent.includes("async ".concat(lowerCaseFirstLetter(delDTOName.replace('DTO', '')), "("))) {
-                getFun = "\n    async ".concat(lowerCaseFirstLetter(delDTOName.replace('DTO', '')), "(requestBody: ").concat(delDTOName, ", user:any): Promise<any> {\n      const { id } = requestBody\n      const row = await this.").concat(lowerCaseFirstLetter(dbModelName), ".destroy({\n        where: { id },    \n      });\n      return row;  \n    }\n    ");
+                getFun = "\n    async ".concat(lowerCaseFirstLetter(delDTOName.replace('DTO', '')), "(requestBody: ").concat(delDTOName, ", user:any): Promise<any> {\n      const { id } = requestBody\n      const row = await this.").concat(lowerCaseFirstLetter(dbModelName), ".destroy({\n        where: { id },\n        deleted_by: user.customer_id ?? 1,\n      } as any);\n      return row;  \n    }\n    ");
                 serivceFileContent = serivceFileContent.replace(regex, "\n\n".concat(getFun, "\n$1$2"));
             }
             fs.writeFileSync(serviceFullPath, serivceFileContent, 'utf8');
@@ -429,7 +429,7 @@ var createServiceFun = function (_a) {
 };
 function run() {
     return __awaiter(this, void 0, void 0, function () {
-        var dbModels, dbModelNames, db_model_name, dbModel, dbModelName, dbModelFullPath, controllers, controllerNames, controller_name, module, controllerName, controllerFullPath, dtoFullPath, serviceFullPath, _a, createDTOName, updateDTOName, getDTOName, delDTOName, lnitEngine, report;
+        var dbModels, dbModelNames, db_model_name, dbModel, dbModelName, dbModelFullPath, controllers, controllerNames, controller_name, module, controllerName, controllerFullPath, dtoFullPath, serviceFullPath, _a, addDTOName, updateDTOName, getDTOName, delDTOName, lnitEngine, report;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0: return [4 /*yield*/, readDbModels('../src/models')];
@@ -464,9 +464,9 @@ function run() {
                     serviceFullPath = controllerFullPath.replace('.controller.ts', '.service.ts');
                     return [4 /*yield*/, createDTO(dbModelName, dtoFullPath)];
                 case 5:
-                    _a = _b.sent(), createDTOName = _a.createDTOName, updateDTOName = _a.updateDTOName, getDTOName = _a.getDTOName, delDTOName = _a.delDTOName;
+                    _a = _b.sent(), addDTOName = _a.addDTOName, updateDTOName = _a.updateDTOName, getDTOName = _a.getDTOName, delDTOName = _a.delDTOName;
                     return [4 /*yield*/, createControlFun({
-                            createDTOName: createDTOName,
+                            addDTOName: addDTOName,
                             updateDTOName: updateDTOName,
                             getDTOName: getDTOName,
                             delDTOName: delDTOName,
@@ -476,7 +476,7 @@ function run() {
                     _b.sent();
                     return [4 /*yield*/, createServiceFun({
                             dbModelName: dbModelName,
-                            createDTOName: createDTOName,
+                            addDTOName: addDTOName,
                             updateDTOName: updateDTOName,
                             getDTOName: getDTOName,
                             delDTOName: delDTOName,
