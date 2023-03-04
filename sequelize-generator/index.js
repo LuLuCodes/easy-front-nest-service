@@ -36,69 +36,47 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-/*
- * @Author: leyi leyi@myun.info
- * @Date: 2022-09-07 09:17:35
- * @LastEditors: leyi leyi@myun.info
- * @LastEditTime: 2023-02-02 19:14:34
- * @FilePath: /easy-front-nest-service/sequelize-generator/index.ts
- * @Description:
- *
- * Copyright (c) 2023 by ${git_name_email}, All Rights Reserved.
- */
-var easy_front_sequelize_generator_1 = require("easy-front-sequelize-generator");
-var path_1 = require("path");
-var dotenv = require("dotenv");
-dotenv.config({ path: (0, path_1.resolve)(__dirname, '../src/.env') });
+var Inquirer = require("inquirer");
+var SyncModel = require("./sync-model");
+var AutoGenerateCrud = require("./auto-generate-crud");
+var Chalk = require("chalk");
+var Options;
+(function (Options) {
+    Options["SYNC_MODELS_FROM_DB"] = "sync models from database";
+    Options["AUTO_GENERATE_CRUD_FOR_MODEL"] = "auto generate crud for model";
+})(Options || (Options = {}));
 (function () { return __awaiter(void 0, void 0, void 0, function () {
-    var config, dialect, builder, err_1;
+    var options, option;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                config = {
-                    connection: {
-                        dialect: 'mysql',
-                        host: process.env.DB_HOST,
-                        port: parseInt(process.env.DB_PORT),
-                        database: process.env.DB_NAME,
-                        username: process.env.DB_USERNAME,
-                        password: process.env.DB_PASSWORD
-                    },
-                    metadata: {
-                        indices: true,
-                        "case": {
-                            model: 'PASCAL',
-                            column: 'LOWER'
-                        },
-                        timestamps: true,
-                        paranoid: true,
-                        aliasFields: {
-                            deletedAt: 'deleted_at',
-                            createdAt: 'created_at',
-                            updatedAt: 'updated_at'
-                        }
-                    },
-                    output: {
-                        clean: true,
-                        outDir: (0, path_1.resolve)(__dirname, '../src/models')
-                    },
-                    strict: false
-                };
-                dialect = new easy_front_sequelize_generator_1.DialectMySQL();
-                builder = new easy_front_sequelize_generator_1.ModelBuilder(config, dialect);
-                _a.label = 1;
+                options = [
+                    Options.SYNC_MODELS_FROM_DB,
+                    Options.AUTO_GENERATE_CRUD_FOR_MODEL,
+                ];
+                return [4 /*yield*/, Inquirer.prompt({
+                        name: 'option',
+                        type: 'list',
+                        choices: options,
+                        message: 'Please choose a option'
+                    })];
             case 1:
-                _a.trys.push([1, 3, , 4]);
-                return [4 /*yield*/, builder.build()];
+                option = (_a.sent()).option;
+                if (!(option === Options.SYNC_MODELS_FROM_DB)) return [3 /*break*/, 3];
+                return [4 /*yield*/, SyncModel.run()];
             case 2:
                 _a.sent();
-                return [3 /*break*/, 4];
+                return [3 /*break*/, 6];
             case 3:
-                err_1 = _a.sent();
-                console.error(err_1);
-                process.exit(1);
-                return [3 /*break*/, 4];
-            case 4: return [2 /*return*/];
+                if (!(option === Options.AUTO_GENERATE_CRUD_FOR_MODEL)) return [3 /*break*/, 5];
+                return [4 /*yield*/, AutoGenerateCrud.run()];
+            case 4:
+                _a.sent();
+                return [3 /*break*/, 6];
+            case 5:
+                console.log(Chalk.red('Unkown option!!!'));
+                _a.label = 6;
+            case 6: return [2 /*return*/];
         }
     });
 }); })();

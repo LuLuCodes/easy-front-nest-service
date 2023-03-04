@@ -1,62 +1,28 @@
-/*
- * @Author: leyi leyi@myun.info
- * @Date: 2022-09-07 09:17:35
- * @LastEditors: leyi leyi@myun.info
- * @LastEditTime: 2023-02-08 17:30:14
- * @FilePath: /easy-front-nest-service/sequelize-generator/index.ts
- * @Description:
- *
- * Copyright (c) 2023 by ${git_name_email}, All Rights Reserved.
- */
-import {
-  IConfig,
-  ModelBuilder,
-  DialectMySQL,
-} from 'easy-front-sequelize-generator';
-import { resolve } from 'path';
-import * as dotenv from 'dotenv';
+import * as Inquirer from 'inquirer';
+import * as SyncModel from './sync-model';
+import * as AutoGenerateCrud from './auto-generate-crud';
+import * as Chalk from 'chalk';
 
-dotenv.config({ path: resolve(__dirname, '../src/.env') });
-
+enum Options {
+  SYNC_MODELS_FROM_DB = 'sync models from database',
+  AUTO_GENERATE_CRUD_FOR_MODEL = 'auto generate crud for model',
+}
 (async () => {
-  const config: IConfig = {
-    connection: {
-      dialect: 'mysql',
-      host: process.env.DB_HOST,
-      port: parseInt(process.env.DB_PORT as string),
-      database: process.env.DB_NAME,
-      username: process.env.DB_USERNAME,
-      password: process.env.DB_PASSWORD,
-    },
-    metadata: {
-      indices: true,
-      case: {
-        model: 'PASCAL',
-        column: 'LOWER',
-      },
-      timestamps: true,
-      paranoid: true,
-      aliasFields: {
-        deletedAt: 'deleted_at',
-        createdAt: 'created_at',
-        updatedAt: 'updated_at',
-      },
-    },
-    output: {
-      clean: true,
-      outDir: resolve(__dirname, '../src/models'),
-    },
-    strict: false,
-  };
-
-  const dialect = new DialectMySQL();
-
-  const builder = new ModelBuilder(config, dialect);
-
-  try {
-    await builder.build();
-  } catch (err) {
-    console.error(err);
-    process.exit(1);
+  const options = [
+    Options.SYNC_MODELS_FROM_DB,
+    Options.AUTO_GENERATE_CRUD_FOR_MODEL,
+  ];
+  const { option } = await Inquirer.prompt({
+    name: 'option',
+    type: 'list',
+    choices: options,
+    message: 'Please choose a option',
+  });
+  if (option === Options.SYNC_MODELS_FROM_DB) {
+    await SyncModel.run();
+  } else if (option === Options.AUTO_GENERATE_CRUD_FOR_MODEL) {
+    await AutoGenerateCrud.run();
+  } else {
+    console.log(Chalk.red('Unkown option!!!'));
   }
 })();
