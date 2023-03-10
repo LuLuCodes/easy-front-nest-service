@@ -17,6 +17,7 @@ import {
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { v4 as uuidv4 } from 'uuid';
 import { OkResponse } from '@libs/util';
 
 @Injectable()
@@ -25,13 +26,16 @@ export class TransformInterceptor implements NestInterceptor {
     const ctx = context.switchToHttp();
     const req = ctx.getRequest();
     const res = ctx.getResponse();
+    const request_id = uuidv4().replace(/-/g, '');
+    req.body.request_id = request_id;
+    req.query.request_id = request_id;
     return next.handle().pipe(
       map((data) => {
         if (req.body && req.body.ef_author) {
           data.ef_author = 'qian.qing@aliyun.com';
         }
         res.status(HttpStatus.OK);
-        return OkResponse(data);
+        return { ...OkResponse(data), request_id: request_id };
       }),
     );
   }

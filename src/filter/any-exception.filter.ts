@@ -39,6 +39,9 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const errorResponse = ErrorResponse(ResponseCode.SYS_ERROR, message);
     response.status(200);
     response.header('Content-Type', 'application/json; charset=utf-8');
-    response.send(errorResponse);
+    response.send({
+      ...errorResponse,
+      request_id: request.body.request_id || request.query.request_id,
+    });
   }
 }
