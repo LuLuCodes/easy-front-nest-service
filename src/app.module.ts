@@ -15,7 +15,6 @@ import { AuthGuard } from '@guard/auth.guard';
 import { CacheService } from '@service/cache.service';
 import { CronTaskService } from '@service/cron-task.service';
 import { MqClientService } from '@service/mq.client.service';
-import { HttpService } from '@service/http.service';
 
 import { DBModule } from './db.module';
 import { InitModule } from './init.module';
@@ -54,7 +53,10 @@ import while_list from '@config/white-list';
       exclude: ['/api*'],
     }),
     HttpModule.registerAsync({
-      useClass: HttpService,
+      useFactory: async () => ({
+        timeout: 10000,
+        maxRedirects: 5,
+      }),
     }),
     RedisModule.forRootAsync({
       imports: [ConfigModule],
