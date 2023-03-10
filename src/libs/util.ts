@@ -73,7 +73,7 @@ export function dateFormat(date: Date, fmt = 'yyyy-MM-dd hh:mm:ss') {
 
 export function OkResponse(data?: any, msg = 'OK') {
   return {
-    request_id: uuidv4(),
+    request_id: uuidv4().replace(/-/g, ''),
     code: ResponseCode.OK,
     data,
     msg,
@@ -83,7 +83,7 @@ export function OkResponse(data?: any, msg = 'OK') {
 export function ErrorResponse(code: ResponseCode, msg: string | Error) {
   if (typeof msg === 'string') {
     return {
-      request_id: uuidv4(),
+      request_id: uuidv4().replace(/-/g, ''),
       code,
       data: null,
       msg,
@@ -91,7 +91,7 @@ export function ErrorResponse(code: ResponseCode, msg: string | Error) {
   }
 
   return {
-    request_id: uuidv4(),
+    request_id: uuidv4().replace(/-/g, ''),
     code,
     data: null,
     msg: msg.message || JSON.stringify(msg),
