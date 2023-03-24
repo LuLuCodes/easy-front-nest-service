@@ -2,7 +2,7 @@
  * @Author: leyi leyi@myun.info
  * @Date: 2021-11-25 17:08:33
  * @LastEditors: leyi leyi@myun.info
- * @LastEditTime: 2023-03-05 00:29:00
+ * @LastEditTime: 2023-03-24 14:22:01
  * @FilePath: /easy-front-nest-service/README.md
  * @Description:
  *
@@ -45,6 +45,7 @@ pm2 start pm2.json
 **请先在.env 文件中配置数据库参数，并修改'db-generator/db_schema.sql'文件中的数据库名**
 
 ```shell
+chmod +x ./db-generatoer/install.sh
 ./db-generatoer/install.sh
 ```
 
