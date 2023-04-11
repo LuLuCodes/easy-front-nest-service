@@ -9,13 +9,12 @@
  * Copyright (c) 2023 by ${git_name_email}, All Rights Reserved.
  */
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
 import { CustomerController } from './customer.controller';
 import { CustomerService } from './customer.service';
 import { CacheService } from '@service/cache.service';
 
 @Module({
-  imports: [ConfigModule],
+  imports: [],
   controllers: [CustomerController],
   providers: [CustomerService, CacheService],
 })

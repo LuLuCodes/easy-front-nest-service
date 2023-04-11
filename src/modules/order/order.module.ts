@@ -11,7 +11,6 @@
 import { Module } from '@nestjs/common';
 import { HttpModule } from '@nestjs/axios';
 import { BullModule } from '@nestjs/bull';
-import { ConfigModule } from '@nestjs/config';
 import { OrderController } from './order.controller';
 import { OrderService } from './order.service';
 import { CacheService } from '@service/cache.service';
@@ -19,7 +18,6 @@ import { MqClientService } from '@service/mq.client.service';
 
 @Module({
   imports: [
-    ConfigModule,
     HttpModule,
     BullModule.registerQueue({
       name: 'order-timeout-close-queue',

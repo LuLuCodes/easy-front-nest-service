@@ -47,6 +47,7 @@ import while_list from '@config/white-list';
         session_config,
         while_list,
       ],
+      isGlobal: true,
     }),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'www'),
