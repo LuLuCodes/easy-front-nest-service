@@ -60,7 +60,7 @@ import while_list from '@config/white-list';
       }),
     }),
     RedisModule.forRootAsync({
-      imports: [ConfigModule],
+      imports: [],
       inject: [ConfigService],
       useFactory: async (
         configService: ConfigService,
@@ -77,7 +77,7 @@ import while_list from '@config/white-list';
       },
     }),
     SequelizeModule.forRootAsync({
-      imports: [ConfigModule],
+      imports: [],
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => {
         return {
@@ -198,7 +198,7 @@ import while_list from '@config/white-list';
       },
     }),
     BullModule.forRootAsync({
-      imports: [ConfigModule],
+      imports: [],
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
         redis: {
