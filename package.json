@@ -2,9 +2,9 @@
   "name": "easy-front-nest-service",
   "version": "4.0.0",
   "description": "基于nestjs v9的后端API Service框架",
-  "author": "",
+  "author": "qian.qing@aliyun.com",
   "private": true,
-  "license": "UNLICENSED",
+  "license": "MIT",
   "scripts": {
     "bootstrap": "pnpm install",
     "prebuild": "rimraf api",
