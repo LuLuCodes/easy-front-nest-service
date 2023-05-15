@@ -69,7 +69,8 @@ export class OssController {
     await ensureDir(folderPath);
     const filePathList = [];
     for (const file of files) {
-      const filePath = `${Date.now()}-${file.originalname}`;
+      const file_name = Buffer.from(file.originalname, 'binary').toString();
+      const filePath = `${Date.now()}-${file_name}`;
       await outputFile(`${folderPath}/${filePath}`, file.buffer);
       filePathList.push(filePath);
     }

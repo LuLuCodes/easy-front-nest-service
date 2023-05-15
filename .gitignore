@@ -2,6 +2,7 @@
 /api
 /uploads-temp
 /node_modules
+/oss-files
 .env
 
 # Logs
