@@ -150,15 +150,14 @@ export const wait = (ms: number) => {
   });
 };
 
-export const isJsonStr = (str: string) => {
+export const safetyParseJson = (str) => {
+  let result = null;
   try {
-    if (typeof JSON.parse(str) === 'object') {
-      return true;
-    }
+    result = JSON.parse(str);
   } catch (e) {
-    return false;
+    return null;
   }
-  return false;
+  return result;
 };
 
 export function isDefined<T>(value: T): value is NonNullable<T> {
