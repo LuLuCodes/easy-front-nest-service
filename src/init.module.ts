@@ -4,161 +4,135 @@ import { CacheService } from '@service/cache.service';
 import { InjectModel } from '@nestjs/sequelize';
 import { CacheKey } from '@config/global';
 import { Op } from 'sequelize';
-import { TThirdPlatformConfig } from '@models/TThirdPlatformConfig';
 import { MPCoreFactory } from '@easy-front-core-sdk/miniprogram';
 import { WXCoreFactory } from '@easy-front-core-sdk/wx';
 import { WXPayCoreFactory } from '@easy-front-core-sdk/wxpay';
 import * as fs from 'fs';
 import { resolve } from 'path';
+import { DictCacheService } from '@service/dict-cache.service';
 
 @Module({
   imports: [],
-  providers: [CacheService],
+  providers: [CacheService, DictCacheService],
 })
 export class InitModule implements OnModuleInit {
   constructor(
     private readonly cacheService: CacheService,
     private readonly configService: ConfigService,
-    @InjectModel(TThirdPlatformConfig)
-    private readonly thirdPlatformConfig: typeof TThirdPlatformConfig,
+    private readonly dictCacheService: DictCacheService,
   ) {}
   async onModuleInit(): Promise<void> {
-    await this.initWX();
-    await this.initMP();
-    await this.initWXPay();
+    // await this.initWX();
+    // await this.initMP();
+    // await this.initWXPay();
   }
   async initWX(): Promise<void> {
-    const wx_list = await this.thirdPlatformConfig.findAll({
-      attributes: ['id', 'wx_appid', 'wx_appsecret', 'wx_token'],
-      where: {
-        enabled: 1,
-        wx_appid: {
-          [Op.not]: null,
-        },
-        wx_appsecret: {
-          [Op.not]: null,
-        },
-        wx_token: {
-          [Op.not]: null,
-        },
-      },
-      raw: true,
-    });
-    for (const wx of wx_list) {
-      const { wx_appid, wx_appsecret, wx_token } = wx;
-      WXCoreFactory.putCore(
-        { appId: wx_appid, appScrect: wx_appsecret, token: wx_token },
-        {
-          host: this.configService.get('redis.host'),
-          port: this.configService.get('redis.port'),
-          password: this.configService.get('redis.password'),
-          db: this.configService.get('cache.redis_db'),
-        },
-      );
+    const dict_list = await this.dictCacheService.getDictConf('公众号配置');
+    const wx_redis_conf = {
+      host: this.configService.get('redis.host'),
+      port: this.configService.get('redis.port'),
+      password: this.configService.get('redis.password'),
+      db: this.configService.get('cache.redis_db'),
+    };
+    for (const wx of dict_list) {
+      if (!wx.field_value) {
+        console.error(`公众号配置配置异常[id=${wx.id}]`);
+        continue;
+      }
+      try {
+        const { appid, appsecret, token } = JSON.parse(wx.field_value);
+        // {"appid":"wx6206830d927c62d3","appsecret":"c52e844aa1f369cc84ddc2211aa30865","token":""}
+        WXCoreFactory.putCore(
+          { appId: appid, appScrect: appsecret, token },
+          wx_redis_conf,
+        );
+        console.log(`加载公众号配置：${appid}`);
+      } catch (error) {
+        console.error(`公众号配置异常[id=${wx.id}]，${error.message}`);
+      }
     }
   }
   async initMP(): Promise<void> {
-    const mp_list = await this.thirdPlatformConfig.findAll({
-      attributes: ['id', 'wx_miniprogram_appid', 'wx_miniprogram_appsecret'],
-      where: {
-        enabled: 1,
-        wx_miniprogram_appid: {
-          [Op.not]: null,
-        },
-        wx_miniprogram_appsecret: {
-          [Op.not]: null,
-        },
-      },
-      raw: true,
-    });
-    for (const mp of mp_list) {
-      const { wx_miniprogram_appid, wx_miniprogram_appsecret } = mp;
-      MPCoreFactory.putCore(
-        {
-          appId: wx_miniprogram_appid,
-          appScrect: wx_miniprogram_appsecret,
-        },
-        {
-          host: this.configService.get('redis.host'),
-          port: this.configService.get('redis.port'),
-          password: this.configService.get('redis.password'),
-          db: this.configService.get('cache.redis_db'),
-        },
-      );
+    const dict_list = await this.dictCacheService.getDictConf('小程序配置');
+    const mp_redis_conf = {
+      host: this.configService.get('redis.host'),
+      port: this.configService.get('redis.port'),
+      password: this.configService.get('redis.password'),
+      db: this.configService.get('cache.redis_db'),
+    };
+    for (const mp of dict_list) {
+      if (!mp.field_value) {
+        console.error(`小程序配置异常[id=${mp.id}]`);
+        continue;
+      }
+      try {
+        const conf: any = JSON.parse(mp.field_value);
+        // {"appid":"wx6206830d927c62d3","appsecret":"c52e844aa1f369cc84ddc2211aa30865"}
+        MPCoreFactory.putCore(
+          {
+            appId: conf.appid,
+            appScrect: conf.appsecret,
+          },
+          mp_redis_conf,
+        );
+        console.log(`加载小程序配置：${conf.appid}`);
+      } catch (error) {
+        console.error(`小程序配置异常[id=${mp.id}]，${error.message}`);
+      }
     }
   }
   async initWXPay(): Promise<void> {
-    const wx_pay_list = await this.thirdPlatformConfig.findAll({
-      attributes: [
-        'id',
-        'wx_pay_mchid',
-        'wx_pay_apisecret',
-        'wx_pay_api3secret',
-        'wx_pay_serial_no',
-        'wx_pay_plat_serial_no',
-        'wx_pay_notify_url',
-        'wx_pay_refund_notify_url',
-        'wx_pay_recharge_notify_url',
-        'wx_open_appid',
-      ],
-      where: {
-        enabled: 1,
-        wx_pay_mchid: {
-          [Op.not]: null,
-        },
-        wx_pay_apisecret: {
-          [Op.not]: null,
-        },
-        wx_pay_api3secret: {
-          [Op.not]: null,
-        },
-        wx_pay_serial_no: {
-          [Op.not]: null,
-        },
-        wx_pay_plat_serial_no: {
-          [Op.not]: null,
-        },
-      },
-      raw: true,
-    });
+    const dict_list = await this.dictCacheService.getDictConf('微信支付配置');
+    const folderPath = resolve(__dirname, '../../../cert/wx-pay');
+    for (const wx of dict_list) {
+      if (!wx.field_value) {
+        console.error(`微信支付配置异常[id=${wx.id}]`);
+        continue;
+      }
 
-    // const folderPath = resolve(__dirname, '../../../cert/wx-pay');
-    // for (const wx of wx_pay_list) {
-    //   const {
-    //     wx_pay_mchid,
-    //     wx_pay_apisecret,
-    //     wx_pay_api3secret,
-    //     wx_pay_serial_no,
-    //     wx_pay_plat_serial_no,
-    //     wx_pay_notify_url,
-    //     wx_pay_refund_notify_url,
-    //     wx_pay_recharge_notify_url,
-    //     wx_open_appid,
-    //   } = wx;
-    //   WXPayCoreFactory.putCore({
-    //     mchId: wx_pay_mchid,
-    //     apiScrect: wx_pay_apisecret,
-    //     api3Screct: wx_pay_api3secret,
-    //     serialNo: wx_pay_serial_no,
-    //     key: fs.readFileSync(`${folderPath}/${wx_pay_mchid}_key.pem`),
-    //     platSerialNo: wx_pay_plat_serial_no,
-    //   });
-    //   this.cacheService.set(
-    //     `${CacheKey.WX_PAY_NOTIFY_URL}_${wx_pay_mchid}`,
-    //     wx_pay_notify_url,
-    //   );
-    //   this.cacheService.set(
-    //     `${CacheKey.WX_PAY_REFUND_NOTIFY_URL}_${wx_pay_mchid}`,
-    //     wx_pay_refund_notify_url,
-    //   );
-    //   this.cacheService.set(
-    //     `${CacheKey.WX_PAY_RECHARGE_NOTIFY_URL}_${wx_pay_mchid}`,
-    //     wx_pay_recharge_notify_url,
-    //   );
-    //   this.cacheService.set(
-    //     `${CacheKey.WX_OPEN_APPID}_${wx_pay_mchid}`,
-    //     wx_open_appid,
-    //   );
-    // }
+      try {
+        const {
+          mchid,
+          apisecret,
+          api3secret,
+          serial_no,
+          plat_serial_no,
+          notify_url,
+          refund_notify_url,
+          recharge_notify_url,
+          wx_open_appid,
+        } = JSON.parse(wx.field_value);
+
+        WXPayCoreFactory.putCore({
+          mchId: mchid,
+          apiScrect: apisecret,
+          api3Screct: api3secret,
+          serialNo: serial_no,
+          key: fs.readFileSync(`${folderPath}/${mchid}_key.pem`),
+          platSerialNo: plat_serial_no,
+        });
+
+        // this.cacheService.set(
+        //   `${CacheKey.WX_PAY_NOTIFY_URL}_${wx_pay_mchid}`,
+        //   wx_pay_notify_url,
+        // );
+        // this.cacheService.set(
+        //   `${CacheKey.WX_PAY_REFUND_NOTIFY_URL}_${wx_pay_mchid}`,
+        //   wx_pay_refund_notify_url,
+        // );
+        // this.cacheService.set(
+        //   `${CacheKey.WX_PAY_RECHARGE_NOTIFY_URL}_${wx_pay_mchid}`,
+        //   wx_pay_recharge_notify_url,
+        // );
+        // this.cacheService.set(
+        //   `${CacheKey.WX_OPEN_APPID}_${wx_pay_mchid}`,
+        //   wx_open_appid,
+        // );
+
+        console.log(`加载微信支付配置：${mchid}`);
+      } catch (error) {
+        console.error(`加载微信支付配置：异常[id=${wx.id}]，${error.message}`);
+      }
+    }
   }
 }

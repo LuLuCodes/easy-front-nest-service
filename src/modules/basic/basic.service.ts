@@ -1,36 +1,36 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Sequelize } from 'sequelize-typescript';
-import { Op, FindAndCountOptions, QueryTypes } from 'sequelize';
+import { FindAndCountOptions } from 'sequelize';
 import { CacheService } from '@service/cache.service';
-import { GetEnabledSwiperDTO, GetAreaDTO } from './basic.dto';
-import { TSwiper, TArea } from '@models/index';
+import { GetDictDto, SendSmsDto, VerifySmsCodeDto } from './basic.dto';
+import { TDictionary } from '@models/index';
 import * as _ from 'lodash';
-import { CacheKey } from '@config/global';
+import { SmsCoreService } from '@service/sms-core.service';
 
 @Injectable()
 export class BasicService {
   constructor(
     private sequelize: Sequelize,
     private cacheService: CacheService,
-    @InjectModel(TSwiper)
-    private readonly tSwiper: typeof TSwiper,
-    @InjectModel(TArea)
-    private readonly tArea: typeof TArea,
+    private smsCoreService: SmsCoreService,
+    @InjectModel(TDictionary)
+    private readonly tDictionary: typeof TDictionary,
   ) {}
 
-  async getSwiper(requestBody: GetEnabledSwiperDTO): Promise<any> {
-    const { id, position, pageNum, pageSize, order, attributes } = requestBody;
-    // where 条件拼装
-    const now = Date.now();
-    let where: any = {
-      id,
-      position,
-      end_time: { [Op.gte]: now },
-      enabled: 1,
-    };
-    where = _.pickBy(where, _.identity);
+  async getDictionary(requestBody: GetDictDto): Promise<any> {
+    const { id, field_name_list, pageNum, pageSize, order, attributes } =
+      requestBody;
 
+    const where: any = {};
+
+    if (id) {
+      where.id = id;
+    }
+
+    if (field_name_list?.length) {
+      where.field_name = field_name_list;
+    }
     // 组装sequelize option
     let selector: FindAndCountOptions = {
       attributes,
@@ -42,58 +42,22 @@ export class BasicService {
     };
     selector = _.pickBy(selector, _.identity);
 
-    const { rows, count } = await this.tSwiper.findAndCountAll(selector);
+    const { rows, count } = await this.tDictionary.findAndCountAll(selector);
     return {
       rows,
       count,
     };
   }
 
-  async getArea(requestBody: GetAreaDTO): Promise<any> {
-    const area = await this.cacheService.get(`${CacheKey.ALL_AREA}`);
-    if (area) {
-      return JSON.parse(area);
-    }
-    const province_list: any = {};
-    const city_list: any = {};
-    const county_list: any = {};
-    const province_rows = await this.tArea.findAll({
-      attributes: ['id', 'pcd_code', 'pcd_name'],
-      where: {
-        level: 100,
-      },
-      raw: true,
-    });
+  async sendCode(requestBody: SendSmsDto): Promise<any> {
+    const { mobile, sms_type } = requestBody;
+    await this.smsCoreService.sendCode(mobile, sms_type);
+    return;
+  }
 
-    const city_rows = await this.tArea.findAll({
-      attributes: ['id', 'pcd_code', 'pcd_name'],
-      where: {
-        level: 1000,
-      },
-      raw: true,
-    });
-
-    const county_rows = await this.tArea.findAll({
-      attributes: ['id', 'pcd_code', 'pcd_name'],
-      where: {
-        level: 10000,
-      },
-      raw: true,
-    });
-
-    for (const row of province_rows) {
-      province_list[row.pcd_code] = row.pcd_name;
-    }
-
-    for (const row of city_rows) {
-      city_list[row.pcd_code] = row.pcd_name;
-    }
-
-    for (const row of county_rows) {
-      county_list[row.pcd_code] = row.pcd_name;
-    }
-    const result = { province_list, city_list, county_list };
-    await this.cacheService.set(`${CacheKey.ALL_AREA}`, JSON.stringify(result));
-    return result;
+  async verifyCode(requestBody: VerifySmsCodeDto): Promise<any> {
+    const { mobile, sms_type, code } = requestBody;
+    await this.smsCoreService.checkCode(mobile, sms_type, code);
+    return;
   }
 }

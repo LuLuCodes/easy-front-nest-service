@@ -27,6 +27,7 @@
     "cz": "git-cz"
   },
   "dependencies": {
+    "@alicloud/pop-core": "^1.7.13",
     "@easy-front-core-sdk/kits": "^1.4.9",
     "@easy-front-core-sdk/miniprogram": "^1.4.9",
     "@easy-front-core-sdk/wx": "^1.4.9",
@@ -37,15 +38,12 @@
     "@nestjs/common": "^9.3.1",
     "@nestjs/config": "^2.3.0",
     "@nestjs/core": "^9.3.1",
-    "@nestjs/microservices": "^9.3.1",
     "@nestjs/platform-express": "^9.3.1",
     "@nestjs/schedule": "^2.1.0",
     "@nestjs/sequelize": "^9.0.0",
     "@nestjs/serve-static": "^3.0.0",
     "@nestjs/swagger": "^6.2.1",
     "ali-oss": "^6.17.1",
-    "amqp-connection-manager": "^4.1.10",
-    "amqplib": "^0.10.3",
     "bignumber.js": "^9.1.1",
     "body-parser": "^1.20.1",
     "body-parser-xml": "^2.0.3",

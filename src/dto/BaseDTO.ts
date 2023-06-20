@@ -8,7 +8,6 @@ import {
   IsArray,
   IsOptional,
 } from 'class-validator';
-import { Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class BaseDTO {
@@ -118,4 +117,13 @@ export class UpdateStatusDTO extends BaseDTO {
   @IsInt({ message: 'deleted必须为有效整数' })
   @Min(0, { message: 'deleted必须大于等于0' })
   readonly deleted?: number;
+}
+
+export class DeleteRowDTO extends BaseDTO {
+  @ApiProperty({
+    description: '删除主键',
+    type: Number,
+  })
+  @IsInt({ message: 'enabled必须为有效整数' })
+  readonly id: number;
 }

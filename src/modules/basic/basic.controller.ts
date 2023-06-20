@@ -1,24 +1,11 @@
-import {
-  Controller,
-  Post,
-  Get,
-  Body,
-  Query,
-  Param,
-  UsePipes,
-  Session,
-  Headers,
-} from '@nestjs/common';
+import { Controller, Post, Body, UsePipes, Session } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiTags, ApiBody, ApiOperation, ApiHeader } from '@nestjs/swagger';
 import { ValidationPipe } from '@pipe/validation.pipe';
-import { ResponseCode } from '@config/global';
-import { md5 } from '@libs/cryptogram';
-import { CatchError } from '@decorator/catch.decorator';
 import { CacheService } from '@service/cache.service';
 import { BasicService } from './basic.service';
 
-import { GetEnabledSwiperDTO, GetAreaDTO } from './basic.dto';
+import { GetDictDto, SendSmsDto, VerifySmsCodeDto } from './basic.dto';
 
 @ApiTags('基础API')
 @ApiHeader({
@@ -39,32 +26,47 @@ export class BasicController {
   ) {}
 
   @ApiOperation({
-    summary: '获取轮播图',
-    description: '获取轮播图',
+    summary: '获取字典',
+    description: '获取字典',
   })
   @ApiBody({
     description: '请求参数',
-    type: GetEnabledSwiperDTO,
+    type: GetDictDto,
   })
   @UsePipes(new ValidationPipe({ transform: true }))
-  @Post('get-swiper')
-  async getSwiper(@Body() body: GetEnabledSwiperDTO): Promise<any> {
-    const response = await this.basicService.getSwiper(body);
+  @Post('get-dict')
+  async getDictionary(@Body() body: GetDictDto): Promise<any> {
+    const response = await this.basicService.getDictionary(body);
     return response;
   }
 
   @ApiOperation({
-    summary: '获取省市区',
-    description: '获取省市区',
+    summary: '发送短信',
+    description: '发送短信场景',
   })
   @ApiBody({
     description: '请求参数',
-    type: GetAreaDTO,
+    type: SendSmsDto,
   })
   @UsePipes(new ValidationPipe({ transform: true }))
-  @Post('get-area')
-  async getArea(@Body() body: GetAreaDTO): Promise<any> {
-    const response = await this.basicService.getArea(body);
+  @Post('send-code')
+  async sendCode(@Body() body: SendSmsDto): Promise<any> {
+    const response = await this.basicService.sendCode(body);
+    return response;
+  }
+
+  @ApiOperation({
+    summary: '校验短信码',
+    description: '校验短信码',
+  })
+  @ApiBody({
+    description: '请求参数',
+    type: VerifySmsCodeDto,
+  })
+  @UsePipes(new ValidationPipe({ transform: true }))
+  @Post('verify-code')
+  async verifyCode(@Body() body: VerifySmsCodeDto): Promise<any> {
+    const response = await this.basicService.verifyCode(body);
     return response;
   }
 }

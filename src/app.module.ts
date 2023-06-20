@@ -14,7 +14,7 @@ import { SignGuard } from '@guard/sign.guard';
 import { AuthGuard } from '@guard/auth.guard';
 import { CacheService } from '@service/cache.service';
 import { CronTaskService } from '@service/cron-task.service';
-import { MqClientService } from '@service/mq.client.service';
+import { DictCacheService } from '@service/dict-cache.service';
 
 import { DBModule } from './db.module';
 import { InitModule } from './init.module';
@@ -22,10 +22,9 @@ import { WxModule } from './modules/wx/wx.module';
 import { MpModule } from './modules/mp/mp.module';
 import { WxPayModule } from './modules/wxpay/wx.pay.module';
 import { OssModule } from './modules/oss/oss.module';
-import { CustomerModule } from './modules/customer/customer.module';
-import { GoodsModule } from './modules/goods/goods.module';
-import { OrderModule } from './modules/order/order.module';
 import { BasicModule } from './modules/basic/basic.module';
+import { AccessModule } from './modules/access/access.module';
+import { OpLogModule } from './modules/oplog/oplog.module';
 
 import app_config from '@config/app';
 import databse_config from '@config/mysql';
@@ -212,16 +211,18 @@ import while_list from '@config/white-list';
     BullModule.registerQueue({
       name: 'api-log',
     }),
+    BullModule.registerQueue({
+      name: 'op-log',
+    }),
     DBModule,
     WxModule,
     MpModule,
     WxPayModule,
     OssModule,
-    CustomerModule,
-    GoodsModule,
-    OrderModule,
+    AccessModule,
     BasicModule,
     InitModule,
+    OpLogModule,
     ScheduleModule.forRoot(),
   ],
   providers: [
@@ -235,7 +236,7 @@ import while_list from '@config/white-list';
     },
     CacheService,
     CronTaskService,
-    MqClientService,
+    DictCacheService,
   ],
 })
 export class AppModule implements NestModule {

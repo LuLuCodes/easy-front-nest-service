@@ -163,3 +163,41 @@ export const safetyParseJson = (str) => {
 export function isDefined<T>(value: T): value is NonNullable<T> {
   return value != null;
 }
+
+export function arrayToTree(
+  items,
+  primary_key = 'id',
+  parent_key = 'parent_id',
+) {
+  const result = []; // 存放结果集
+  const itemMap = {}; //
+  for (const item of items) {
+    const id = item[primary_key];
+    const pid = item[parent_key];
+
+    if (!itemMap[id]) {
+      itemMap[id] = {
+        children: [],
+      };
+    }
+
+    itemMap[id] = {
+      ...item,
+      children: itemMap[id]['children'],
+    };
+
+    const treeItem = itemMap[id];
+
+    if (pid === 0) {
+      result.push(treeItem);
+    } else {
+      if (!itemMap[pid]) {
+        itemMap[pid] = {
+          children: [],
+        };
+      }
+      itemMap[pid].children.push(treeItem);
+    }
+  }
+  return result;
+}

@@ -23,3 +23,17 @@ export enum CacheKey {
   ALI_PAY_REFUND_NOTIFY_URL = 'ALI_PAY_REFUND_NOTIFY_URL',
   ALI_PAY_RECHARGE_NOTIFY_URL = 'ALI_PAY_RECHARGE_NOTIFY_URL',
 }
+
+export const ex_attributes = {
+  exclude: [
+    'deleted_at',
+    'created_at',
+    'updated_at',
+    'created_by',
+    'updated_by',
+  ],
+};
+
+export const ex_attributes2 = {
+  exclude: ['deleted_at', 'created_by', 'updated_by'],
+};
