@@ -1,4 +1,5 @@
 import { NestFactory } from '@nestjs/core';
+import { VersioningType } from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { ConfigService } from '@nestjs/config';
 import { AppModule } from './app.module';
@@ -135,6 +136,8 @@ async function bootstrap() {
     const document = SwaggerModule.createDocument(app, options);
     SwaggerModule.setup('api-doc', app, document);
   }
+  // `Header`版本控制
+  // app.enableVersioning({ type: VersioningType.HEADER, header: 'version' });
   await app.listen(config.get('app.port'));
   console.log(`Application is running on: ${await app.getUrl()}`);
 }

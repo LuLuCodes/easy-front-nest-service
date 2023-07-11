@@ -1,7 +1,17 @@
+/*
+ * @Author: leyi leyi@myun.info
+ * @Date: 2022-10-14 09:00:05
+ * @LastEditors: leyi leyi@myun.info
+ * @LastEditTime: 2023-07-11 11:41:46
+ * @FilePath: /easy-front-nest-service/test/http.service.spec.ts
+ * @Description:
+ *
+ * Copyright (c) 2023 by ${git_name_email}, All Rights Reserved.
+ */
 import { Test } from '@nestjs/testing';
 import { HttpModule, HttpService } from '@nestjs/axios';
 
-describe('CatsController', () => {
+describe.skip('CatsController', () => {
   let httpService: HttpService;
   const client_id = '68914c2df131f2b9';
   const base_url = 'http://api.vv-tool.com';

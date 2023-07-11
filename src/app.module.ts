@@ -25,6 +25,8 @@ import { OssModule } from './modules/oss/oss.module';
 import { BasicModule } from './modules/basic/basic.module';
 import { AccessModule } from './modules/access/access.module';
 import { OpLogModule } from './modules/oplog/oplog.module';
+import { ExampleModule } from './example/example.module';
+import { ExampleModule } from './example/example.module';
 
 import app_config from '@config/app';
 import databse_config from '@config/mysql';
@@ -224,6 +226,7 @@ import while_list from '@config/white-list';
     InitModule,
     OpLogModule,
     ScheduleModule.forRoot(),
+    ExampleModule,
   ],
   providers: [
     {

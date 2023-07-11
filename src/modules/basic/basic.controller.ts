@@ -1,4 +1,21 @@
-import { Controller, Post, Body, UsePipes, Session } from '@nestjs/common';
+/*
+ * @Author: leyi leyi@myun.info
+ * @Date: 2023-06-20 16:33:55
+ * @LastEditors: leyi leyi@myun.info
+ * @LastEditTime: 2023-07-08 17:16:27
+ * @FilePath: /easy-front-nest-service/src/modules/basic/basic.controller.ts
+ * @Description:
+ *
+ * Copyright (c) 2023 by ${git_name_email}, All Rights Reserved.
+ */
+import {
+  Controller,
+  Post,
+  Body,
+  UsePipes,
+  Session,
+  Version,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiTags, ApiBody, ApiOperation, ApiHeader } from '@nestjs/swagger';
 import { ValidationPipe } from '@pipe/validation.pipe';
@@ -34,6 +51,7 @@ export class BasicController {
     type: GetDictDto,
   })
   @UsePipes(new ValidationPipe({ transform: true }))
+  // @Version(['1', '2'])
   @Post('get-dict')
   async getDictionary(@Body() body: GetDictDto): Promise<any> {
     const response = await this.basicService.getDictionary(body);
