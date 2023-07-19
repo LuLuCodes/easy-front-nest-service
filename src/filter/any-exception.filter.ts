@@ -1,3 +1,13 @@
+/*
+ * @Author: leyi leyi@myun.info
+ * @Date: 2023-03-10 17:55:55
+ * @LastEditors: leyi leyi@myun.info
+ * @LastEditTime: 2023-07-19 11:15:34
+ * @FilePath: /easy-front-nest-service/src/filter/any-exception.filter.ts
+ * @Description:
+ *
+ * Copyright (c) 2023 by ${git_name_email}, All Rights Reserved.
+ */
 /**
  * 捕获所有异常
  */
