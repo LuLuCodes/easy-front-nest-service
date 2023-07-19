@@ -41,7 +41,6 @@ export class InitModule implements OnModuleInit {
       }
       try {
         const { appid, appsecret, token } = JSON.parse(wx.field_value);
-        // {"appid":"wx6206830d927c62d3","appsecret":"c52e844aa1f369cc84ddc2211aa30865","token":""}
         WXCoreFactory.putCore(
           { appId: appid, appScrect: appsecret, token },
           wx_redis_conf,
@@ -67,7 +66,7 @@ export class InitModule implements OnModuleInit {
       }
       try {
         const conf: any = JSON.parse(mp.field_value);
-        // {"appid":"wx6206830d927c62d3","appsecret":"c52e844aa1f369cc84ddc2211aa30865"}
+        // {"appid":"","appsecret":""}
         MPCoreFactory.putCore(
           {
             appId: conf.appid,
