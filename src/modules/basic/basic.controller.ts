@@ -2,7 +2,7 @@
  * @Author: leyi leyi@myun.info
  * @Date: 2023-06-20 16:33:55
  * @LastEditors: leyi leyi@myun.info
- * @LastEditTime: 2023-07-08 17:16:27
+ * @LastEditTime: 2023-07-24 18:56:11
  * @FilePath: /easy-front-nest-service/src/modules/basic/basic.controller.ts
  * @Description:
  *
@@ -13,8 +13,10 @@ import {
   Post,
   Body,
   UsePipes,
+  UseFilters,
   Session,
   Version,
+  SetMetadata,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiTags, ApiBody, ApiOperation, ApiHeader } from '@nestjs/swagger';
@@ -22,7 +24,10 @@ import { ValidationPipe } from '@pipe/validation.pipe';
 import { CacheService } from '@service/cache.service';
 import { BasicService } from './basic.service';
 
+import { OtherOkResponse, OtherErrorResponse } from '@libs/util';
+
 import { GetDictDto, SendSmsDto, VerifySmsCodeDto } from './basic.dto';
+import { OtherExceptionsFilter } from '@filter/other-exception.filter';
 
 @ApiTags('基础API')
 @ApiHeader({
@@ -51,8 +56,10 @@ export class BasicController {
     type: GetDictDto,
   })
   @UsePipes(new ValidationPipe({ transform: true }))
+  @UseFilters(new OtherExceptionsFilter())
   // @Version(['1', '2'])
   @Post('get-dict')
+  @SetMetadata('OkResponse', OtherOkResponse)
   async getDictionary(@Body() body: GetDictDto): Promise<any> {
     const response = await this.basicService.getDictionary(body);
     return response;

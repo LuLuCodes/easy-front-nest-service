@@ -94,6 +94,30 @@ export function ErrorResponse(code: ResponseCode, msg: string | Error) {
   };
 }
 
+export function OtherOkResponse(data?: any, msg = 'OK') {
+  return {
+    success: true,
+    data,
+    msg,
+  };
+}
+
+export function OtherErrorResponse(code: ResponseCode, msg: string | Error) {
+  if (typeof msg === 'string') {
+    return {
+      success: false,
+      data: null,
+      msg,
+    };
+  }
+
+  return {
+    success: false,
+    data: null,
+    msg: msg.message || JSON.stringify(msg),
+  };
+}
+
 export function randomNo(len = 6) {
   let random_no = '';
   for (

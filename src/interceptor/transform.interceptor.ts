@@ -2,7 +2,7 @@
  * @Author: leyi leyi@myun.info
  * @Date: 2021-11-25 17:08:33
  * @LastEditors: leyi leyi@myun.info
- * @LastEditTime: 2022-09-24 16:12:26
+ * @LastEditTime: 2023-07-24 16:44:15
  * @FilePath: /easy-front-nest-service/src/interceptor/transform.interceptor.ts
  * @Description:
  *
@@ -15,6 +15,7 @@ import {
   NestInterceptor,
   HttpStatus,
 } from '@nestjs/common';
+
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { v4 as uuidv4 } from 'uuid';
@@ -29,13 +30,18 @@ export class TransformInterceptor implements NestInterceptor {
     const request_id = uuidv4().replace(/-/g, '');
     req.body.request_id = request_id;
     req.query.request_id = request_id;
+    const responseFun = Reflect.getMetadata('OkResponse', context.getHandler());
     return next.handle().pipe(
       map((data) => {
         if (req.body && req.body.ef_author) {
           data.ef_author = 'qian.qing@aliyun.com';
         }
         res.status(HttpStatus.OK);
-        return { ...OkResponse(data), request_id: request_id };
+        if (responseFun) {
+          return { ...responseFun(data), request_id: request_id };
+        } else {
+          return { ...OkResponse(data), request_id: request_id };
+        }
       }),
     );
   }
