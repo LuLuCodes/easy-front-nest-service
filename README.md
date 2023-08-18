@@ -2,7 +2,7 @@
  * @Author: leyi leyi@myun.info
  * @Date: 2021-11-25 17:08:33
  * @LastEditors: leyi leyi@myun.info
- * @LastEditTime: 2023-03-24 14:22:01
+ * @LastEditTime: 2023-08-18 11:02:48
  * @FilePath: /easy-front-nest-service/README.md
  * @Description:
  *
@@ -59,4 +59,38 @@ npm run seq # and select `sync models from database`
 
 ```shell
 npm run seq # and select `auto generate crud for model`
+```
+
+# 关于 Sharp 内存泄漏的解决方案
+
+## 安装 jemalloc
+
+```shell
+yum -y install jemalloc
+```
+
+## 配置环境变量
+
+```shell
+# 编辑 /etc/environment
+LD_PRELOAD=/usr/lib64/libjemalloc.so.1
+```
+
+```shell
+export LD_PRELOAD="/usr/lib64/libjemalloc.so.1"
+
+echo /usr/lib64/libjemalloc.so.1 >> /etc/ld.so.preload
+```
+
+## 清除 pm2 中以运行的程序
+
+```shell
+pm2 kill
+pm2 resurrect
+```
+
+## 单例运行
+
+```shell
+LD_PRELOAD=/usr/lib64/libjemalloc.so.1 node index.js
 ```
