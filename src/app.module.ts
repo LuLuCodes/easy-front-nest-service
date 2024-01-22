@@ -178,6 +178,26 @@ import while_list from '@config/white-list';
                   },
                 );
               },
+              beforeFind(options: any) {
+                if (options.where && !options.where.force_request_id) {
+                  delete options.where.request_id;
+                }
+              },
+              beforeCount(options: any) {
+                if (options.where && !options.where.force_request_id) {
+                  delete options.where.request_id;
+                }
+              },
+              beforeFindAfterExpandIncludeAll(options: any) {
+                if (options.where && !options.where.force_request_id) {
+                  delete options.where.request_id;
+                }
+              },
+              beforeFindAfterOptions(options: any) {
+                if (options.where && !options.where.force_request_id) {
+                  delete options.where.request_id;
+                }
+              },
             },
           },
           dialectOptions: {
