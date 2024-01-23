@@ -2,7 +2,7 @@
  * @Author: leyi leyi@myun.info
  * @Date: 2021-12-25 14:14:15
  * @LastEditors: leyi leyi@myun.info
- * @LastEditTime: 2024-01-23 11:14:31
+ * @LastEditTime: 2024-01-23 11:16:25
  * @FilePath: /easy-front-nest-service/src/guard/sign.guard.ts
  * @Description:
  *
@@ -54,7 +54,6 @@ export class SignGuard implements CanActivate {
     }
     try {
       delete request_data.sign;
-      delete request_data.timestamp;
       let isOk = false;
       if (method === 'GET') {
         isOk = checkSign(sign, Kit.makeSortStr(request_data), url);
