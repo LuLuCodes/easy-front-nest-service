@@ -19,7 +19,7 @@ export class BasicService {
   ) {}
 
   async getDictionary(requestBody: GetDictDto): Promise<any> {
-    const { id, field_name_list, pageNum, pageSize, order, attributes } =
+    const { id, field_name_list, page_num, page_size, order, attributes } =
       requestBody;
 
     const where: any = {};
@@ -35,8 +35,8 @@ export class BasicService {
     let selector: FindAndCountOptions = {
       attributes,
       where,
-      offset: (pageNum - 1) * pageSize,
-      limit: pageSize,
+      offset: (page_num - 1) * page_size,
+      limit: page_size,
       order: order || [['id', 'desc']],
       raw: true,
     };

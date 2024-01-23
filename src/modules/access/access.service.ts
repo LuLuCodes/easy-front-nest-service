@@ -541,9 +541,9 @@ export class AccessService {
   async getUserList(requestBody: QueryUserDto): Promise<any> {
     const { nick, login_client, account_id, role_type, login_type } =
       requestBody;
-    const pageNum = requestBody.pageNum || 1;
-    const pageSize = requestBody.pageSize || 10;
-    const offset = (pageNum - 1) * pageSize;
+    const page_num = requestBody.page_num || 1;
+    const page_size = requestBody.page_size || 10;
+    const offset = (page_num - 1) * page_size;
     const where: any = {};
     if (nick) {
       where.nick = { [Op.startsWith]: nick };
@@ -579,7 +579,7 @@ export class AccessService {
       ],
       where,
       offset: offset,
-      limit: pageSize,
+      limit: page_size,
       order: requestBody.order || [['id', 'desc']],
       raw: true,
       nest: true,
@@ -617,9 +617,9 @@ export class AccessService {
   // 角色列表
   async getRoleList(requestBody: QueryRoleDto): Promise<any> {
     const { role_name, role_type, attributes } = requestBody;
-    const pageNum = requestBody.pageNum || 1;
-    const pageSize = requestBody.pageSize || 10;
-    const offset = (pageNum - 1) * pageSize;
+    const page_num = requestBody.page_num || 1;
+    const page_size = requestBody.page_size || 10;
+    const offset = (page_num - 1) * page_size;
     const where: any = {};
     if (role_type) {
       where.role_type = role_type;
@@ -631,7 +631,7 @@ export class AccessService {
       attributes: attributes || ex_attributes2,
       where,
       offset: offset,
-      limit: pageSize,
+      limit: page_size,
       order: requestBody.order || [['id', 'desc']],
     });
     return role_list;

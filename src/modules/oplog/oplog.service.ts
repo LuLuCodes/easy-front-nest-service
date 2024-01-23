@@ -42,9 +42,9 @@ export class OpLogService {
 
   async queryLog(requestBody: QueryLogDto, user: any): Promise<any> {
     const { target_type, action_desc, action_user } = requestBody;
-    const pageNum = requestBody.pageNum || 1;
-    const pageSize = requestBody.pageSize || 10;
-    const offset = (pageNum - 1) * pageSize;
+    const page_num = requestBody.page_num || 1;
+    const page_size = requestBody.page_size || 10;
+    const offset = (page_num - 1) * page_size;
     let where: any = { target_type };
     if (action_desc) {
       where.action_desc = { [Op.substring]: action_desc };
@@ -57,7 +57,7 @@ export class OpLogService {
       attributes: { exclude: ['target_type', 'deleted_at'] },
       where,
       offset: offset,
-      limit: pageSize,
+      limit: page_size,
       order: requestBody.order || [['id', 'desc']],
     });
   }

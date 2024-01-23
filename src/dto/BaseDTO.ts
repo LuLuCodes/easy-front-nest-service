@@ -63,23 +63,23 @@ export class BaseDTO {
 
 export class QueryDTO extends BaseDTO {
   @ApiPropertyOptional({
-    description: 'pageNum页面(1开始)',
+    description: 'page_num页面(1开始)',
     type: Number,
   })
   @IsOptional()
-  @IsInt({ message: 'pageNum必须为必须为有效整数' })
-  @Min(1, { message: 'pageNum应大于等于1' })
-  readonly pageNum = 1;
+  @IsInt({ message: 'page_num必须为必须为有效整数' })
+  @Min(1, { message: 'page_num应大于等于1' })
+  readonly page_num = 1;
 
   @ApiPropertyOptional({
-    description: 'pageSize页面(1开始)',
+    description: 'page_size页面(1开始)',
     type: Number,
   })
   @IsOptional()
-  @IsInt({ message: 'pageSize必须为必须为有效整数' })
-  @Min(1, { message: 'pageSize应大于等于1' })
-  @Max(1000, { message: 'pageSize应小于等于1000' })
-  readonly pageSize = 10;
+  @IsInt({ message: 'page_size必须为必须为有效整数' })
+  @Min(1, { message: 'page_size应大于等于1' })
+  @Max(1000, { message: 'page_size应小于等于1000' })
+  readonly page_size = 10;
 
   @ApiPropertyOptional({
     description:
@@ -93,10 +93,11 @@ export class QueryDTO extends BaseDTO {
   @ApiPropertyOptional({
     description:
       '查询字段名(https://www.sequelize.com.cn/core-concepts/model-querying-basics#select-%E6%9F%A5%E8%AF%A2%E7%89%B9%E5%AE%9A%E5%B1%9E%E6%80%A7)',
-    type: Object,
+    type: [String],
   })
   @IsOptional()
-  readonly attributes?: any;
+  @IsArray({ message: 'attributes必须为数组' })
+  readonly attributes?: string[];
 }
 
 export class UpdateStatusDTO extends BaseDTO {
