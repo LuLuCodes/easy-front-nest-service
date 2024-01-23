@@ -2,7 +2,7 @@
  * @Author: leyi leyi@myun.info
  * @Date: 2021-12-25 14:14:15
  * @LastEditors: leyi leyi@myun.info
- * @LastEditTime: 2024-01-23 11:16:25
+ * @LastEditTime: 2024-01-23 11:18:33
  * @FilePath: /easy-front-nest-service/src/guard/sign.guard.ts
  * @Description:
  *
@@ -25,18 +25,19 @@ export class SignGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
     const { headers, url, method } = request;
-    if (headers['x-from-swagger'] === 'swagger') {
-      return true;
-    }
-    if (this.hasUrl(this.configService.get('while_list.sign'), request.url)) {
-      return true;
-    }
-
     let request_data = null;
     if (method === 'GET') {
       request_data = request.query;
     } else {
       request_data = request.body;
+    }
+    if (
+      headers['x-from-swagger'] === 'swagger' ||
+      this.hasUrl(this.configService.get('while_list.sign'), request.url)
+    ) {
+      delete request_data.sign;
+      delete request_data.timestamp;
+      return true;
     }
     const { sign, timestamp } = request_data;
     // 如果白名单里面有的url就不拦截
