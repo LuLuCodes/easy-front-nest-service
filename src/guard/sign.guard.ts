@@ -2,7 +2,7 @@
  * @Author: leyi leyi@myun.info
  * @Date: 2021-12-25 14:14:15
  * @LastEditors: leyi leyi@myun.info
- * @LastEditTime: 2024-01-23 11:18:33
+ * @LastEditTime: 2024-01-24 17:11:23
  * @FilePath: /easy-front-nest-service/src/guard/sign.guard.ts
  * @Description:
  *
@@ -24,7 +24,7 @@ export class SignGuard implements CanActivate {
   constructor(private readonly configService: ConfigService) {}
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
-    const { headers, url, method } = request;
+    const { headers, path: url, method } = request;
     let request_data = null;
     if (method === 'GET') {
       request_data = request.query;
@@ -33,7 +33,7 @@ export class SignGuard implements CanActivate {
     }
     if (
       headers['x-from-swagger'] === 'swagger' ||
-      this.hasUrl(this.configService.get('while_list.sign'), request.url)
+      this.hasUrl(this.configService.get('while_list.sign'), url)
     ) {
       delete request_data.sign;
       delete request_data.timestamp;

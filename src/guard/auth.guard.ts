@@ -2,7 +2,7 @@
  * @Author: leyi leyi@myun.info
  * @Date: 2021-11-25 17:08:33
  * @LastEditors: leyi leyi@myun.info
- * @LastEditTime: 2022-12-27 13:33:38
+ * @LastEditTime: 2024-01-24 17:11:40
  * @FilePath: /easy-front-nest-service/src/guard/auth.guard.ts
  * @Description:
  *
@@ -36,7 +36,7 @@ export class AuthGuard implements CanActivate {
       return true;
     }
     // 如果白名单里面有的url就不拦截
-    if (this.hasUrl(this.configService.get('while_list.token'), request.url)) {
+    if (this.hasUrl(this.configService.get('while_list.token'), request.path)) {
       return true;
     }
     if (headers['x-auth-token']) {
