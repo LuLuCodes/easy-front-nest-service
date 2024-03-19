@@ -197,3 +197,19 @@ export function aes256gcmDecrypt(
   decipherIv.final();
   return decryptStr;
 }
+
+/**
+ * api接口加密
+ * @param data 返回值
+ * @param key 加密的key
+ * @returns 加密文本
+ */
+export function apiCipher(data: any, key: string): string {
+  if (data == null) {
+    return data;
+  }
+  return cryptoJS.AES.encrypt(
+    typeof data === 'object' ? JSON.stringify(data) : data.toString(),
+    key,
+  ).toString();
+}
