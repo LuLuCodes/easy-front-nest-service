@@ -121,7 +121,7 @@ export class OssController {
   })
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('get-upload-params')
-  async getOrderCommentList(
+  async getUploadParams(
     @Session() session,
     @Body() body: GetUploadParamsDTO,
   ): Promise<any> {
