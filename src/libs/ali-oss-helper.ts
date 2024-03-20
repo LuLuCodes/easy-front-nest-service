@@ -2,8 +2,8 @@
  * @Author: leyi leyi@myun.info
  * @Date: 2024-03-20 14:36:32
  * @LastEditors: leyi leyi@myun.info
- * @LastEditTime: 2024-03-20 15:01:33
- * @FilePath: /douyin-shop-master-service/src/libs/ali-oss-helper.ts
+ * @LastEditTime: 2024-03-20 19:52:43
+ * @FilePath: /easy-front-nest-service/src/libs/ali-oss-helper.ts
  * @Description:
  *
  * Copyright (c) 2024 by ${git_name_email}, All Rights Reserved.
@@ -42,7 +42,7 @@ export default class AliOssHelper {
   private getPolicyBase64() {
     const date = new Date();
     // 设置policy过期时间。
-    date.setHours(date.getHours() + this._max_size);
+    date.setHours(date.getHours() + this._time_out);
     const srcT = date.toISOString();
     const policyText = {
       expiration: srcT,
