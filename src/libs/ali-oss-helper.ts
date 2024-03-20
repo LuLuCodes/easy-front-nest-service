@@ -2,7 +2,7 @@
  * @Author: leyi leyi@myun.info
  * @Date: 2024-03-20 14:36:32
  * @LastEditors: leyi leyi@myun.info
- * @LastEditTime: 2024-03-20 19:52:43
+ * @LastEditTime: 2024-03-20 19:59:05
  * @FilePath: /easy-front-nest-service/src/libs/ali-oss-helper.ts
  * @Description:
  *
@@ -13,7 +13,7 @@ import * as crypto from 'crypto-js';
 export default class AliOssHelper {
   private _access_key_id = '';
   private _access_key_secret = '';
-  private _time_out = 0.5;
+  private _time_out = 1;
   private _max_size = 0;
   constructor({
     access_key_id,
@@ -26,7 +26,7 @@ export default class AliOssHelper {
   }) {
     this._access_key_id = access_key_id;
     this._access_key_secret = access_key_secret;
-    this._max_size = max_size || 0.5;
+    this._max_size = max_size || 3;
   }
 
   createUploadParams() {
