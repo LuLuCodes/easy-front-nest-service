@@ -2,14 +2,23 @@ import {
   Controller,
   Post,
   Body,
+  Session,
   UseInterceptors,
+  UsePipes,
   UploadedFiles,
   BadRequestException,
 } from '@nestjs/common';
 import { Express } from 'express';
+import { ValidationPipe } from '@pipe/validation.pipe';
 // import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { ConfigService } from '@nestjs/config';
-import { ApiTags, ApiOperation, ApiConsumes, ApiHeader } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiTags,
+  ApiOperation,
+  ApiConsumes,
+  ApiHeader,
+} from '@nestjs/swagger';
 import { CatchError } from '@decorator/catch.decorator';
 import { CacheService } from '@service/cache.service';
 import { ApiMultiFile } from '@decorator/api.multi.file.decorator';
@@ -17,8 +26,11 @@ import { AliOssService } from 'nestjs-ali-oss';
 import { ensureDir, outputFile, remove } from 'fs-extra';
 import { resolve } from 'path';
 import { length } from 'class-validator';
+import { GetUploadParamsDTO } from './oss.dto';
+import AliOssHelper from '@libs/ali-oss-helper';
+import { hash } from '../../libs/cryptogram';
 
-@ApiTags('后台商品API')
+@ApiTags('Oss API')
 @ApiHeader({
   name: 'x-from-swagger',
   description: '如果是swagger发送的请求，会跳过token和sign验证',
@@ -97,5 +109,31 @@ export class OssController {
     });
     await Promise.all(delPromises);
     return { urls };
+  }
+
+  @ApiOperation({
+    summary: 'GetUploadParams',
+    description: 'GetUploadParams',
+  })
+  @ApiBody({
+    description: '请求参数',
+    type: GetUploadParamsDTO,
+  })
+  @UsePipes(new ValidationPipe({ transform: true }))
+  @Post('get-upload-params')
+  async getOrderCommentList(
+    @Session() session,
+    @Body() body: GetUploadParamsDTO,
+  ): Promise<any> {
+    const { max_size } = body;
+    const helper = new AliOssHelper({
+      access_key_id: this.configService.get('oss.access_key_id'),
+      access_key_secret: this.configService.get('oss.access_key_secret'),
+      max_size,
+    });
+
+    // 生成参数。
+    const params = helper.createUploadParams();
+    return { ...params, domain: this.domain };
   }
 }
