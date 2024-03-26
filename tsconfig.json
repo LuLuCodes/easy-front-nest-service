@@ -6,7 +6,7 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
-    "target": "es2017",
+    "target": "ES2021",
     "sourceMap": true,
     "outDir": "./api",
     "baseUrl": "./",
@@ -34,6 +34,6 @@
       "@filter/*": ["./src/filter/*"]
     },
   },
-  "exclude": ["node_modules", "api", "sequelize-generator"],
+  "exclude": ["node_modules", "api", "sequelize-generator", "db-generator"],
   "include": ["src/**/*", "test/**/*", ".eslintrc.js", "commitlint.config.js", ".cz-config.js"]
 }

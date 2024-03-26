@@ -1,5 +1,5 @@
 import { NestFactory } from '@nestjs/core';
-import { VersioningType } from '@nestjs/common';
+// import { VersioningType } from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { ConfigService } from '@nestjs/config';
 import { AppModule } from './app.module';
@@ -11,19 +11,18 @@ import { AllExceptionsFilter } from '@filter/any-exception.filter';
 import { ValidationExceptionFilter } from '@filter/validation-exception-filter';
 import { RedisLock } from '@libs/redlock';
 import rateLimit from 'express-rate-limit';
-import * as helmet from 'helmet';
-import * as cookieParser from 'cookie-parser';
-import * as bodyParser from 'body-parser';
-import * as bodyParserXml from 'body-parser-xml';
-import * as compression from 'compression';
-import * as ConnectRedis from 'connect-redis';
-import * as session from 'express-session';
+import helmet from 'helmet';
+import cookieParser from 'cookie-parser';
+import bodyParser from 'body-parser';
+import bodyParserXml from 'body-parser-xml';
+import compression from 'compression';
+import RedisStore from 'connect-redis';
+import session from 'express-session';
 import { createClient } from 'redis';
-import * as multer from 'multer';
+import multer from 'multer';
 
 bodyParserXml(bodyParser);
 
-const RedisStore = ConnectRedis(session);
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   const config = app.get(ConfigService);
@@ -48,21 +47,7 @@ async function bootstrap() {
     }),
   );
   if (config.get('app.node_env') === 'production') {
-    app.use(helmet.contentSecurityPolicy());
-    app.use(helmet.crossOriginEmbedderPolicy());
-    app.use(helmet.crossOriginOpenerPolicy());
-    app.use(helmet.crossOriginResourcePolicy());
-    app.use(helmet.dnsPrefetchControl());
-    app.use(helmet.expectCt());
-    app.use(helmet.frameguard());
-    app.use(helmet.hidePoweredBy());
-    app.use(helmet.hsts());
-    app.use(helmet.ieNoOpen());
-    app.use(helmet.noSniff());
-    app.use(helmet.originAgentCluster());
-    app.use(helmet.permittedCrossDomainPolicies());
-    app.use(helmet.referrerPolicy());
-    app.use(helmet.xssFilter());
+    app.use(helmet());
   }
   app.enableCors({
     origin: true,
@@ -100,11 +85,12 @@ async function bootstrap() {
     legacyMode: true,
   });
   await sessionRedis.connect();
+  const redisStore = new RedisStore({
+    client: sessionRedis,
+  });
   app.use(
     session({
-      store: new RedisStore({
-        client: sessionRedis,
-      }),
+      store: redisStore,
       secret: config.get('session.secret'),
       key: config.get('session.key'),
       cookie: config.get('session.cookie'),
