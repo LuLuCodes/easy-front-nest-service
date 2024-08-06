@@ -73,6 +73,7 @@
     "ioredis": "^5.3.2",
     "lodash": "^4.17.21",
     "log4js": "^6.9.1",
+    "mathjs": "^13.0.3",
     "minimist": "^1.2.8",
     "multer": "1.4.5-lts.1",
     "mysql2": "^3.9.2",
@@ -85,7 +86,8 @@
     "sequelize": "^6.37.1",
     "sequelize-typescript": "^2.1.6",
     "stacktrace-js": "^2.0.2",
-    "uuid": "^9.0.1"
+    "uuid": "^9.0.1",
+    "vm": "^0.1.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.2.1",
