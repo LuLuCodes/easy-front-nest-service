@@ -6,9 +6,11 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { RedisModule, RedisModuleOptions } from '@liaoliaots/nestjs-redis';
-import { ThrottlerModule } from '@nestjs/throttler';
+import { ThrottlerModule, seconds } from '@nestjs/throttler';
+import { ThrottlerStorageRedisService } from 'nestjs-throttler-storage-redis';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { join, resolve } from 'path';
+import Redis from 'ioredis';
 
 import { LoggerMiddleware } from './middleware/logger.middleware';
 import { SignGuard } from '@guard/sign.guard';
@@ -53,12 +55,22 @@ import while_list from '@config/white-list';
     ThrottlerModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (configService: ConfigService) => [
-        {
-          ttl: configService.get('app.throttle_ttl'),
-          limit: configService.get('app.throttle_limit'),
-        },
-      ],
+      useFactory: (configService: ConfigService) => ({
+        throttlers: [
+          {
+            ttl: configService.get('app.throttle_ttl'),
+            limit: configService.get('app.throttle_limit'),
+          },
+        ],
+        storage: new ThrottlerStorageRedisService(
+          new Redis({
+            host: configService.get('redis.host'),
+            port: configService.get('redis.port'),
+            password: configService.get('redis.password'),
+            db: configService.get('redis.throttler_store_db_index'),
+          }),
+        ),
+      }),
     }),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'www'),
