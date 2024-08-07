@@ -10,7 +10,6 @@ import { HttpExceptionFilter } from '@filter/http-exception.filter';
 import { AllExceptionsFilter } from '@filter/any-exception.filter';
 import { ValidationExceptionFilter } from '@filter/validation-exception-filter';
 import { RedisLock } from '@libs/redlock';
-import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
@@ -34,18 +33,7 @@ async function bootstrap() {
     }
     next();
   });
-  app.use(
-    rateLimit({
-      windowMs: 60 * 1000, // 1 minutes
-      max: 3000, // limit each IP to 100 requests per windowMs
-      keyGenerator: function (req) {
-        const address =
-          req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-        const key = address + '_' + req.originalUrl;
-        return key;
-      },
-    }),
-  );
+
   if (config.get('app.node_env') === 'production') {
     app.use(helmet());
   }

@@ -45,6 +45,7 @@
     "@nestjs/sequelize": "^10.0.1",
     "@nestjs/serve-static": "^4.0.1",
     "@nestjs/swagger": "^7.3.0",
+    "@nestjs/throttler": "^6.0.0",
     "ali-oss": "^6.20.0",
     "bignumber.js": "^9.1.2",
     "body-parser": "^1.20.2",

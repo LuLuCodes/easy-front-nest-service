@@ -6,12 +6,14 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { RedisModule, RedisModuleOptions } from '@liaoliaots/nestjs-redis';
+import { ThrottlerModule } from '@nestjs/throttler';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { join, resolve } from 'path';
 
 import { LoggerMiddleware } from './middleware/logger.middleware';
 import { SignGuard } from '@guard/sign.guard';
 import { AuthGuard } from '@guard/auth.guard';
+import { CustomThrottlerGuard } from '@guard/custom-throttler.guard';
 import { CacheService } from '@service/cache.service';
 import { CronTaskService } from '@service/cron-task.service';
 import { DictCacheService } from '@service/dict-cache.service';
@@ -47,6 +49,16 @@ import while_list from '@config/white-list';
         while_list,
       ],
       isGlobal: true,
+    }),
+    ThrottlerModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => [
+        {
+          ttl: configService.get('app.throttle_ttl'),
+          limit: configService.get('app.throttle_limit'),
+        },
+      ],
     }),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'www'),
@@ -253,6 +265,10 @@ import while_list from '@config/white-list';
     {
       provide: APP_GUARD,
       useClass: AuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: CustomThrottlerGuard,
     },
     CacheService,
     CronTaskService,
