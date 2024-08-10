@@ -3,7 +3,7 @@
  * @Date: 2022-09-07 09:17:35
  * @LastEditors: leyi leyi@myun.info
  * @LastEditTime: 2023-02-08 17:30:14
- * @FilePath: /easy-front-nest-service/sequelize-generator/index.ts
+ * @FilePath: /douyin-shop-master-service/sequelize-generator/index.ts
  * @Description:
  *
  * Copyright (c) 2023 by ${git_name_email}, All Rights Reserved.

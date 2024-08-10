@@ -35,14 +35,14 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 exports.run = void 0;
 /*
  * @Author: leyi leyi@myun.info
  * @Date: 2022-09-07 09:17:35
  * @LastEditors: leyi leyi@myun.info
  * @LastEditTime: 2023-02-08 17:30:14
- * @FilePath: /easy-front-nest-service/sequelize-generator/index.ts
+ * @FilePath: /douyin-shop-master-service/sequelize-generator/index.ts
  * @Description:
  *
  * Copyright (c) 2023 by ${git_name_email}, All Rights Reserved.
@@ -64,27 +64,27 @@ function run() {
                             port: parseInt(process.env.DB_PORT),
                             database: process.env.DB_NAME,
                             username: process.env.DB_USERNAME,
-                            password: process.env.DB_PASSWORD
+                            password: process.env.DB_PASSWORD,
                         },
                         metadata: {
                             indices: true,
-                            "case": {
+                            case: {
                                 model: 'PASCAL',
-                                column: 'LOWER'
+                                column: 'LOWER',
                             },
                             timestamps: true,
                             paranoid: true,
                             aliasFields: {
                                 deletedAt: 'deleted_at',
                                 createdAt: 'created_at',
-                                updatedAt: 'updated_at'
-                            }
+                                updatedAt: 'updated_at',
+                            },
                         },
                         output: {
                             clean: true,
-                            outDir: (0, path_1.resolve)(__dirname, '../src/models')
+                            outDir: (0, path_1.resolve)(__dirname, '../src/models'),
                         },
-                        strict: false
+                        strict: false,
                     };
                     dialect = new easy_front_sequelize_generator_1.DialectMySQL();
                     builder = new easy_front_sequelize_generator_1.ModelBuilder(config, dialect);

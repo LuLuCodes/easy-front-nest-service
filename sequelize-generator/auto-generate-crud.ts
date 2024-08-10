@@ -1,4 +1,4 @@
-import * as Inquirer from 'inquirer';
+import { select } from '@inquirer/prompts';
 import * as Chalk from 'chalk';
 import * as fs from 'fs';
 import { ensureFile, pathExists } from 'fs-extra';
@@ -287,14 +287,14 @@ const createDTO = async (
     const columnDTOContent = `
       ${getColumnValidator(name, comment, type, columnRequired)}
       readonly ${name}${columnRequired ? '' : '?'}${
-      defaultValue
-        ? `=${defaultValue}`
-        : `: ${
-            ['int', 'decimal', 'float', 'double'].includes(dtoColumnType)
-              ? 'number'
-              : dtoColumnType
-          }`
-    };`;
+        defaultValue
+          ? `=${defaultValue}`
+          : `: ${
+              ['int', 'decimal', 'float', 'double'].includes(dtoColumnType)
+                ? 'number'
+                : dtoColumnType
+            }`
+      };`;
 
     if (!primaryKey && !immutableColumnsDTO.includes(name)) {
       addDTOContent = addDTOContent.replace(/}$/, `  ${columnDTOContent}\n}`);
@@ -400,8 +400,8 @@ const createControlFun = async ({
     ): Promise<any> {
       const { user } = session;
       const response = await this.${moduleName}Service.${lowerCaseFirstLetter(
-      addDTOName.replace('DTO', ''),
-    )}(body, user);
+        addDTOName.replace('DTO', ''),
+      )}(body, user);
       return response;
     }`;
 
@@ -433,8 +433,8 @@ const createControlFun = async ({
     ): Promise<any> {
       const { user } = session;
       const response = await this.${moduleName}Service.${lowerCaseFirstLetter(
-      updateDTOName.replace('DTO', ''),
-    )}(body, user);
+        updateDTOName.replace('DTO', ''),
+      )}(body, user);
       return response;
     }`;
 
@@ -464,8 +464,8 @@ const createControlFun = async ({
     ): Promise<any> {
       const { user } = session;
       const response = await this.${moduleName}Service.${lowerCaseFirstLetter(
-      getDTOName.replace('DTO', ''),
-    )}(body, user);
+        getDTOName.replace('DTO', ''),
+      )}(body, user);
       return response;
     }`;
 
@@ -495,8 +495,8 @@ const createControlFun = async ({
     ): Promise<any> {
       const { user } = session;
       const response = await this.${moduleName}Service.${lowerCaseFirstLetter(
-      delDTOName.replace('DTO', ''),
-    )}(body, user);
+        delDTOName.replace('DTO', ''),
+      )}(body, user);
       return response;
     }`;
 
@@ -689,10 +689,14 @@ const createServiceFun = async ({
 
 export async function run() {
   const dbModels = await readDbModels('../src/models');
-  const dbModelNames = dbModels.map((item) => item.dbModelName);
-  const { db_model_name } = await Inquirer.prompt({
-    name: 'db_model_name',
-    type: 'list',
+  const dbModelNames = dbModels.map((item) => {
+    return {
+      name: item.dbModelName,
+      value: item.dbModelName,
+      description: item.dbModelName,
+    };
+  });
+  const db_model_name = await select({
     choices: dbModelNames,
     message: 'Please choose a model',
   });
@@ -703,11 +707,15 @@ export async function run() {
   const { dbModelName, dbModelFullPath } = dbModel;
 
   const controllers = await readController('../src/modules');
-  const controllerNames = controllers.map((item) => item.controllerName);
+  const controllerNames = controllers.map((item) => {
+    return {
+      name: item.controllerName,
+      value: item.controllerName,
+      description: item.controllerName,
+    };
+  });
 
-  const { controller_name } = await Inquirer.prompt({
-    name: 'controller_name',
-    type: 'list',
+  const controller_name = await select({
     choices: controllerNames,
     message:
       'Please choose a controller, create an interface in the controller of your choiced ',

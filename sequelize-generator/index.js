@@ -35,40 +35,57 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-exports.__esModule = true;
-var Inquirer = require("inquirer");
+Object.defineProperty(exports, "__esModule", { value: true });
+/*
+ * @Author: leyi leyi@myun.info
+ * @Date: 2023-08-17 20:03:36
+ * @LastEditors: leyi leyi@myun.info
+ * @LastEditTime: 2024-03-26 11:43:01
+ * @FilePath: /douyin-shop-master-service/sequelize-generator/index.ts
+ * @Description:
+ *
+ * Copyright (c) 2024 by ${git_name_email}, All Rights Reserved.
+ */
+var prompts_1 = require("@inquirer/prompts");
 var SyncModel = require("./sync-model");
 var AutoGenerateCrud = require("./auto-generate-crud");
 var Chalk = require("chalk");
 var Options;
 (function (Options) {
-    Options["SYNC_MODELS_FROM_DB"] = "sync models from database";
-    Options["AUTO_GENERATE_CRUD_FOR_MODEL"] = "auto generate crud for model";
+    Options["SYNC_MODELS_FROM_DB"] = "SYNC_MODELS_FROM_DB";
+    Options["AUTO_GENERATE_CRUD_FOR_MODEL"] = "AUTO_GENERATE_CRUD_FOR_MODEL";
 })(Options || (Options = {}));
 (function () { return __awaiter(void 0, void 0, void 0, function () {
-    var options, option;
+    var choices, answer;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                options = [
-                    Options.SYNC_MODELS_FROM_DB,
-                    Options.AUTO_GENERATE_CRUD_FOR_MODEL,
+                choices = [
+                    {
+                        name: Options.SYNC_MODELS_FROM_DB,
+                        value: Options.SYNC_MODELS_FROM_DB,
+                        description: 'sync models from database',
+                    },
+                    {
+                        name: Options.AUTO_GENERATE_CRUD_FOR_MODEL,
+                        value: Options.AUTO_GENERATE_CRUD_FOR_MODEL,
+                        description: 'auto generate crud for model',
+                    },
                 ];
-                return [4 /*yield*/, Inquirer.prompt({
-                        name: 'option',
-                        type: 'list',
-                        choices: options,
-                        message: 'Please choose a option'
+                return [4 /*yield*/, (0, prompts_1.select)({
+                        choices: choices,
+                        message: 'Please choose a option',
                     })];
             case 1:
-                option = (_a.sent()).option;
-                if (!(option === Options.SYNC_MODELS_FROM_DB)) return [3 /*break*/, 3];
+                answer = _a.sent();
+                console.log(answer);
+                if (!(answer === Options.SYNC_MODELS_FROM_DB)) return [3 /*break*/, 3];
                 return [4 /*yield*/, SyncModel.run()];
             case 2:
                 _a.sent();
                 return [3 /*break*/, 6];
             case 3:
-                if (!(option === Options.AUTO_GENERATE_CRUD_FOR_MODEL)) return [3 /*break*/, 5];
+                if (!(answer === Options.AUTO_GENERATE_CRUD_FOR_MODEL)) return [3 /*break*/, 5];
                 return [4 /*yield*/, AutoGenerateCrud.run()];
             case 4:
                 _a.sent();

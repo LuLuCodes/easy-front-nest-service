@@ -35,9 +35,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 exports.run = void 0;
-var Inquirer = require("inquirer");
+var prompts_1 = require("@inquirer/prompts");
 var fs = require("fs");
 var fs_extra_1 = require("fs-extra");
 var path = require("path");
@@ -51,10 +51,10 @@ var eslintDefaultConfig = {
     parser: '@typescript-eslint/parser',
     parserOptions: {
         ecmaVersion: 2019,
-        sourceType: 'module'
+        sourceType: 'module',
     },
     plugins: [],
-    "extends": [],
+    extends: [],
     rules: {
         'padded-blocks': [
             'error',
@@ -67,12 +67,12 @@ var eslintDefaultConfig = {
                 ObjectExpression: 'always',
                 ObjectPattern: { multiline: true },
                 ImportDeclaration: { multiline: true, minProperties: 3 },
-                ExportDeclaration: { multiline: true, minProperties: 3 }
+                ExportDeclaration: { multiline: true, minProperties: 3 },
             },
         ],
         'object-property-newline': ['error'],
-        indent: ['error', 'tab']
-    }
+        indent: ['error', 'tab'],
+    },
 };
 var DTODataTypesMap = {
     bigint: 'int',
@@ -96,7 +96,7 @@ var DTODataTypesMap = {
     timestamp: 'int',
     year: 'int',
     set: 'string',
-    json: 'object'
+    json: 'object',
 };
 var lowerCaseFirstLetter = function (str) {
     return str.replace(/^[A-Z]/, function (match) { return match.toLowerCase(); });
@@ -139,7 +139,7 @@ var readDbModels = function (dirPath) { return __awaiter(void 0, void 0, void 0,
                             var dbModelName = fileName.replace('.js', '').replace('.ts', '');
                             dbModels.push({
                                 dbModelFullPath: fullPath,
-                                dbModelName: dbModelName
+                                dbModelName: dbModelName,
                             });
                         }
                     });
@@ -179,7 +179,7 @@ var readController = function (dirPath) { return __awaiter(void 0, void 0, void 
                                 if (fileName.endsWith('.controller.ts')) {
                                     controllers.push({
                                         controllerFullPath: fullPath,
-                                        controllerName: "".concat(fullPath.substring(fullPath.indexOf("/src/modules/"))).replace('.ts', '')
+                                        controllerName: "".concat(fullPath.substring(fullPath.indexOf("/src/modules/"))).replace('.ts', ''),
                                     });
                                 }
                                 _a.label = 4;
@@ -235,12 +235,12 @@ var createDTO = function (dbModelName, dtoFullPath) { return __awaiter(void 0, v
                     username: process.env.DB_USERNAME,
                     password: process.env.DB_PASSWORD,
                     host: process.env.DB_HOST,
-                    port: parseInt(process.env.DB_PORT)
+                    port: parseInt(process.env.DB_PORT),
                 });
                 query = "\n        SELECT \n          c.ORDINAL_POSITION,\n          c.TABLE_SCHEMA,\n          c.TABLE_NAME,\n          c.COLUMN_NAME,\n          c.DATA_TYPE,\n          c.COLUMN_TYPE,\n          c.CHARACTER_MAXIMUM_LENGTH,\n          c.NUMERIC_PRECISION,\n          c.NUMERIC_SCALE,\n          c.DATETIME_PRECISION,                                             \n          c.IS_NULLABLE,\n          c.COLUMN_KEY,\n          c.EXTRA,\n          c.COLUMN_DEFAULT,\n          c.COLUMN_COMMENT,\n          t.TABLE_COMMENT                        \n        FROM information_schema.columns c\n        INNER JOIN information_schema.tables t\n        ON c.TABLE_SCHEMA = t.TABLE_SCHEMA AND c.TABLE_NAME = t.TABLE_NAME\n        WHERE c.TABLE_SCHEMA = '".concat(process.env.DB_NAME, "' AND c.TABLE_NAME = '").concat(realTableName, "' ORDER BY c.ORDINAL_POSITION;\n  ");
                 return [4 /*yield*/, sequelize.query(query, {
                         type: sequelize_1.QueryTypes.SELECT,
-                        raw: true
+                        raw: true,
                     })];
             case 1:
                 columns = _c.sent();
@@ -256,7 +256,7 @@ var createDTO = function (dbModelName, dtoFullPath) { return __awaiter(void 0, v
                         allowNull: column.IS_NULLABLE === 'YES',
                         primaryKey: column.COLUMN_KEY === 'PRI',
                         comment: column.COLUMN_COMMENT,
-                        defaultValue: getDefaultValue(column.COLUMN_DEFAULT)
+                        defaultValue: getDefaultValue(column.COLUMN_DEFAULT),
                     };
                     columnsMetadata.push(columnMetadata);
                 }
@@ -435,29 +435,37 @@ function run() {
                 case 0: return [4 /*yield*/, readDbModels('../src/models')];
                 case 1:
                     dbModels = _b.sent();
-                    dbModelNames = dbModels.map(function (item) { return item.dbModelName; });
-                    return [4 /*yield*/, Inquirer.prompt({
-                            name: 'db_model_name',
-                            type: 'list',
+                    dbModelNames = dbModels.map(function (item) {
+                        return {
+                            name: item.dbModelName,
+                            value: item.dbModelName,
+                            description: item.dbModelName,
+                        };
+                    });
+                    return [4 /*yield*/, (0, prompts_1.select)({
                             choices: dbModelNames,
-                            message: 'Please choose a model'
+                            message: 'Please choose a model',
                         })];
                 case 2:
-                    db_model_name = (_b.sent()).db_model_name;
+                    db_model_name = _b.sent();
                     dbModel = dbModels.find(function (item) { return item.dbModelName === db_model_name; });
                     dbModelName = dbModel.dbModelName, dbModelFullPath = dbModel.dbModelFullPath;
                     return [4 /*yield*/, readController('../src/modules')];
                 case 3:
                     controllers = _b.sent();
-                    controllerNames = controllers.map(function (item) { return item.controllerName; });
-                    return [4 /*yield*/, Inquirer.prompt({
-                            name: 'controller_name',
-                            type: 'list',
+                    controllerNames = controllers.map(function (item) {
+                        return {
+                            name: item.controllerName,
+                            value: item.controllerName,
+                            description: item.controllerName,
+                        };
+                    });
+                    return [4 /*yield*/, (0, prompts_1.select)({
                             choices: controllerNames,
-                            message: 'Please choose a controller, create an interface in the controller of your choiced '
+                            message: 'Please choose a controller, create an interface in the controller of your choiced ',
                         })];
                 case 4:
-                    controller_name = (_b.sent()).controller_name;
+                    controller_name = _b.sent();
                     module = controllers.find(function (item) { return item.controllerName === controller_name; });
                     controllerName = module.controllerName, controllerFullPath = module.controllerFullPath;
                     dtoFullPath = controllerFullPath.replace('.controller.ts', '.dto.ts');
@@ -470,7 +478,7 @@ function run() {
                             updateDTOName: updateDTOName,
                             getDTOName: getDTOName,
                             delDTOName: delDTOName,
-                            controllerFullPath: controllerFullPath
+                            controllerFullPath: controllerFullPath,
                         })];
                 case 6:
                     _b.sent();
@@ -480,13 +488,13 @@ function run() {
                             updateDTOName: updateDTOName,
                             getDTOName: getDTOName,
                             delDTOName: delDTOName,
-                            serviceFullPath: serviceFullPath
+                            serviceFullPath: serviceFullPath,
                         })];
                 case 7:
                     _b.sent();
                     lnitEngine = new lint.ESLint({
                         baseConfig: eslintDefaultConfig,
-                        fix: true
+                        fix: true,
                     });
                     return [4 /*yield*/, lnitEngine.lintFiles([
                             dtoFullPath,
