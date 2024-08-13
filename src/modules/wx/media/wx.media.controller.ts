@@ -37,7 +37,7 @@ import { resolve } from 'path';
 
 @ApiTags('微信公众号素材API')
 @ApiHeader({
-  name: 'x-from-swagger',
+  name: 'x-from-source',
   description: '如果是swagger发送的请求，会跳过token和sign验证',
   example: 'swagger',
   schema: {

@@ -32,7 +32,7 @@ export class AuthGuard implements CanActivate {
     let { user } = session;
     let { authToken } = session;
 
-    if (headers['x-from-swagger'] === 'swagger') {
+    if (headers['x-from-source'] === 'swagger') {
       return true;
     }
     // 如果白名单里面有的url就不拦截

@@ -1,3 +1,13 @@
+/*
+ * @Author: leyi leyi@myun.info
+ * @Date: 2024-08-07 16:00:26
+ * @LastEditors: leyi leyi@myun.info
+ * @LastEditTime: 2024-08-13 09:51:48
+ * @FilePath: /easy-front-nest-service/src/guard/custom-throttler.guard.ts
+ * @Description:
+ *
+ * Copyright (c) 2024 by ${git_name_email}, All Rights Reserved.
+ */
 import { Injectable } from '@nestjs/common';
 import { ThrottlerGuard, ThrottlerException } from '@nestjs/throttler';
 import { ThrottlerRequest } from '@nestjs/throttler/dist/throttler.guard.interface';

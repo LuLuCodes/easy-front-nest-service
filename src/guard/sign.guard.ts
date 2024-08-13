@@ -32,7 +32,7 @@ export class SignGuard implements CanActivate {
       request_data = request.body;
     }
     if (
-      headers['x-from-swagger'] === 'swagger' ||
+      headers['x-from-source'] === 'swagger' ||
       this.hasUrl(this.configService.get('while_list.sign'), url)
     ) {
       delete request_data.sign;
