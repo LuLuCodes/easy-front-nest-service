@@ -70,7 +70,6 @@ async function bootstrap() {
     },
     password: config.get('redis.password'),
     database: config.get('redis.cookie_db_index'),
-    legacyMode: true,
   });
   await sessionRedis.connect();
   const redisStore = new RedisStore({

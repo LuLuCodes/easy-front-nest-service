@@ -2,7 +2,7 @@
  * @Author: leyi leyi@myun.info
  * @Date: 2021-12-25 14:14:15
  * @LastEditors: leyi leyi@myun.info
- * @LastEditTime: 2024-01-24 17:11:23
+ * @LastEditTime: 2024-08-13 19:55:43
  * @FilePath: /easy-front-nest-service/src/guard/sign.guard.ts
  * @Description:
  *
@@ -69,7 +69,10 @@ export class SignGuard implements CanActivate {
       throw new HttpException('签名错误', HttpStatus.FORBIDDEN);
     } catch (e) {
       console.log('to sign', e.message);
-      throw new HttpException('签名校验异常', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(
+        `签名校验异常:${e.message}`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
