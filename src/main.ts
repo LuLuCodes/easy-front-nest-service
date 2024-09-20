@@ -112,6 +112,28 @@ async function bootstrap() {
   // `Header`版本控制
   // app.enableVersioning({ type: VersioningType.HEADER, header: 'version' });
   await app.listen(config.get('app.port'));
+  const buddhaArt = `
+                 _oo0oo_
+                o8888888o
+                88" . "88
+                (| -_- |)
+                0\\  =  /0
+              ___/'---'\\___
+            .' \\|       |/ '.
+           / \\|||  :  |||// \\
+          / _||||| -:- |||||- \\
+         |   | \\\  -  /// |   |
+         | \\_|  ''\\---/''  |_/ |
+         \\  .-\\__  '-'  ___/-. /
+       ___'. .'  /--.--\\  '. .'___
+    ."" '<  '.___\\_<|>_/___.' >' "".
+   | | :  '- \\'.;'\\ _ /';.'/ - ' : | |
+   \\  \\ '_.   \\_ __\\ /__ _/   .-' /  /
+    '-._'.___  /__\\.-.\\__/__.- _.-'
+
+        佛祖保佑  永无BUG  永不宕机
+  `;
   console.log(`Application is running on: ${await app.getUrl()}`);
+  console.log(buddhaArt);
 }
 bootstrap();
