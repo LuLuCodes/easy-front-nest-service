@@ -147,7 +147,14 @@
     "moduleNameMapper": {
       "@config/(.*)": "<rootDir>/src/config/$1",
       "@service/(.*)": "<rootDir>/src/service/$1",
-      "@libs/(.*)": "<rootDir>/src/libs/$1"
+      "@libs/(.*)": "<rootDir>/src/libs/$1",
+      "@models/(.*)$": "<rootDir>/src/models/$1",
+      "@modules/(.*)$": "<rootDir>/src/modules/$1",
+      "@pipe/(.*)$": "<rootDir>/src/pipe/$1",
+      "@filter/(.*)$": "<rootDir>/src/filter/$1",
+      "@dto/(.*)$": "<rootDir>/src/dto/$1",
+      "@guard/(.*)$": "<rootDir>/src/guard/$1",
+      "@decorator/(.*)$": "<rootDir>/src/decorator/$1"
     },
     "testRegex": ".*\\.spec\\.ts$",
     "transform": {

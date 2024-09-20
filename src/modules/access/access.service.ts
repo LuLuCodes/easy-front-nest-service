@@ -1,3 +1,13 @@
+/*
+ * @Author: leyi leyi@myun.info
+ * @Date: 2023-06-20 16:33:55
+ * @LastEditors: leyi leyi@myun.info
+ * @LastEditTime: 2024-09-20 12:16:29
+ * @FilePath: /easy-front-nest-service/src/modules/access/access.service.ts
+ * @Description:
+ *
+ * Copyright (c) 2024 by ${git_name_email}, All Rights Reserved.
+ */
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Sequelize } from 'sequelize-typescript';
