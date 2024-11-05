@@ -39,6 +39,7 @@ async function bootstrap() {
   }
   app.enableCors({
     origin: true,
+    // exposedHeaders: [], // 允许前端获取的头部（跨域）
     allowedHeaders:
       'Content-Type, X-XSRF-Token, CSRF-Token, X-CSRF-Token, X-Auth-Token',
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
