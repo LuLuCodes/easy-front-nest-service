@@ -41,9 +41,7 @@ export function encryptPassword(password: string, salt: string): string {
   const tempSalt = Buffer.from(salt, 'base64');
   return (
     // 10000 代表迭代次数 16代表长度
-    crypto
-      .pbkdf2Sync(password, tempSalt, 10000, 32, 'sha256')
-      .toString('base64')
+    crypto.pbkdf2Sync(password, tempSalt, 10000, 32, 'sm3').toString('base64')
   );
 }
 
