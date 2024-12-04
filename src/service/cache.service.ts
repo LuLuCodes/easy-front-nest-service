@@ -114,4 +114,11 @@ export class CacheService {
     }
     return await this.client.hmset(key, ...args);
   }
+
+  async expire(key: string, seconds: number): Promise<boolean> {
+    if (!this.client) {
+      await this.getClient();
+    }
+    return await this.client.expire(key, seconds);
+  }
 }
