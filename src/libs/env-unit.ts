@@ -1,3 +1,13 @@
+/*
+ * @Author: leyi leyi@myun.info
+ * @Date: 2024-10-22 12:54:35
+ * @LastEditors: leyi leyi@myun.info
+ * @LastEditTime: 2025-04-22 10:25:00
+ * @FilePath: /easy-front-nest-service/src/libs/env-unit.ts
+ * @Description:
+ *
+ * Copyright (c) 2025 by ${git_name_email}, All Rights Reserved.
+ */
 import * as dotenv from 'dotenv';
 import * as path from 'path';
 
@@ -19,7 +29,7 @@ const fromatValue = <T>(
   callback: (value: string) => T,
 ): T => {
   const value: string | undefined = process.env[key];
-  if (typeof value === 'undefined') {
+  if (typeof value === 'undefined' || value === '') {
     return defaultValue;
   }
   return callback(value);
@@ -33,3 +43,9 @@ export const envNumber = (key: string, defaultValue = 0): number =>
 
 export const envBoolean = (key: string, defaultValue = false): boolean =>
   fromatValue(key, defaultValue, (value) => value === 'true');
+
+export const envArray = (
+  key: string,
+  split = ',',
+  defaultValue = [],
+): string[] => fromatValue(key, defaultValue, (value) => value.split(split));
