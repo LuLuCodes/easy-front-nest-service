@@ -46,6 +46,150 @@ export function encryptPassword(password: string, salt: string): string {
 }
 
 /**
+ * 密码强度检查结果
+ */
+export interface IPasswordStrengthResult {
+  is_valid: boolean; // 密码是否有效
+  score: number; // 密码强度分数 (0-100)
+  strength: string; // 强度级别 ('弱', '中等', '强', '非常强')
+  issues: string[]; // 密码存在的问题列表
+  suggestions: string[]; // 改进建议
+}
+
+/**
+ * 检查密码强度
+ * @param password 待检查的密码
+ * @param min_length 最小长度要求 (默认8)
+ * @returns 密码强度检查结果
+ */
+export function checkPasswordStrength(
+  password: string,
+  min_length: number = 8,
+): IPasswordStrengthResult {
+  const issues: string[] = [];
+  const suggestions: string[] = [];
+  let score = 0;
+
+  // 基础检查
+  if (!password) {
+    issues.push('密码不能为空');
+    return {
+      is_valid: false,
+      score: 0,
+      strength: '弱',
+      issues,
+      suggestions: ['请输入密码'],
+    };
+  }
+
+  // 长度检查 - 作为强制项
+  if (password.length < min_length) {
+    issues.push(`密码长度不足 ${min_length} 个字符`);
+    suggestions.push(`密码至少需要 ${min_length} 个字符`);
+    // 长度不足，直接返回无效结果
+    return {
+      is_valid: false,
+      score: Math.min(30, password.length * 3), // 给出一些基于当前长度的分数
+      strength: '弱',
+      issues,
+      suggestions,
+    };
+  } else {
+    score += 10; // 基础分
+    // 额外长度加分
+    score += Math.min(20, (password.length - min_length) * 2);
+  }
+
+  // 字符多样性检查
+  const has_lower_case = /[a-z]/.test(password);
+  const has_upper_case = /[A-Z]/.test(password);
+  const has_numbers = /[0-9]/.test(password);
+  const has_special_chars = /[^A-Za-z0-9]/.test(password);
+
+  if (!has_lower_case) {
+    issues.push('缺少小写字母');
+    suggestions.push('添加小写字母可以增强密码强度');
+  } else {
+    score += 10;
+  }
+
+  if (!has_upper_case) {
+    issues.push('缺少大写字母');
+    suggestions.push('添加大写字母可以增强密码强度');
+  } else {
+    score += 10;
+  }
+
+  if (!has_numbers) {
+    issues.push('缺少数字');
+    suggestions.push('添加数字可以增强密码强度');
+  } else {
+    score += 10;
+  }
+
+  if (!has_special_chars) {
+    issues.push('缺少特殊字符');
+    suggestions.push('添加特殊字符（如 !@#$%^&*）可以显著增强密码强度');
+  } else {
+    score += 15;
+  }
+
+  // 检查常见弱密码
+  if (
+    /^(123456|password|qwerty|admin|welcome|12345678|123123|111111|1234567890|password123)$/i.test(
+      password,
+    )
+  ) {
+    issues.push('使用了常见的弱密码');
+    suggestions.push('避免使用常见的弱密码');
+    score = 0;
+  }
+
+  // 连续字符检查
+  if (
+    /(?:abcdef|bcdefg|cdefgh|defghi|efghij|fghijk|ghijkl|hijklm|ijklmn|jklmno|klmnop|lmnopq|mnopqr|nopqrs|opqrst|pqrstu|qrstuv|rstuvw|stuvwx|tuvwxy|uvwxyz|012345|123456|234567|345678|456789)/i.test(
+      password,
+    )
+  ) {
+    issues.push('包含连续的字母或数字');
+    suggestions.push('避免使用连续的字母或数字');
+    score -= 10;
+  }
+
+  // 确保分数在0-100范围内
+  score = Math.max(0, Math.min(100, score));
+
+  // 确定强度级别
+  let strength: string;
+  if (score < 40) {
+    strength = '弱';
+  } else if (score < 60) {
+    strength = '中等';
+  } else if (score < 80) {
+    strength = '强';
+  } else {
+    strength = '非常强';
+  }
+
+  // 确定密码是否有效（至少达到中等强度）
+  // 注意：这里不再检查长度，因为长度检查已经作为前置条件
+  const is_valid = score >= 50;
+
+  // 如果没有问题，添加一个积极反馈
+  if (issues.length === 0) {
+    suggestions.push('您的密码很强大，非常好！');
+  }
+
+  return {
+    is_valid,
+    score,
+    strength,
+    issues,
+    suggestions,
+  };
+}
+
+/**
  * AES-128-CBC 加密方法
  * @param key  加密key
  * @param iv   向量
