@@ -2,7 +2,7 @@
  * @Author: leyi leyi@myun.info
  * @Date: 2024-10-22 12:54:35
  * @LastEditors: leyi leyi@myun.info
- * @LastEditTime: 2025-04-22 10:25:00
+ * @LastEditTime: 2025-08-07 10:46:54
  * @FilePath: /easy-front-nest-service/src/libs/env-unit.ts
  * @Description:
  *
@@ -48,4 +48,10 @@ export const envArray = (
   key: string,
   split = ',',
   defaultValue = [],
-): string[] => fromatValue(key, defaultValue, (value) => value.split(split));
+): string[] =>
+  fromatValue(key, defaultValue, (value) => {
+    if (!value.trim()) {
+      return [];
+    }
+    return value.split(split).filter((item) => item.trim() !== '');
+  });
