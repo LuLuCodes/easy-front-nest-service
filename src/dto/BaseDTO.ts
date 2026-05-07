@@ -1,130 +1,26 @@
-import {
-  IsNotEmpty,
-  IsString,
-  IsNumber,
-  IsInt,
-  Min,
-  Max,
-  IsArray,
-  IsOptional,
-} from 'class-validator';
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+/**
+ * @deprecated 单一聚合 DTO 已被 `@common/dto/*` 中按职责拆分的 DTO 取代。
+ * 保留本文件作为旧代码的过渡兼容层，新代码请直接组合具体 DTO，
+ * 或在 controller 中使用 `IntersectionType` 显式聚合。
+ *
+ * 计划在 P5（业务模块剥离）完成后移除本文件。
+ */
+import { IntersectionType } from '@nestjs/mapped-types';
 
-export class BaseDTO {
-  @ApiPropertyOptional({
-    description: '时间戳',
-    type: Number,
-  })
-  @IsOptional()
-  @IsInt({ message: 'timestamp必须为有效整数' })
-  readonly timestamp?: number;
+import { BaseRequestDto } from '@common/dto/base-request.dto';
+import { CacheParamsDto } from '@common/dto/cache-params.dto';
+import { DeleteRowDto } from '@common/dto/delete-row.dto';
+import { PaginationDto } from '@common/dto/pagination.dto';
+import { UpdateStatusDto } from '@common/dto/update-status.dto';
 
-  @ApiPropertyOptional({
-    description: '签名',
-    type: String,
-  })
-  @IsOptional()
-  @IsString({ message: 'sign必须为字符串' })
-  readonly sign?: string;
+/** @deprecated 改用 `@common/dto/{base-request,cache-params}.dto` 组合。 */
+export class BaseDTO extends IntersectionType(BaseRequestDto, CacheParamsDto) {}
 
-  @ApiPropertyOptional({
-    description: '缓存key',
-    type: String,
-  })
-  @IsOptional()
-  @IsString({ message: 'cache_key必须为字符串' })
-  readonly cache_key?: string;
+/** @deprecated 改用 `@common/dto/pagination.dto` + 业务字段组合。 */
+export class QueryDTO extends IntersectionType(BaseDTO, PaginationDto) {}
 
-  @ApiPropertyOptional({
-    description: '删除缓存key',
-    type: [String],
-  })
-  @IsOptional()
-  @IsArray({ message: 'del_cache_key必须为数组' })
-  readonly del_cache_key?: string[];
+/** @deprecated 改用 `@common/dto/update-status.dto` + 业务字段组合。 */
+export class UpdateStatusDTO extends IntersectionType(BaseDTO, UpdateStatusDto) {}
 
-  @ApiPropertyOptional({
-    description: '缓存模式，EX或者PX，不传默认EX',
-    type: String,
-  })
-  @IsOptional()
-  @IsString({ message: 'cache_mode必须为字符串' })
-  readonly cache_mode?: string;
-
-  @ApiPropertyOptional({
-    description: '缓存时长，不传时1~20秒随机',
-    type: Number,
-  })
-  @IsOptional()
-  @IsInt({ message: 'cache_time必须为有效整数' })
-  @Min(1, { message: 'cache_time必须大于等于1' })
-  readonly cache_time?: number;
-}
-
-export class QueryDTO extends BaseDTO {
-  @ApiPropertyOptional({
-    description: 'page_num页面(1开始)',
-    type: Number,
-  })
-  @IsOptional()
-  @IsInt({ message: 'page_num必须为必须为有效整数' })
-  @Min(1, { message: 'page_num应大于等于1' })
-  readonly page_num = 1;
-
-  @ApiPropertyOptional({
-    description: 'page_size页面(1开始)',
-    type: Number,
-  })
-  @IsOptional()
-  @IsInt({ message: 'page_size必须为必须为有效整数' })
-  @Min(1, { message: 'page_size应大于等于1' })
-  @Max(1000, { message: 'page_size应小于等于1000' })
-  readonly page_size = 10;
-
-  @ApiPropertyOptional({
-    description:
-      '排序字段(https://www.sequelize.com.cn/core-concepts/model-querying-basics#%E6%8E%92%E5%BA%8F)',
-    type: Array,
-  })
-  @IsOptional()
-  @IsArray({ message: 'order必须为数组' })
-  readonly order?: Array<any>;
-
-  @ApiPropertyOptional({
-    description:
-      '查询字段名(https://www.sequelize.com.cn/core-concepts/model-querying-basics#select-%E6%9F%A5%E8%AF%A2%E7%89%B9%E5%AE%9A%E5%B1%9E%E6%80%A7)',
-    type: [String],
-  })
-  @IsOptional()
-  @IsArray({ message: 'attributes必须为数组' })
-  readonly attributes?: string[];
-}
-
-export class UpdateStatusDTO extends BaseDTO {
-  @ApiPropertyOptional({
-    description: '是否启用 1:启用',
-    type: Number,
-  })
-  @IsOptional()
-  @IsInt({ message: 'enabled必须为有效整数' })
-  @Min(0, { message: 'enabled必须大于等于0' })
-  readonly enabled?: number;
-
-  @ApiPropertyOptional({
-    description: '是否逻辑删除 1:已删除',
-    type: Number,
-  })
-  @IsOptional()
-  @IsInt({ message: 'deleted必须为有效整数' })
-  @Min(0, { message: 'deleted必须大于等于0' })
-  readonly deleted?: number;
-}
-
-export class DeleteRowDTO extends BaseDTO {
-  @ApiProperty({
-    description: '删除主键',
-    type: Number,
-  })
-  @IsInt({ message: 'enabled必须为有效整数' })
-  readonly id: number;
-}
+/** @deprecated 改用 `@common/dto/delete-row.dto` + 业务字段组合。 */
+export class DeleteRowDTO extends IntersectionType(BaseDTO, DeleteRowDto) {}

@@ -155,6 +155,7 @@
     ],
     "rootDir": "./",
     "moduleNameMapper": {
+      "@common/(.*)": "<rootDir>/src/common/$1",
       "@config/(.*)": "<rootDir>/src/config/$1",
       "@service/(.*)": "<rootDir>/src/service/$1",
       "@libs/(.*)": "<rootDir>/src/libs/$1",
