@@ -1,4 +1,4 @@
-FROM keymetrics/pm2:12-alpine
+FROM keymetrics/pm2:24-alpine
 LABEL maintainer="qian.qing@aliyun.com"
 
 # 创建工作目录，对应的是应用代码存放在容器内的路径
