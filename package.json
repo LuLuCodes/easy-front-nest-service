@@ -170,8 +170,7 @@
     "testPathIgnorePatterns": [
       "/node_modules/",
       "/api/",
-      ".*\\.integration\\.spec\\.ts$",
-      "test/service\\.spec\\.ts$"
+      ".*\\.integration\\.spec\\.ts$"
     ],
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
