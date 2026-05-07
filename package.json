@@ -41,7 +41,7 @@
     "@easy-front-core-sdk/miniprogram": "^1.5.4",
     "@easy-front-core-sdk/wx": "^1.5.4",
     "@easy-front-core-sdk/wxpay": "^1.5.4",
-    "@inquirer/prompts": "^4.3.0",
+    "@inquirer/prompts": "^8.4.2",
     "@liaoliaots/nestjs-redis": "^9.0.5",
     "@nestjs/axios": "^3.0.2",
     "@nestjs/bull": "^10.1.1",
