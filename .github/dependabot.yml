@@ -9,6 +9,10 @@ updates:
     labels:
       - dependencies
       - npm
+    commit-message:
+      prefix: chore
+      prefix-development: chore
+      include: scope
     groups:
       nestjs:
         patterns:
@@ -36,6 +40,9 @@ updates:
     labels:
       - dependencies
       - ci
+    commit-message:
+      prefix: chore
+      include: scope
 
   - package-ecosystem: docker
     directory: '/'
@@ -44,3 +51,6 @@ updates:
     labels:
       - dependencies
       - docker
+    commit-message:
+      prefix: chore
+      include: scope
