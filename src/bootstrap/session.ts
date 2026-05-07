@@ -20,12 +20,18 @@ export async function applySession(
   });
   await sessionRedis.connect();
 
+  const isProd = config.get<string>('app.node_env') === 'production';
+  const cookieConfig = config.get<Record<string, unknown>>('session.cookie') ?? {};
+
   app.use(
     session({
       store: new RedisStore({ client: sessionRedis }),
       secret: config.get('session.secret'),
-      key: config.get('session.key'),
-      cookie: config.get('session.cookie'),
+      name: config.get('session.key'),
+      cookie: {
+        ...cookieConfig,
+        secure: isProd,
+      },
       resave: true,
       rolling: true,
       saveUninitialized: false,
