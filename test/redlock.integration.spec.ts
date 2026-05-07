@@ -29,11 +29,7 @@ describe('redlock test', () => {
     }
 
     // 尝试执行taskThatThrows，如果函数抛出错误，错误会被捕获并重新抛出
-    const res = await RedisLock.using(
-      'resource-key',
-      1000,
-      taskThatThrows,
-    ).catch((error) =>
+    const res = await RedisLock.using('resource-key', 1000, taskThatThrows).catch((error) =>
       console.log('Failed to execute taskThatThrows:', error.message),
     );
     console.log(res);

@@ -1,0 +1,20 @@
+# 全局兜底 owner
+* @LuLuCodes
+
+# CI / 工程化
+/.github/                @LuLuCodes
+/.husky/                 @LuLuCodes
+/eslint.config.mjs       @LuLuCodes
+/tsconfig*.json          @LuLuCodes
+/package.json            @LuLuCodes
+/pnpm-lock.yaml          @LuLuCodes
+
+# 部署
+/dockerfile              @LuLuCodes
+/scripts/                @LuLuCodes
+
+# 文档
+/docs/                   @LuLuCodes
+/README.md               @LuLuCodes
+
+# 后续阶段会按目录细化（auth / database / 业务模块），此处暂以单人兜底
