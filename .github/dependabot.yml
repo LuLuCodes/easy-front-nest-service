@@ -13,6 +13,37 @@ updates:
       prefix: chore
       prefix-development: chore
       include: scope
+    ignore:
+      # NestJS 11 升级真的有 breaking change（Express 5、class-validator stricter），
+      # 单独走升级 PR 而不是 bot 一刀切
+      - dependency-name: '@nestjs/*'
+        update-types: ['version-update:semver-major']
+      # ESLint 9→10 移除 eslintrc 支持等，等 typescript-eslint 全面跟进
+      - dependency-name: 'eslint*'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'typescript-eslint'
+        update-types: ['version-update:semver-major']
+      # Jest 30 跟 P7 (testcontainers + coverage) 一起处理
+      - dependency-name: 'jest'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'ts-jest'
+        update-types: ['version-update:semver-major']
+      - dependency-name: '@types/jest'
+        update-types: ['version-update:semver-major']
+      - dependency-name: '@types/supertest'
+        update-types: ['version-update:semver-major']
+      # Node LTS 锁 22；types 跟随 Node major
+      - dependency-name: '@types/node'
+        update-types: ['version-update:semver-major']
+      # TypeScript 6 等 SWC / NestJS / ts-jest 都跟进再升
+      - dependency-name: 'typescript'
+        update-types: ['version-update:semver-major']
+      # connect-redis 8 改了 RedisStore 构造方式，需手工验证
+      - dependency-name: 'connect-redis'
+        update-types: ['version-update:semver-major']
+      # P5 要剥离的业务 SDK：bump 没意义
+      - dependency-name: '@easy-front-core-sdk/*'
+      - dependency-name: 'easy-front-core-sdk'
     groups:
       nestjs:
         patterns:
