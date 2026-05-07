@@ -104,21 +104,16 @@ gh pr create --fill
 - ✅ Enable **auto-merge** at repository level
 - Dependabot 已通过 `.github/dependabot.yml` 配置每周扫描
 
-## 6. ⚠️ 安全提醒：立即处置项
+## 6. 安全凭证管理
 
-仓库历史中的 `.gitlab-ci.yml` **包含明文凭证**：
+历史版本的 `.gitlab-ci.yml` 曾把阿里云镜像仓库账号密码硬编码在文件里（具体值已不再展示，旧密码已于 2026-05-07 rotate 失效）。当前规则：
 
-```yaml
-REGISTRY_USER: public@myun.info
-REGISTRY_PASSWORD: Myun@123jx
-```
+- **任何凭证、token、API Key 都不得写入仓库**（包括示例、注释、文档）
+- 所有 CI 需要的凭证一律走 **GitHub Secrets**：`Settings → Secrets and variables → Actions`
+- 本地开发用的环境变量写在 `.env.local`（已在 `.gitignore`），不进 git
+- 提交前可以本地跑 `gitleaks detect --source . --no-git` 自检
 
-**必须立即操作：**
-
-1. 登录阿里云镜像仓库后台 → 修改 `public@myun.info` 账号密码
-2. 把新凭证存入 GitHub Secrets（`REGISTRY_USER` / `REGISTRY_PASSWORD`）
-3. P0 PR 合并后 `.gitlab-ci.yml` 文件已删，但 git 历史中仍可见旧密码 —— 旧密码必须视为已泄露
-4. 用 `gitleaks detect --source . --no-git` 或 `trufflehog git file://. --branch main` 扫一遍，确认无其他泄漏
+> 旧密码仍残留在 git 历史 commit `89bab0f` 中。由于密码已 rotate 失效、且重写历史会破坏现有 clone 与 tag，决定保留历史。如未来要开源仓库，需重新评估。
 
 ## 7. P0 之后即将启用的进阶规则（预告）
 

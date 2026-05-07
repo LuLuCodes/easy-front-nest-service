@@ -71,18 +71,16 @@ src/
 
 ---
 
-## ⚠️ 立即处置（不入阶段，今天就做）
+## ⚠️ 立即处置（已完成，2026-05-07）
 
-`.gitlab-ci.yml` 中存在**明文凭证**：
+历史版本的 `.gitlab-ci.yml` 中曾存在阿里云容器镜像仓库的**明文凭证**（已失效，不再展示具体值）。处理时间线：
 
-```yaml
-REGISTRY_USER: public@myun.info
-REGISTRY_PASSWORD: Myun@123jx
-```
+- ✅ **2026-05-07**：阿里云仓库账号密码已 rotate
+- ✅ **2026-05-07**：`.gitlab-ci.yml` 已在 P0 commit 中删除
+- ✅ **2026-05-07**：本文件与 `docs/CONTRIBUTING.md` 中的明文示例已抹除
+- ⏳ **待办**：在 GitHub Secrets 中存储新凭证（`REGISTRY_USER` / `REGISTRY_PASSWORD`），供 P6 阶段的 docker.yml 工作流读取
 
-- **第一步**：立即去阿里云仓库后台 rotate 该账号密码
-- **第二步**：把新凭证存到 GitHub Secrets（`REGISTRY_USER` / `REGISTRY_PASSWORD`），删除 `.gitlab-ci.yml` 里的明文（或在 P0 中整体替换为 GitHub Actions 后一并删除）
-- **第三步**：用 `gitleaks` / `trufflehog` 扫一遍历史 commit，确认是否还有其他泄漏
+> 旧密码仍残留在 git 历史 commit `89bab0f` 中。由于密码已失效，且重写历史会破坏现有 clone 与 tag，决定不重写历史。如未来需开源此仓库，需重新评估。
 
 ---
 
