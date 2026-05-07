@@ -137,7 +137,7 @@
     "lint-staged": "^15.2.10",
     "prettier": "^3.3.3",
     "sequelize-auto": "^0.8.8",
-    "shx": "^0.3.4",
+    "shx": "^0.4.0",
     "supertest": "^7.0.0",
     "ts-jest": "^29.2.5",
     "ts-loader": "^9.5.1",
