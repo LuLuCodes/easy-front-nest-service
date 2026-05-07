@@ -1,0 +1,49 @@
+name: Bug Report
+description: 报告一个 bug
+title: '[Bug]: '
+labels: [bug, triage]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: 描述
+      description: 清晰描述 bug 现象
+      placeholder: 接口 X 在条件 Y 下返回 Z，预期是 W
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: 复现步骤
+      placeholder: |
+        1. 启动服务 ...
+        2. 调用接口 ...
+        3. 看到 ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: 期望行为
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: 环境信息
+      value: |
+        - Node 版本：
+        - pnpm 版本：
+        - OS：
+        - 服务版本 / commit：
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: 日志 / 截图
+      render: shell

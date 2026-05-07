@@ -36,3 +36,13 @@ lerna-debug.log*
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+
+# Local backup files (do not commit)
+*.bak
+
+# Local env files
+.env.local
+.env.*.local
+
+# TypeScript build cache
+*.tsbuildinfo
