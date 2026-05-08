@@ -7,8 +7,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { ThrottlerModule, seconds } from '@nestjs/throttler';
 import { ThrottlerStorageRedisService } from 'nestjs-throttler-storage-redis';
-import { SequelizeModule } from '@nestjs/sequelize';
-import { join, resolve } from 'path';
+import { join } from 'path';
 import Redis from 'ioredis';
 
 import { LoggerModule } from '@common/logger/logger.module';
@@ -22,7 +21,6 @@ import { CacheService } from '@service/cache.service';
 import { CronTaskService } from '@service/cron-task.service';
 import { DictCacheService } from '@service/dict-cache.service';
 
-import { DBModule } from './db.module';
 import { InitModule } from './init.module';
 import { WxModule } from './modules/wx/wx.module';
 import { MpModule } from './modules/mp/mp.module';
@@ -87,130 +85,6 @@ import while_list from '@config/white-list';
     }),
     RedisModule,
     DatabaseModule,
-    SequelizeModule.forRootAsync({
-      imports: [],
-      inject: [ConfigService],
-      useFactory: async (configService: ConfigService) => {
-        return {
-          dialect: 'mysql',
-          host: configService.get('mysql.host'),
-          port: configService.get('mysql.port'),
-          username: configService.get('mysql.username'),
-          password: configService.get('mysql.password'),
-          database: configService.get('mysql.database'),
-          timezone: '+08:00',
-          pool: {
-            max: 20,
-            min: 5,
-            acquire: 60000,
-            idle: 10000,
-          },
-          modelPaths: [resolve(__dirname, './models', '**/!(index).{ts,js}')],
-          retryAttempts: 3, // 数据链接重试次数
-          retryDelay: 2000, // 连接重试尝试之间的延迟(ms)
-          logQueryParameters: true,
-          define: {
-            hooks: {
-              beforeCreate(attributes: any, options: any) {
-                const { fields } = options;
-                if (!attributes.dataValues.created_by && fields.includes('created_by')) {
-                  // attributes.dataValues.created_by = 1;
-                  throw new Error(`缺少created_by字段`);
-                }
-                if (!attributes.dataValues.updated_by && fields.includes('updated_by')) {
-                  attributes.dataValues.updated_by = attributes.dataValues.created_by;
-                }
-                // 注入app_id
-                // attributes.dataValues.app_id = configService.get('app.app_id');
-              },
-              beforeBulkCreate(instances: any, options: any) {
-                const { fields } = options;
-                for (const instance of instances) {
-                  if (!instance.dataValues.created_by && fields.includes('created_by')) {
-                    // instance.dataValues.created_by = 1;
-                    throw new Error(`缺少created_by字段`);
-                  }
-                  if (!instance.dataValues.updated_by && fields.includes('updated_by')) {
-                    instance.dataValues.updated_by = instance.dataValues.created_by;
-                  }
-                  // 注入app_id
-                  // instance.dataValues.app_id = configService.get('app.app_id');
-                }
-              },
-              beforeBulkDestroy(options: any) {
-                if (!options.deleted_by) {
-                  throw new Error(`缺少deleted_by字段`);
-                }
-              },
-              beforeUpdate(instance: any, options: any) {
-                console.log(options);
-                const { fields } = options;
-                if (!instance.dataValues.updated_by && fields.includes('updated_by')) {
-                  throw new Error(`缺少updated_by字段`);
-                }
-                delete instance.dataValues.created_by;
-              },
-              beforeBulkUpdate(options: any) {
-                const { attributes, fields } = options;
-                if (!attributes.updated_by) {
-                  throw new Error(`缺少updated_by字段`);
-                }
-                if (fields.includes('deleted_by')) {
-                  delete attributes.updated_at;
-                }
-                delete attributes.created_by;
-              },
-              async afterBulkDestroy(options: any) {
-                await options.model.update(
-                  {
-                    updated_by: options.deleted_by,
-                    deleted_by: options.deleted_by,
-                  },
-                  {
-                    where: options.where,
-                    paranoid: false,
-                    transaction: options.transaction,
-                  },
-                );
-              },
-              beforeFind(options: any) {
-                if (options.where && !options.where.force_request_id) {
-                  delete options.where.request_id;
-                }
-              },
-              beforeCount(options: any) {
-                if (options.where && !options.where.force_request_id) {
-                  delete options.where.request_id;
-                }
-              },
-              beforeFindAfterExpandIncludeAll(options: any) {
-                if (options.where && !options.where.force_request_id) {
-                  delete options.where.request_id;
-                }
-              },
-              beforeFindAfterOptions(options: any) {
-                if (options.where && !options.where.force_request_id) {
-                  delete options.where.request_id;
-                }
-              },
-            },
-          },
-          dialectOptions: {
-            decimalNumbers: true,
-            maxPreparedStatements: 100,
-            multipleStatements: true,
-            dateStrings: true,
-            typeCast: function (field, next) {
-              // for reading from database
-              if (field.type === 'DATETIME') {
-                return field.string();
-              }
-              return next();
-            },
-          },
-        };
-      },
-    }),
     BullModule.forRootAsync({
       imports: [],
       inject: [ConfigService],
@@ -226,7 +100,6 @@ import while_list from '@config/white-list';
     BullModule.registerQueue({
       name: 'op-log',
     }),
-    DBModule,
     WxModule,
     MpModule,
     WxPayModule,

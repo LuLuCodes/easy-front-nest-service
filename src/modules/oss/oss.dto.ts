@@ -43,7 +43,6 @@ import {
 import { Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { QueryDTO, BaseDTO } from '@dto/BaseDTO';
-import { Is } from 'sequelize-typescript';
 
 export class GetUploadParamsDTO extends BaseDTO {
   @ApiPropertyOptional({
