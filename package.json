@@ -69,7 +69,7 @@
     "cookie-parser": "^1.4.6",
     "cross-env": "^7.0.3",
     "crypto-js": "^4.2.0",
-    "dayjs": "^1.11.10",
+    "dayjs": "^1.11.20",
     "dotenv": "^16.4.5",
     "easy-front-core-sdk": "^1.5.4",
     "easy-front-sequelize-generator": "^1.0.3",
