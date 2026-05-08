@@ -18,8 +18,11 @@ updates:
       # 单独走升级 PR 而不是 bot 一刀切
       - dependency-name: '@nestjs/*'
         update-types: ['version-update:semver-major']
-      # ESLint 9→10 移除 eslintrc 支持等，等 typescript-eslint 全面跟进
+      # ESLint 9→10 移除 eslintrc 支持等，等 typescript-eslint 全面跟进。
+      # 注意 'eslint*' glob 不匹配带 scope 的 @eslint/*，需要显式列出。
       - dependency-name: 'eslint*'
+        update-types: ['version-update:semver-major']
+      - dependency-name: '@eslint/*'
         update-types: ['version-update:semver-major']
       - dependency-name: 'typescript-eslint'
         update-types: ['version-update:semver-major']
