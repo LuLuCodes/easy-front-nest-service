@@ -1,16 +1,10 @@
-import {
-  ArgumentMetadata,
-  Injectable,
-  PipeTransform,
-  BadRequestException,
-} from '@nestjs/common';
+import { Injectable, Logger, PipeTransform, BadRequestException } from '@nestjs/common';
 import { validate } from 'class-validator';
 import { plainToInstance } from 'class-transformer';
-import { LoggerFactory } from '@libs/log4js';
-const logger = LoggerFactory.getInstance();
 
 @Injectable()
 export class ValidationPipe implements PipeTransform {
+  private readonly logger = new Logger(ValidationPipe.name);
   private isTransformEnabled;
   constructor(options) {
     const { transform } = options;
@@ -19,9 +13,7 @@ export class ValidationPipe implements PipeTransform {
   async transform(value: any, metadata: any): Promise<any> {
     const { metatype } = metadata;
     if (!metatype || !this.toValidate(metatype)) {
-      return this.isTransformEnabled
-        ? this.transformPrimitive(value, metadata)
-        : value;
+      return this.isTransformEnabled ? this.transformPrimitive(value, metadata) : value;
     }
     const object = plainToInstance(metatype, value);
     const errors = await validate(object);
@@ -29,10 +21,10 @@ export class ValidationPipe implements PipeTransform {
       const constraints = this.getConstraints(errors[0]);
       if (constraints) {
         const msg = Object.values(constraints)[0];
-        logger.error(`Validation failed: ${msg}`);
+        this.logger.error(`Validation failed: ${msg}`);
         throw new BadRequestException(msg);
       } else {
-        logger.error(`Validation failed: Validation failed`);
+        this.logger.error(`Validation failed: Validation failed`);
         throw new BadRequestException('Validation failed');
       }
     }
