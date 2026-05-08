@@ -5,7 +5,6 @@ import { HttpModule } from '@nestjs/axios';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ServeStaticModule } from '@nestjs/serve-static';
-import { RedisModule, RedisModuleOptions } from '@liaoliaots/nestjs-redis';
 import { ThrottlerModule, seconds } from '@nestjs/throttler';
 import { ThrottlerStorageRedisService } from 'nestjs-throttler-storage-redis';
 import { SequelizeModule } from '@nestjs/sequelize';
@@ -13,6 +12,7 @@ import { join, resolve } from 'path';
 import Redis from 'ioredis';
 
 import { LoggerModule } from '@common/logger/logger.module';
+import { RedisModule } from '@common/redis/redis.module';
 import { LoggerMiddleware } from './middleware/logger.middleware';
 import { SignGuard } from '@guard/sign.guard';
 import { AuthGuard } from '@guard/auth.guard';
@@ -84,21 +84,7 @@ import while_list from '@config/white-list';
         maxRedirects: 5,
       }),
     }),
-    RedisModule.forRootAsync({
-      imports: [],
-      inject: [ConfigService],
-      useFactory: async (configService: ConfigService): Promise<RedisModuleOptions> => {
-        return {
-          closeClient: true,
-          config: {
-            host: configService.get('redis.host'),
-            port: configService.get('redis.port'),
-            password: configService.get('redis.password'),
-            db: configService.get('redis.cache_db_index'),
-          },
-        };
-      },
-    }),
+    RedisModule,
     SequelizeModule.forRootAsync({
       imports: [],
       inject: [ConfigService],

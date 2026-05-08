@@ -1,124 +1,74 @@
-import { Injectable } from '@nestjs/common';
-import { RedisService } from '@liaoliaots/nestjs-redis';
+import { Inject, Injectable } from '@nestjs/common';
+import type { Redis } from 'ioredis';
+import { REDIS_CLIENT } from '@common/redis/redis.module';
+
 @Injectable()
 export class CacheService {
-  public client;
-  constructor(private redisService: RedisService) {
-    this.getClient();
-  }
-  async getClient(): Promise<void> {
-    this.client = await this.redisService.getClient();
-  }
+  constructor(@Inject(REDIS_CLIENT) private readonly client: Redis) {}
 
-  //判断key是否存在
   async exists(key: string): Promise<boolean> {
-    if (!this.client) {
-      await this.getClient();
-    }
-    const result = await this.client.exists(key);
-    return result === 1;
+    const n = await this.client.exists(key);
+    return n === 1;
   }
 
-  //设置值的方法
   async set(
     key: string,
-    value: string | Buffer | number | any[],
+    value: string | Buffer | number,
     expiryMode?: 'EX' | 'PX',
     seconds?: number,
   ): Promise<void> {
-    if (!this.client) {
-      await this.getClient();
-    }
-    if (!seconds) {
-      await this.client.set(key, value);
+    if (seconds && expiryMode === 'EX') {
+      await this.client.set(key, value, 'EX', seconds);
+    } else if (seconds && expiryMode === 'PX') {
+      await this.client.set(key, value, 'PX', seconds);
     } else {
-      await this.client.set(key, value, expiryMode, seconds);
+      await this.client.set(key, value);
     }
   }
 
-  //获取值的方法
   async get(key: string): Promise<string> {
-    if (!this.client) {
-      await this.getClient();
-    }
     const data = await this.client.get(key);
-    if (!data) return '';
-    return data;
+    return data ?? '';
   }
 
-  //删除key
-  async del(key: string): Promise<void> {
-    if (!this.client) {
-      await this.getClient();
-    }
-    this.client.del(key);
-    return;
+  async del(key: string): Promise<number> {
+    return this.client.del(key);
   }
 
-  async decrby(key: string, value: number): Promise<number> {
-    if (!this.client) {
-      await this.getClient();
-    }
-    return await this.client.decrby(key, value);
+  decrby(key: string, value: number): Promise<number> {
+    return this.client.decrby(key, value);
   }
 
-  async incrby(key: string, value: number): Promise<number> {
-    if (!this.client) {
-      await this.getClient();
-    }
-    return await this.client.incrby(key, value);
+  incrby(key: string, value: number): Promise<number> {
+    return this.client.incrby(key, value);
   }
 
-  async sadd(key: string, members: Array<number | string>): Promise<boolean> {
-    if (!this.client) {
-      await this.getClient();
-    }
-    return await this.client.sadd(key, ...members);
+  async sadd(key: string, members: Array<number | string>): Promise<number> {
+    return this.client.sadd(key, ...members.map(String));
   }
 
   async sismember(key: string, member: number | string): Promise<boolean> {
-    if (!this.client) {
-      await this.getClient();
-    }
-    const result = await this.client.sismember(key, member);
+    const result = await this.client.sismember(key, String(member));
     return result === 1;
   }
-  async hget(key: string, field: string): Promise<string | null> {
-    if (!this.client) {
-      await this.getClient();
-    }
-    return await this.client.hget(key, field);
+
+  hget(key: string, field: string): Promise<string | null> {
+    return this.client.hget(key, field);
   }
 
-  async hmget(key: string, fields: string[]): Promise<Array<string | null>> {
-    if (!this.client) {
-      await this.getClient();
-    }
-    return await this.client.hmget(key, ...fields);
+  hmget(key: string, fields: string[]): Promise<Array<string | null>> {
+    return this.client.hmget(key, ...fields);
   }
 
-  async hset(
-    key: string,
-    field: string,
-    value: string | number,
-  ): Promise<number> {
-    if (!this.client) {
-      await this.getClient();
-    }
-    return await this.client.hset(key, field, value);
+  hset(key: string, field: string, value: string | number): Promise<number> {
+    return this.client.hset(key, field, value);
   }
 
-  async hmset(key: string, args: Array<string | number>): Promise<number> {
-    if (!this.client) {
-      await this.getClient();
-    }
-    return await this.client.hmset(key, ...args);
+  hmset(key: string, args: Array<string | number>): Promise<'OK'> {
+    return this.client.hmset(key, ...args);
   }
 
-  async expire(key: string, seconds: number): Promise<boolean> {
-    if (!this.client) {
-      await this.getClient();
-    }
-    return await this.client.expire(key, seconds);
+  expire(key: string, seconds: number): Promise<number> {
+    return this.client.expire(key, seconds);
   }
 }
