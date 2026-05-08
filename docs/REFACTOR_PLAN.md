@@ -218,15 +218,77 @@ P0 工具链 ─┬─▶ P1 公共层瘦身 ─┬─▶ P3 数据层迁移 ─
 - **退出条件**：`grep -r "@liaoliaots/nestjs-redis\|RedisService" src/` 为空；CacheService API 完全兼容（30+ 调用方零改动）；`pnpm test` 通过
 - **破坏性**：无对外 API 变化；调用方完全不改
 
-### P3 · 数据层迁移 Sequelize → TypeORM（5 PD · **最重**）
+### P3 · 数据层迁移 Sequelize → TypeORM（约 4 PD · **最重**）
 
-- **目标**：`@nestjs/typeorm` + 原生 migration；保留 `T_xxx` 表名映射
-- **改**：`src/db.module.ts` → `TypeOrmModule.forRootAsync`；`src/models/T*.ts` → `src/entities/{user,role,...}.entity.ts`，统一 `@Entity('t_user')`
-- **新**：`src/database/migrations/`、`src/database/data-source.ts`、`scripts/migration-{generate,run,revert}.sh`
-- **删**：`sequelize-generator/`、`db-generator/`
-- **桥接**：双 ORM 期，Sequelize Module 仅供未迁模块引用，按 `basic → access → oplog → wx*` 顺序逐个 PR 切换；env `DB_DRIVER` 控制双轨；生产先只读切流量 24h
-- **退出条件**：`grep -r "@nestjs/sequelize\|sequelize-typescript" src/` 为空；`typeorm migration:run` 在空库重建 schema 与生产一致；e2e 全绿
-- **破坏性**：高（事务/钩子/scope 语义不同），双轨灰度强制
+> **2026-05-08 调研后调整**：原 plan 写"按 basic → access → oplog → wx 顺序逐个 PR 切换"。实地看代码后改方案 —— 因为 access.service 一处用了 6 个 model + 3 个 transaction，model 间关系跨 ORM 不能保留，**access 必须一刀切**。最终采用 3 个 PR。
+
+#### P3 调研结果（2026-05-08）
+
+| 维度                    | 数值                                                                                                                        | 决定                                                                     |
+| ----------------------- | --------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| Model 数量              | 10 个 (`src/models/T*.ts`)，每个 49-79 行                                                                                   | 1:1 转 TypeORM Entity                                                    |
+| 字段总数                | ~99 个，全 snake_case，含 `created_at/updated_at/deleted_at/created_by/updated_by`                                          | 表名保留 `t_xxx`，列名零变化                                             |
+| 关系装饰器              | **0 个**（在 entity 上）；`db.module.ts` 运行时声明 2 个 (User hasOne UserLogin, UserRoleRelation hasOne UserRole)          | 改 entity 级 `@OneToOne` 装饰器                                          |
+| `@InjectModel` 注入点   | 14 处                                                                                                                       | 改 `@InjectRepository(Entity)`                                           |
+| API 方法调用            | findOne 13 / findAll 5 / findAndCountAll 3 / create 8 / update 16 / destroy 4 / bulkCreate 2 = **51 处**                    | 改 TypeORM Repository                                                    |
+| `transaction` 调用      | 3 处真用（全在 access.service.ts），1 处注释                                                                                | 改 `dataSource.transaction(async (manager) => ...)`                      |
+| Op/QueryTypes/raw query | 仅 cron-task.service 有 import 但**全是 unused**（lint warning 印证），文件 14 行实际为空                                   | 顺手清掉                                                                 |
+| 全局 hooks              | 在 `app.module.ts SequelizeModule.forRootAsync` 里 10 个：审计字段强制 (created_by/updated_by/deleted_by) + request_id 过滤 | 用 TypeORM `EventSubscriber` + entity `@BeforeInsert/@BeforeUpdate` 复刻 |
+| Service 调用集中度      | access.service.ts 用 6 个 model + 33 处方法调用（最重） / 其他 service 各 1-2 个 model                                      | access 一刀切，其他渐进切                                                |
+
+#### 推荐执行：3 个 PR
+
+##### P3-1 · TypeORM 基础设施 + 简单 service 切换（2 PD）
+
+- **新增**：
+  - 装 `typeorm` `@nestjs/typeorm`
+  - `src/database/data-source.ts`（CLI 用 DataSource 实例）
+  - `src/database/migrations/`（空目录）
+  - `src/database/subscribers/audit-fields.subscriber.ts`（复刻审计字段强制 + request_id 过滤逻辑）
+  - `src/entities/{user,user-login,user-role,user-role-relation,user-right,user-right-relation,dictionary,sms-log,user-oplog}.entity.ts`（10 个）
+  - `scripts/{migration-generate,migration-run,migration-revert}.sh`（npm scripts wrapper）
+- **改**：
+  - `app.module.ts`：新增 `TypeOrmModule.forRootAsync`，**保留** `SequelizeModule.forRootAsync`（双 ORM 期）
+  - 简单 service 切换（每个只用 1 个 model）：
+    - `service/sms-core.service.ts` (TSmsLog → SmsLog)
+    - `service/dict-cache.service.ts` (TDictionary → Dictionary)
+    - `modules/basic/basic.service.ts` (TDictionary → Dictionary)
+    - `modules/oplog/oplog.service.ts` (TUserOplog → UserOplog)
+- **保留 Sequelize**：access.service.ts（6 model + 关系 + transaction，留给 P3-2）
+- **退出条件**：4 个 service 切换后，`pnpm test` 通过；`@InjectRepository(SmsLog)` 等可正常 inject
+
+##### P3-2 · 切 access.service.ts（1.5 PD · access 模块一次性切完）
+
+- **改**：
+  - 6 个 `@InjectModel` → `@InjectRepository`
+  - 33 处 model 方法调用 → Repository API
+  - 3 处 `sequelize.transaction(async (t) => ...)` → `dataSource.transaction(async (manager) => ...)`
+  - 关系预加载（hasOne `account`、hasOne `role`）→ TypeORM `relations: ['account']` 或 `leftJoinAndSelect`
+- **退出条件**：access 模块所有接口（登录/注册/角色/权限）行为不变；e2e 跑通
+
+##### P3-3 · 收尾：删 Sequelize + 生成 baseline migration（0.5 PD）
+
+- **删**：
+  - `src/models/T*.ts`（10 个）+ `src/db.module.ts` + `init.module.ts` 中 Sequelize 引用
+  - `app.module.ts` 中 `SequelizeModule.forRootAsync`（含 139 行 hooks 配置）
+  - 卸 `@nestjs/sequelize` `sequelize` `sequelize-typescript` `@types/sequelize` `sequelize-auto` `easy-front-sequelize-generator`
+  - 删 `sequelize-generator/` `db-generator/` 工具目录
+  - 顺手清 `cron-task.service.ts` 的 unused imports
+- **生成 baseline migration**：`pnpm typeorm migration:generate src/database/migrations/0001_baseline -d src/database/data-source.ts`，对比生产 schema 验证一致
+- **退出条件**：`grep -rE "@nestjs/sequelize\|sequelize-typescript\|from 'sequelize'" src/` 为空；空库可通过 migration 重建出与生产一致的 schema
+
+#### 双 ORM 期注意事项
+
+P3-1 完成后到 P3-3 之前（即 access 切换中），**main 上 Sequelize + TypeORM 共存**：
+
+- 两套 ORM 各自维护连接池（同一 MySQL，不同会话）
+- 同一表上 access 模块走 Sequelize（如未来 hotfix），其他 service 走 TypeORM
+- **不能跨 ORM 做事务**：access 的 transaction 全部由 Sequelize 完成；TypeORM 服务不参与
+
+为防止双 ORM 期太长，**P3-1 → P3-2 → P3-3 应该尽量在一周内连续推进**。
+
+- **破坏性**：中（API 行为不变，但事务/hooks/查询语义底层换了一套实现）
+- **回滚**：每个 PR 独立可 revert；P3-3 之前 Sequelize 都可以无损回退
 
 ### P4 · 认证替换 session+MD5 → JWT+Passport（3 PD）
 

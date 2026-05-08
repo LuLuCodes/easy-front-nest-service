@@ -13,6 +13,7 @@ import Redis from 'ioredis';
 
 import { LoggerModule } from '@common/logger/logger.module';
 import { RedisModule } from '@common/redis/redis.module';
+import { DatabaseModule } from '@database/database.module';
 import { LoggerMiddleware } from './middleware/logger.middleware';
 import { SignGuard } from '@guard/sign.guard';
 import { AuthGuard } from '@guard/auth.guard';
@@ -85,6 +86,7 @@ import while_list from '@config/white-list';
       }),
     }),
     RedisModule,
+    DatabaseModule,
     SequelizeModule.forRootAsync({
       imports: [],
       inject: [ConfigService],

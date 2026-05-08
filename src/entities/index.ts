@@ -1,0 +1,10 @@
+export { AuditEntity } from './audit.entity';
+export { Dictionary } from './dictionary.entity';
+export { SmsLog } from './sms-log.entity';
+export { User } from './user.entity';
+export { UserLogin } from './user-login.entity';
+export { UserOplog } from './user-oplog.entity';
+export { UserRight } from './user-right.entity';
+export { UserRightRelation } from './user-right-relation.entity';
+export { UserRole } from './user-role.entity';
+export { UserRoleRelation } from './user-role-relation.entity';
