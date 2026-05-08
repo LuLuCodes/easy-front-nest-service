@@ -1,9 +1,6 @@
 import { Module, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { CacheService } from '@service/cache.service';
-import { InjectModel } from '@nestjs/sequelize';
-import { CacheKey } from '@config/global';
-import { Op } from 'sequelize';
 import { MPCoreFactory } from '@easy-front-core-sdk/miniprogram';
 import { WXCoreFactory } from '@easy-front-core-sdk/wx';
 import { WXPayCoreFactory } from '@easy-front-core-sdk/wxpay';
@@ -41,10 +38,7 @@ export class InitModule implements OnModuleInit {
       }
       try {
         const { appid, appsecret, token } = JSON.parse(wx.field_value);
-        WXCoreFactory.putCore(
-          { appId: appid, appScrect: appsecret, token },
-          wx_redis_conf,
-        );
+        WXCoreFactory.putCore({ appId: appid, appScrect: appsecret, token }, wx_redis_conf);
         console.log(`加载公众号配置：${appid}`);
       } catch (error) {
         console.error(`公众号配置异常[id=${wx.id}]，${error.message}`);

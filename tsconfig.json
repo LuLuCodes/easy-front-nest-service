@@ -20,6 +20,7 @@
     "paths": {
       "@common/*": ["./src/common/*"],
       "@config/*": ["./src/config/*"],
+      "@database/*": ["./src/database/*"],
       "@libs/*": ["./src/libs/*"],
       "@packages/*": ["./src/packages/*"],
       "@entities/*": ["./src/entities/*"],
