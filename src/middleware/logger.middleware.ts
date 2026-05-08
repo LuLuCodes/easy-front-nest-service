@@ -1,61 +1,29 @@
 import { Injectable, Logger, NestMiddleware } from '@nestjs/common';
-import { Queue } from 'bull';
-import { InjectQueue } from '@nestjs/bull';
-import { ConfigService } from '@nestjs/config';
 import { NextFunction } from 'express';
 
 @Injectable()
 export class LoggerMiddleware implements NestMiddleware {
   private readonly logger = new Logger(LoggerMiddleware.name);
-  use_log_queue = false;
-  constructor(
-    @InjectQueue('api-log') private logQueue: Queue,
-    private readonly configService: ConfigService,
-  ) {
-    this.use_log_queue = this.configService.get('app.use_log_queue');
-  }
+
   use(req: any, res: any, next: NextFunction): void {
     const oldWrite = res.write;
     const oldEnd = res.end;
-    const chunks = [];
-    res.write = function (...restArgs) {
-      chunks.push(Buffer.from(restArgs[0]));
+    const chunks: Buffer[] = [];
 
+    res.write = function (...restArgs: any[]) {
+      chunks.push(Buffer.from(restArgs[0]));
       return oldWrite.apply(res, restArgs);
     };
-    res.end = async (...restArgs) => {
+
+    res.end = (...restArgs: any[]) => {
       if (restArgs[0]) {
         chunks.push(Buffer.from(restArgs[0]));
       }
       const data = Buffer.concat(chunks).toString('utf8');
 
       oldEnd.apply(res, restArgs);
-      if (this.use_log_queue) {
-        await this.logQueue.add(
-          {
-            from_ip:
-              req.headers['x-forwarded-for'] || req.connection.remoteAddress || req.ip || 'unkown',
-            url: req.originalUrl,
-            method: req.method,
-            request_session: req.session,
-            request_params: req.params,
-            request_query: req.query,
-            request_body: req.body,
-            referer: req.headers.referer || '',
-            ua: req.headers['user-agent'] || '',
-            response_status_code: res.statusCode,
-            response_data: data,
-            request_time: Date.now(),
-          },
-          {
-            attempts: 3,
-            delay: 20,
-            removeOnComplete: true,
-            removeOnFail: true,
-          },
-        );
-      } else {
-        const logFormat = ` >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+      const logFormat = ` >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         time: ${Date.now()},
         fromIP: ${req.headers['x-forwarded-for'] || req.connection.remoteAddress || req.ip},
         method: ${req.method},
@@ -67,20 +35,18 @@ export class LoggerMiddleware implements NestMiddleware {
         statusCode: ${res.statusCode},
         responseData: ${JSON.stringify(data)},
         referer: ${req.headers.referer || ''},
-        ua: ${
-          req.headers['user-agent']
-        }, \n  >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+        ua: ${req.headers['user-agent']}, \n  >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
       `;
 
-        if (res.statusCode >= 500) {
-          this.logger.error(logFormat);
-        } else if (res.statusCode >= 400) {
-          this.logger.warn(logFormat);
-        } else {
-          this.logger.log(logFormat);
-        }
+      if (res.statusCode >= 500) {
+        this.logger.error(logFormat);
+      } else if (res.statusCode >= 400) {
+        this.logger.warn(logFormat);
+      } else {
+        this.logger.log(logFormat);
       }
     };
+
     next();
   }
 }

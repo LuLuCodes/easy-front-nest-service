@@ -5,8 +5,8 @@ import { InjectModel } from '@nestjs/sequelize';
 import { TUserOplog } from '@models/index';
 import * as _ from 'lodash';
 import { CreateLogDto, QueryLogDto } from './oplog.dto';
-import { Queue } from 'bull';
-import { InjectQueue } from '@nestjs/bull';
+import { Queue } from 'bullmq';
+import { InjectQueue } from '@nestjs/bullmq';
 import * as dayjs from 'dayjs';
 import {} from '@dto/EnumDTO';
 import { Op } from 'sequelize';
@@ -71,9 +71,7 @@ export class OpLogService {
         created_at: dayjs().format('YYYY-MM-DD HH:mm:ss'),
       });
     } catch (error) {
-      console.error(
-        `写入日志失败：入参=${JSON.stringify(log)},异常=${error.message}`,
-      );
+      console.error(`写入日志失败：入参=${JSON.stringify(log)},异常=${error.message}`);
     }
   }
 

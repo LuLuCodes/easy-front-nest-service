@@ -1,5 +1,5 @@
 import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
-import { BullModule } from '@nestjs/bull';
+import { BullModule } from '@nestjs/bullmq';
 import { APP_GUARD } from '@nestjs/core';
 import { HttpModule } from '@nestjs/axios';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -227,16 +227,13 @@ import while_list from '@config/white-list';
       imports: [],
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
-        redis: {
+        connection: {
           host: configService.get('redis.host'),
           port: configService.get('redis.port'),
           password: configService.get('redis.password'),
           db: configService.get('redis.queue_db_index'),
         },
       }),
-    }),
-    BullModule.registerQueue({
-      name: 'api-log',
     }),
     BullModule.registerQueue({
       name: 'op-log',
