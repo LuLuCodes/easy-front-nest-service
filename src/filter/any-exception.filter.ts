@@ -17,23 +17,22 @@ import {
   ArgumentsHost,
   HttpException,
   HttpStatus,
+  Logger,
 } from '@nestjs/common';
 
-import { LoggerFactory } from '@libs/log4js';
 import { ErrorResponse } from '@libs/util';
 import { ResponseCode } from '@config/global';
 
-const logger = LoggerFactory.getInstance();
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
+  private readonly logger = new Logger(AllExceptionsFilter.name);
+
   catch(exception: Error, host: ArgumentsHost): void {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse();
     const request = ctx.getRequest();
     const status =
-      exception instanceof HttpException
-        ? exception.getStatus()
-        : HttpStatus.INTERNAL_SERVER_ERROR;
+      exception instanceof HttpException ? exception.getStatus() : HttpStatus.INTERNAL_SERVER_ERROR;
 
     const message = exception.message;
 
@@ -44,7 +43,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     Status code: ${status}
     Response: ${exception.toString()} \n  <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     `;
-    logger.error(logFormat);
+    this.logger.error(logFormat);
 
     const errorResponse = ErrorResponse(ResponseCode.SYS_ERROR, message);
     response.status(200);

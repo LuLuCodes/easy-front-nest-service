@@ -12,6 +12,7 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { join, resolve } from 'path';
 import Redis from 'ioredis';
 
+import { LoggerModule } from '@common/logger/logger.module';
 import { LoggerMiddleware } from './middleware/logger.middleware';
 import { SignGuard } from '@guard/sign.guard';
 import { AuthGuard } from '@guard/auth.guard';
@@ -52,6 +53,7 @@ import while_list from '@config/white-list';
       ],
       isGlobal: true,
     }),
+    LoggerModule,
     ThrottlerModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -85,9 +87,7 @@ import while_list from '@config/white-list';
     RedisModule.forRootAsync({
       imports: [],
       inject: [ConfigService],
-      useFactory: async (
-        configService: ConfigService,
-      ): Promise<RedisModuleOptions> => {
+      useFactory: async (configService: ConfigService): Promise<RedisModuleOptions> => {
         return {
           closeClient: true,
           config: {
@@ -125,19 +125,12 @@ import while_list from '@config/white-list';
             hooks: {
               beforeCreate(attributes: any, options: any) {
                 const { fields } = options;
-                if (
-                  !attributes.dataValues.created_by &&
-                  fields.includes('created_by')
-                ) {
+                if (!attributes.dataValues.created_by && fields.includes('created_by')) {
                   // attributes.dataValues.created_by = 1;
                   throw new Error(`缺少created_by字段`);
                 }
-                if (
-                  !attributes.dataValues.updated_by &&
-                  fields.includes('updated_by')
-                ) {
-                  attributes.dataValues.updated_by =
-                    attributes.dataValues.created_by;
+                if (!attributes.dataValues.updated_by && fields.includes('updated_by')) {
+                  attributes.dataValues.updated_by = attributes.dataValues.created_by;
                 }
                 // 注入app_id
                 // attributes.dataValues.app_id = configService.get('app.app_id');
@@ -145,19 +138,12 @@ import while_list from '@config/white-list';
               beforeBulkCreate(instances: any, options: any) {
                 const { fields } = options;
                 for (const instance of instances) {
-                  if (
-                    !instance.dataValues.created_by &&
-                    fields.includes('created_by')
-                  ) {
+                  if (!instance.dataValues.created_by && fields.includes('created_by')) {
                     // instance.dataValues.created_by = 1;
                     throw new Error(`缺少created_by字段`);
                   }
-                  if (
-                    !instance.dataValues.updated_by &&
-                    fields.includes('updated_by')
-                  ) {
-                    instance.dataValues.updated_by =
-                      instance.dataValues.created_by;
+                  if (!instance.dataValues.updated_by && fields.includes('updated_by')) {
+                    instance.dataValues.updated_by = instance.dataValues.created_by;
                   }
                   // 注入app_id
                   // instance.dataValues.app_id = configService.get('app.app_id');
@@ -171,10 +157,7 @@ import while_list from '@config/white-list';
               beforeUpdate(instance: any, options: any) {
                 console.log(options);
                 const { fields } = options;
-                if (
-                  !instance.dataValues.updated_by &&
-                  fields.includes('updated_by')
-                ) {
+                if (!instance.dataValues.updated_by && fields.includes('updated_by')) {
                   throw new Error(`缺少updated_by字段`);
                 }
                 delete instance.dataValues.created_by;

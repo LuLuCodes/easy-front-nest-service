@@ -172,14 +172,51 @@ P0 工具链 ─┬─▶ P1 公共层瘦身 ─┬─▶ P3 数据层迁移 ─
 - **退出条件**：`main.ts` < 30 行；`/api/health` 200；Swagger `/docs` 可访问
 - **破坏性**：DTO 字段位置变化，需回归 access/basic 列表接口
 
-### P2 · 基础设施替换：log/cache/queue（3 PD）
+### P2 · 基础设施替换：log/queue（**调整范围后约 1.5 PD**）
 
-- **目标**：log4js→**pino**；自封装 CacheService→**@nestjs/cache-manager + ioredis store**；Bull→**BullMQ**
-- **删**：`src/config/log4js.ts`、`src/service/cache.service.ts`
-- **新**：`src/common/{logger/pino.module.ts, cache/cache.module.ts, queue/bullmq.module.ts}`
-- **桥接**：临时保留 `CacheService` 作为 thin wrapper 委托给 cache-manager；Bull→BullMQ 包装 `Queue.add`；env `LOGGER_DRIVER=log4js|pino` 双跑 1 周
-- **退出条件**：`grep -r "log4js\|new CacheService" src/` 为空；BullMQ 任务可消费；压测 RPS 不降
-- **破坏性**：日志格式变 JSON（运维需更新 Loki 解析）
+> **2026-05-08 调研后调整**：原 plan 写「CacheService → @nestjs/cache-manager」，
+> 实地看代码后决定**取消**。理由见下方调研记录。
+
+#### P2 调研结果（2026-05-08）
+
+| 替换面                           | 调研结论                                                                                                                                                                                                                                                                                          | 决定                         |
+| -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------- |
+| **log4js → pino**                | 仅 `src/libs/log4js.ts`(158L) + `src/config/log4js.ts`(111L) + 4 个调用点（middleware/pipe/3 个 filter）；调用面只有 `logger.{log,info,warn,error,fatal,trace,debug}`                                                                                                                             | ✅ 执行                      |
+| **CacheService → cache-manager** | `CacheService` 暴露 **13 个方法**：`exists/set/get/del/decrby/incrby/sadd/sismember/hget/hmget/hset/hmset/expire`，其中过半是 Redis 结构化数据 API（Hash/Set/计数器）。`@nestjs/cache-manager` 只抽象简单 KV，**强行替换会丢能力**。`@liaoliaots/nestjs-redis` 本身是活跃维护的好库，没有更换必要 | ❌ **不替换**，保留现状      |
+| **Bull → BullMQ**                | 2 个全局队列 `api-log`/`op-log` + 1 个 access 模块本地队列；3 个生产者 + 1 个消费者；BullMQ 跟 Bull API 大致兼容，主要变化是 `@Process` → `@Processor`(class) 模式                                                                                                                                | ✅ 执行                      |
+| **Bonus 发现**                   | `api-log` 队列**没有 consumer**！LoggerMiddleware push 进 Redis 但永远没人消费，是个死队列堆积                                                                                                                                                                                                    | 顺手处理：补 consumer 或废弃 |
+
+#### P2-A · log4js → pino（1 PD）
+
+- **改**：`src/middleware/logger.middleware.ts`、`src/pipe/validation.pipe.ts`、`src/filter/{any,http,other}-exception.filter.ts` —— 替换 `LoggerFactory.getInstance()` 调用为 NestJS `Logger`（`nestjs-pino` 提供）
+- **新**：`src/common/logger/logger.module.ts`、`src/common/logger/logger.config.ts`
+- **改**：`src/main.ts` / `bootstrap` —— 在 `NestFactory.create` 时启用 `bufferLogs:true` + `app.useLogger(app.get(Logger))`
+- **删**：`src/libs/log4js.ts`、`src/config/log4js.ts`
+- **依赖**：`pnpm add nestjs-pino pino pino-http pino-pretty` / `pnpm remove log4js stacktrace-js chalk`（chalk 仅 log4js wrapper 用了）
+- **退出条件**：`grep -rE "log4js\|stacktrace-js" src/` 为空；启动后 `/api/health` 仍 200；HTTP 请求自动出结构化 JSON 日志
+
+#### P2-B · Bull → BullMQ + 修死队列（0.5 PD）
+
+- **改**：`src/app.module.ts`、`src/modules/{access,oplog}/*.module.ts` —— `BullModule.forRootAsync` API 微调；`registerQueue` 配置不变
+- **改**：`src/middleware/logger.middleware.ts`、`src/modules/oplog/oplog.service.ts` —— `Queue` 类型从 `bull` 换 `bullmq`
+- **改**：`src/modules/oplog/oplog.processor.ts` —— `@Processor('op-log')` + `@Process('oplog')` → `@Processor('op-log')` class 继承 `WorkerHost` 重写 `process()` 方法（BullMQ 标准）
+- **`api-log` 死队列处置**（2 选 1）：
+  - **选项 1（推荐）**：彻底废弃，删 `BullModule.registerQueue({name: 'api-log'})`，删 LoggerMiddleware 中 `use_log_queue` 分支。HTTP 日志走 pino-http 即可，无需队列。
+  - 选项 2：补一个 `api-log` 的 processor，把消息消费写库或文件
+- **依赖**：`pnpm add @nestjs/bullmq bullmq` / `pnpm remove @nestjs/bull bull`
+- **退出条件**：`grep -r "@nestjs/bull\b\|from 'bull'" src/` 为空；`op-log` 任务可消费（看 LogService 写 `t_user_oplog` 表）；Bull Board / 仪表板能看到 BullMQ 队列
+
+#### P2-C · 自 provider ioredis + CacheService 原地重写（0.5 PD）
+
+> **2026-05-08 二次调研**：放弃 cache-manager 路线后改方向 —— 真正的问题不在"依赖什么包"，而在 `CacheService` 实现层有 boilerplate 和 bug：13 个方法每个都重复 `if (!this.client) await getClient()` 异步初始化；`del()` 函数签名 `Promise<void>` 但内部没 await 是真 bug。
+
+- **新**：`src/common/redis/redis.module.ts`（~20 行）自 provider 一个 ioredis 单例 + 导出 `REDIS_CLIENT` symbol
+- **改**：`src/service/cache.service.ts` 改用 `@Inject(REDIS_CLIENT)` 同步注入 ioredis 客户端，消灭所有 `if (!this.client)` 检查；修 `del` 未 await bug；类型从 `any` → `Redis`
+- **改**：`src/app.module.ts` 移除 `@liaoliaots/nestjs-redis` 的 `RedisModule.forRootAsync`，改 import 自 provider 的 `RedisModule`
+- **改**：`src/bootstrap/session.ts` —— 它通过 `createClient` from 'redis' 直接连了一份 cookie session 用的 redis（独立 db_index）；保留独立连接但风格统一（可后续抽到 redis.module.ts 内多 client）
+- **删**：依赖 `@liaoliaots/nestjs-redis`（仅 cache.service.ts 用过）
+- **退出条件**：`grep -r "@liaoliaots/nestjs-redis\|RedisService" src/` 为空；CacheService API 完全兼容（30+ 调用方零改动）；`pnpm test` 通过
+- **破坏性**：无对外 API 变化；调用方完全不改
 
 ### P3 · 数据层迁移 Sequelize → TypeORM（5 PD · **最重**）
 

@@ -1,13 +1,12 @@
-import { Injectable, NestMiddleware } from '@nestjs/common';
+import { Injectable, Logger, NestMiddleware } from '@nestjs/common';
 import { Queue } from 'bull';
 import { InjectQueue } from '@nestjs/bull';
 import { ConfigService } from '@nestjs/config';
 import { NextFunction } from 'express';
-import { LoggerFactory } from '@libs/log4js';
 
-const logger = LoggerFactory.getInstance();
 @Injectable()
 export class LoggerMiddleware implements NestMiddleware {
+  private readonly logger = new Logger(LoggerMiddleware.name);
   use_log_queue = false;
   constructor(
     @InjectQueue('api-log') private logQueue: Queue,
@@ -35,10 +34,7 @@ export class LoggerMiddleware implements NestMiddleware {
         await this.logQueue.add(
           {
             from_ip:
-              req.headers['x-forwarded-for'] ||
-              req.connection.remoteAddress ||
-              req.ip ||
-              'unkown',
+              req.headers['x-forwarded-for'] || req.connection.remoteAddress || req.ip || 'unkown',
             url: req.originalUrl,
             method: req.method,
             request_session: req.session,
@@ -61,11 +57,7 @@ export class LoggerMiddleware implements NestMiddleware {
       } else {
         const logFormat = ` >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         time: ${Date.now()},
-        fromIP: ${
-          req.headers['x-forwarded-for'] ||
-          req.connection.remoteAddress ||
-          req.ip
-        },
+        fromIP: ${req.headers['x-forwarded-for'] || req.connection.remoteAddress || req.ip},
         method: ${req.method},
         originalUri: ${req.originalUrl},
         session: ${JSON.stringify(req.session)},
@@ -81,11 +73,11 @@ export class LoggerMiddleware implements NestMiddleware {
       `;
 
         if (res.statusCode >= 500) {
-          logger.error(logFormat);
+          this.logger.error(logFormat);
         } else if (res.statusCode >= 400) {
-          logger.warn(logFormat);
+          this.logger.warn(logFormat);
         } else {
-          logger.log(logFormat);
+          this.logger.log(logFormat);
         }
       }
     };
