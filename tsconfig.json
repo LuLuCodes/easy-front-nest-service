@@ -30,7 +30,6 @@
       "@guard/*": ["./src/guard/*"],
       "@service/*": ["./src/service/*"],
       "@dto/*": ["./src/dto/*"],
-      "@models/*": ["./src/models/*"],
       "@decorator/*": ["./src/decorator/*"],
       "@interceptor/*": ["./src/interceptor/*"],
       "@filter/*": ["./src/filter/*"]
