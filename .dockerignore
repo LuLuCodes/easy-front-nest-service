@@ -1,0 +1,57 @@
+# --- VCS / metadata ---
+.git
+.gitignore
+.gitattributes
+.github
+.gitlab-ci.yml
+
+# --- node ---
+node_modules
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# --- build outputs (rebuilt inside the image) ---
+api
+dist
+coverage
+.next
+.cache
+
+# --- test / dev artifacts ---
+test
+**/*.spec.ts
+**/*.test.ts
+.eslintcache
+
+# --- IDE / OS ---
+.idea
+.vscode
+.DS_Store
+*.swp
+
+# --- secrets and local config ---
+src/.env.test
+.env
+.env.*
+!src/.env.production
+
+# --- docs and infra files not needed at runtime ---
+docs
+README.md
+CHANGELOG.md
+LICENSE
+*.md
+.husky
+.lintstagedrc*
+.prettier*
+.editorconfig
+.nvmrc
+
+# --- temp / runtime artifacts ---
+oss-files
+logs
+*.log
+tmp
+.cache
