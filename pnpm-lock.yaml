@@ -61,6 +61,9 @@ importers:
       ali-oss:
         specifier: ^6.23.0
         version: 6.23.0
+      alipay-sdk:
+        specifier: ^4.14.0
+        version: 4.14.0
       axios:
         specifier: ^1.16.0
         version: 1.16.0
@@ -2623,6 +2626,13 @@ packages:
       }
     engines: { node: '>=8' }
 
+  alipay-sdk@4.14.0:
+    resolution:
+      {
+        integrity: sha512-oiD/VP5Ei0RRacHHmE+N0uqgOj2xzce7c0fHrtyyh1P04O+o9I1r65LdGPzU8960J56xOxS/d3c+R/9lsPUH7g==,
+      }
+    engines: { node: '>=18.0.0' }
+
   ansi-colors@4.1.3:
     resolution:
       {
@@ -3212,6 +3222,13 @@ packages:
         integrity: sha512-P8BjAsXvZS+VIDUI11hHCQEv74YT67YUi5JJFNWIqL235sBmjX4+qx9Muvls5ivyNENctx46xQLQ3aTuE7ssaQ==,
       }
     engines: { node: '>=6' }
+
+  camelcase-keys@7.0.2:
+    resolution:
+      {
+        integrity: sha512-Rjs1H+A9R+Ig+4E/9oyB66UC5Mj9Xq3N//vcLf2WzgdTi/3gUu3Z9KoqmlrEG4VuuLK8wJHofxzdQXz/knhiYg==,
+      }
+    engines: { node: '>=12' }
 
   camelcase@5.3.1:
     resolution:
@@ -4066,6 +4083,12 @@ packages:
         integrity: sha512-glXVh42vz40yZb9Cq2oMOt70FIoWiv+vxNvdKdU8CwjLad25qHM3trLxhl9bVjdr6WaslIXhWpn0NO8T/67Qjg==,
       }
     engines: { node: '>= 8.0.0' }
+
+  dot-case@3.0.4:
+    resolution:
+      {
+        integrity: sha512-Kv5nKlh6yRrdrGvxeJ2e5y2eRUpkUosIW4A2AS38zwSz27zu7ufDwQPi5Jhs3XAlGNetl3bmnGhQsMtkKJnj3w==,
+      }
 
   dot-prop@5.3.0:
     resolution:
@@ -6471,6 +6494,12 @@ packages:
       }
     engines: { node: '>=0.10.0' }
 
+  lower-case@2.0.2:
+    resolution:
+      {
+        integrity: sha512-7fm3l3NAF9WfN6W3JOmf5drwpVqX78JtoGJ3A6W0a6ZnldM41w2fV5D490psKFTpMds8TJse/eHLFFsNHHjHgg==,
+      }
+
   lowercase-keys@3.0.0:
     resolution:
       {
@@ -6536,6 +6565,13 @@ packages:
       {
         integrity: sha512-JmqCvUhmt43madlpFzG4BQzG2Z3m6tvQDNKdClZnO3VbIudJYmxsT0FNJMeiB2+JTSlTQTSbU8QdesVmwJcmLg==,
       }
+
+  map-obj@4.3.0:
+    resolution:
+      {
+        integrity: sha512-hdN1wVrZbb29eBGiGjJbeP8JbKjq1urkHJ/LIP/NY48MZ1QVXUsQBV1G1zvYFHn1XE06cwjBsOI2K3Ulnj1YXQ==,
+      }
+    engines: { node: '>=8' }
 
   math-intrinsics@1.1.0:
     resolution:
@@ -6912,6 +6948,12 @@ packages:
     resolution:
       {
         integrity: sha512-1nh45deeb5olNY7eX82BkPO7SSxR5SSYJiPTrTdFUVYwAl8CKMA5N9PjTYkHiRjisVcxcQ1HXdLhx2qxxJzLNQ==,
+      }
+
+  no-case@3.0.4:
+    resolution:
+      {
+        integrity: sha512-fgAN3jGAh+RoxUGZHTSOLJIqUc2wmoBwGR4tbpNAKmmovFoWq0OdRkb0VkldReO2a2iBT/OEulG9XSUc10r3zg==,
       }
 
   nock@14.0.15:
@@ -8231,6 +8273,19 @@ packages:
       }
     engines: { node: '>=18' }
 
+  snake-case@3.0.4:
+    resolution:
+      {
+        integrity: sha512-LAOh4z89bGQvl9pFfNF8V146i7o7/CqFPbqzYgP+yYzDIDeS9HaNFtXABamRW+AQzEVODcvE79ljJ+8a9YSdMg==,
+      }
+
+  snakecase-keys@8.1.0:
+    resolution:
+      {
+        integrity: sha512-9/Eug2btrCiOi+9+vIXJnxUcKVfcbLy5Uwff4BrO6PQf3Oq/2iYQ/1zkmnrpIIjfel/DAasAlux7OvAmCa+Xnw==,
+      }
+    engines: { node: '>=18' }
+
   sonic-boom@4.2.1:
     resolution:
       {
@@ -8310,6 +8365,13 @@ packages:
         integrity: sha512-qC9iz2FlN7DQl3+wjwn3802RTyjCx7sDvfQEXchwa6CWOx07/WVfh91gBmQ9fahw8snwGEWU3xGzOt4tFyHLxg==,
       }
     engines: { node: '>= 0.6' }
+
+  sse-decoder@1.0.0:
+    resolution:
+      {
+        integrity: sha512-JPopy3jfNmPcUz5Ru6skKhHNRJbsvcEW6Z4SirKkucLS8Jya1Bmf4FVX8giOkLm8xQJ7kK68P6GXoVSTkbedUA==,
+      }
+    engines: { node: '>= 14.19.3' }
 
   stack-utils@2.0.6:
     resolution:
@@ -8953,6 +9015,13 @@ packages:
       }
     engines: { node: '>=10' }
 
+  type-fest@1.4.0:
+    resolution:
+      {
+        integrity: sha512-yGSza74xk0UG8k+pLh5oeoYirvIiWo5t0/o3zHHAO2tRDiZcxWP7fywNlXhqb6/r6sWvwi+RsyQMWhVLe4BVuA==,
+      }
+    engines: { node: '>=10' }
+
   type-fest@4.41.0:
     resolution:
       {
@@ -9105,6 +9174,13 @@ packages:
         integrity: sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ==,
       }
 
+  undici@7.25.0:
+    resolution:
+      {
+        integrity: sha512-xXnp4kTyor2Zq+J1FfPI6Eq3ew5h6Vl0F/8d9XU5zZQf1tX9s2Su1/3PiMmUANFULpmksxkClamIZcaUqryHsQ==,
+      }
+    engines: { node: '>=20.18.1' }
+
   unescape@1.0.1:
     resolution:
       {
@@ -9175,6 +9251,13 @@ packages:
       proxy-agent:
         optional: true
 
+  urllib@4.9.0:
+    resolution:
+      {
+        integrity: sha512-Rp3DBvVqy9arSTMH6oN5N7OAN01U3dQ2xc19AadP86MzC4j67MDeqOup5shpWnjkDVGWfLfWPOd8CyqOtd6u3w==,
+      }
+    engines: { node: '>= 18.19.0' }
+
   user-home@2.0.0:
     resolution:
       {
@@ -9194,6 +9277,13 @@ packages:
         integrity: sha512-PYxZDA+6QtvRvm//++aGdmKG/cI07jNwbROz0Ql+VzFV1+Z0Dy55NI4zZ7RHc9KKpBePNFwoErqIuqQv/cjiTA==,
       }
     engines: { node: '>= 0.12.0' }
+
+  utility@2.5.0:
+    resolution:
+      {
+        integrity: sha512-lDbOVde5UAKgtxrSyZNhqrTA7f7anba6DTqbsDWgUFk6PZlmr7djqPYw0FnL5a6TbJvRt38VmYqt07zVLzXG2A==,
+      }
+    engines: { node: '>= 16.0.0' }
 
   utils-merge@1.0.1:
     resolution:
@@ -9579,6 +9669,13 @@ packages:
         integrity: sha512-PtGEvEP30p7sbIBJKUBjUnqgTVOyMURc4dLo9iNyAJnNIEz9pm88cCXF21w94Kg3k6RXkeZh5DHOGS0qEONvNQ==,
       }
     engines: { node: '>=12' }
+
+  ylru@2.0.0:
+    resolution:
+      {
+        integrity: sha512-T6hTrKcr9lKeUG0MQ/tO72D3UGptWVohgzpHG8ljU1jeBt2RCjcWxvsTPD8ZzUq1t1FvwROAw1kxg2euvg/THg==,
+      }
+    engines: { node: '>= 18.19.0' }
 
   yn@3.1.1:
     resolution:
@@ -11486,6 +11583,18 @@ snapshots:
       - proxy-agent
       - supports-color
 
+  alipay-sdk@4.14.0:
+    dependencies:
+      '@fidm/x509': 1.2.1
+      bignumber.js: 9.1.2
+      camelcase-keys: 7.0.2
+      crypto-js: 4.2.0
+      formstream: 1.5.2
+      snakecase-keys: 8.1.0
+      sse-decoder: 1.0.0
+      urllib: 4.9.0
+      utility: 2.5.0
+
   ansi-colors@4.1.3: {}
 
   ansi-escapes@3.2.0: {}
@@ -11849,6 +11958,13 @@ snapshots:
       get-intrinsic: 1.3.0
 
   callsites@3.1.0: {}
+
+  camelcase-keys@7.0.2:
+    dependencies:
+      camelcase: 6.3.0
+      map-obj: 4.3.0
+      quick-lru: 5.1.1
+      type-fest: 1.4.0
 
   camelcase@5.3.1: {}
 
@@ -12309,6 +12425,11 @@ snapshots:
   diff@4.0.2: {}
 
   digest-header@1.1.0: {}
+
+  dot-case@3.0.4:
+    dependencies:
+      no-case: 3.0.4
+      tslib: 2.8.1
 
   dot-prop@5.3.0:
     dependencies:
@@ -14032,6 +14153,10 @@ snapshots:
 
   longest@2.0.1: {}
 
+  lower-case@2.0.2:
+    dependencies:
+      tslib: 2.8.1
+
   lowercase-keys@3.0.0: {}
 
   lru-cache@10.4.3: {}
@@ -14059,6 +14184,8 @@ snapshots:
   makeerror@1.0.12:
     dependencies:
       tmpl: 1.0.5
+
+  map-obj@4.3.0: {}
 
   math-intrinsics@1.1.0: {}
 
@@ -14257,6 +14384,11 @@ snapshots:
     optional: true
 
   nice-try@1.0.5: {}
+
+  no-case@3.0.4:
+    dependencies:
+      lower-case: 2.0.2
+      tslib: 2.8.1
 
   nock@14.0.15:
     dependencies:
@@ -14988,6 +15120,17 @@ snapshots:
       ansi-styles: 6.2.3
       is-fullwidth-code-point: 5.1.0
 
+  snake-case@3.0.4:
+    dependencies:
+      dot-case: 3.0.4
+      tslib: 2.8.1
+
+  snakecase-keys@8.1.0:
+    dependencies:
+      map-obj: 4.3.0
+      snake-case: 3.0.4
+      type-fest: 4.41.0
+
   sonic-boom@4.2.1:
     dependencies:
       atomic-sleep: 1.0.0
@@ -15023,6 +15166,8 @@ snapshots:
   sql-highlight@6.1.0: {}
 
   sqlstring@2.3.3: {}
+
+  sse-decoder@1.0.0: {}
 
   stack-utils@2.0.6:
     dependencies:
@@ -15403,6 +15548,8 @@ snapshots:
 
   type-fest@0.21.3: {}
 
+  type-fest@1.4.0: {}
+
   type-fest@4.41.0: {}
 
   type-is@1.6.18:
@@ -15477,6 +15624,8 @@ snapshots:
 
   undici-types@6.21.0: {}
 
+  undici@7.25.0: {}
+
   unescape@1.0.1:
     dependencies:
       extend-shallow: 2.0.1
@@ -15522,6 +15671,16 @@ snapshots:
       statuses: 1.5.0
       utility: 1.18.0
 
+  urllib@4.9.0:
+    dependencies:
+      form-data: 4.0.5
+      formstream: 1.5.2
+      mime-types: 2.1.35
+      qs: 6.15.1
+      type-fest: 4.41.0
+      undici: 7.25.0
+      ylru: 2.0.0
+
   user-home@2.0.0:
     dependencies:
       os-homedir: 1.0.2
@@ -15535,6 +15694,12 @@ snapshots:
       mkdirp: 0.5.6
       mz: 2.7.0
       unescape: 1.0.1
+
+  utility@2.5.0:
+    dependencies:
+      escape-html: 1.0.3
+      unescape: 1.0.1
+      ylru: 2.0.0
 
   utils-merge@1.0.1: {}
 
@@ -15776,6 +15941,8 @@ snapshots:
     dependencies:
       buffer-crc32: 0.2.13
       pend: 1.2.0
+
+  ylru@2.0.0: {}
 
   yn@3.1.1: {}
 
