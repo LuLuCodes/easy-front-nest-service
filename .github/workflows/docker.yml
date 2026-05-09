@@ -109,6 +109,10 @@ jobs:
           severity: HIGH,CRITICAL
           ignore-unfixed: true
           trivyignores: .trivyignore
+          # In sarif mode the action expands `severity` to ALL so the
+          # uploaded report contains every level for Code Scanning. We
+          # need this flag to keep the gate restricted to HIGH/CRITICAL.
+          limit-severities-for-sarif: true
           format: sarif
           output: trivy-results.sarif
           exit-code: '1'
