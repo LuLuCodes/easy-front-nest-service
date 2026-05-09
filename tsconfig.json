@@ -33,7 +33,8 @@
       "@dto/*": ["./src/dto/*"],
       "@decorator/*": ["./src/decorator/*"],
       "@interceptor/*": ["./src/interceptor/*"],
-      "@filter/*": ["./src/filter/*"]
+      "@filter/*": ["./src/filter/*"],
+      "@tenant/*": ["./src/tenant/*"]
     }
   },
   "exclude": ["node_modules", "api", "sequelize-generator", "db-generator"],

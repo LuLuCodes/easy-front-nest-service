@@ -46,3 +46,6 @@ lerna-debug.log*
 
 # TypeScript build cache
 *.tsbuildinfo
+
+# Local Claude Code workspace state
+/.claude

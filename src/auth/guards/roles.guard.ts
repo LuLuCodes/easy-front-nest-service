@@ -27,6 +27,7 @@ export class RolesGuard implements CanActivate {
     if (!user || !Array.isArray(user.roles)) {
       throw new ForbiddenException('缺少角色信息');
     }
+    if (user.is_super_admin) return true;
     const granted = user.roles.some((role) => required.includes(role));
     if (!granted) {
       throw new ForbiddenException('角色权限不足');

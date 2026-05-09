@@ -38,6 +38,7 @@ describe('JwtStrategy', () => {
     const result = strategy.validate({
       sub: 42,
       account_id: 'tester',
+      tenant_id: 0,
       roles: ['admin'],
       permissions: ['p1'],
     });
@@ -45,6 +46,7 @@ describe('JwtStrategy', () => {
       sub: 42,
       id: 42,
       account_id: 'tester',
+      tenant_id: 0,
       roles: ['admin'],
       permissions: ['p1'],
     });
@@ -62,7 +64,7 @@ describe('JwtRefreshStrategy', () => {
       cookies: { refresh_token: 'cookie-token' },
       body: {},
     } as unknown as Request;
-    const out = strategy.validate(req, { sub: 7, account_id: 't', jti: 'j' });
+    const out = strategy.validate(req, { sub: 7, account_id: 't', tenant_id: 0, jti: 'j' });
     expect(out.token).toBe('cookie-token');
   });
 
@@ -72,7 +74,7 @@ describe('JwtRefreshStrategy', () => {
       cookies: {},
       body: { refreshToken: 'body-token' },
     } as unknown as Request;
-    const out = strategy.validate(req, { sub: 7, account_id: 't', jti: 'j' });
+    const out = strategy.validate(req, { sub: 7, account_id: 't', tenant_id: 0, jti: 'j' });
     expect(out.token).toBe('body-token');
   });
 });
@@ -100,6 +102,7 @@ describe('LocalStrategy', () => {
       id: 1,
       sub: 1,
       account_id: 'a',
+      tenant_id: 0,
       roles: [],
       permissions: [],
     };

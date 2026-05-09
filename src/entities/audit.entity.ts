@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, DeleteDateColumn, UpdateDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, DeleteDateColumn, Index, UpdateDateColumn } from 'typeorm';
 import { bigintTransformer } from '@database/transformers/bigint.transformer';
 
 /**
@@ -7,6 +7,15 @@ import { bigintTransformer } from '@database/transformers/bigint.transformer';
  * varies (most are BIGINT, t_dictionary is INT).
  */
 export abstract class AuditEntity {
+  @Index()
+  @Column({
+    name: 'tenant_id',
+    type: 'bigint',
+    transformer: bigintTransformer,
+    default: 0,
+  })
+  tenant_id!: number;
+
   @CreateDateColumn({ name: 'created_at', type: 'datetime' })
   created_at!: Date;
 

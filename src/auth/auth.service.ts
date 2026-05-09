@@ -16,6 +16,7 @@ import {
   UserRoleRelation,
 } from '@entities/index';
 import { LOGIN_TYPE, USER_STATUS } from '@dto/EnumDTO';
+import { SYSTEM_TENANT_ID } from '@tenant/constants';
 
 import type {
   AuthenticatedUser,
@@ -79,6 +80,8 @@ export class AuthService {
       id: user.id!,
       sub: user.id!,
       account_id: login.account_id!,
+      tenant_id: SYSTEM_TENANT_ID,
+      is_super_admin: false,
       login_client: login.login_client,
       role_type: user.role_type,
       roles: authorities.roles,
@@ -92,6 +95,8 @@ export class AuthService {
     const accessPayload: JwtAccessPayload = {
       sub: user.id,
       account_id: user.account_id,
+      tenant_id: user.tenant_id,
+      is_super_admin: user.is_super_admin,
       login_client: user.login_client,
       role_type: user.role_type,
       roles: user.roles,
@@ -100,6 +105,7 @@ export class AuthService {
     const refreshPayload: JwtRefreshPayload = {
       sub: user.id,
       account_id: user.account_id,
+      tenant_id: user.tenant_id,
       jti: randomUUID(),
     };
 
@@ -131,6 +137,8 @@ export class AuthService {
       id: user.id!,
       sub: user.id!,
       account_id: payload.account_id,
+      tenant_id: payload.tenant_id,
+      is_super_admin: false,
       role_type: user.role_type,
       roles: authorities.roles,
       permissions: authorities.permissions,
