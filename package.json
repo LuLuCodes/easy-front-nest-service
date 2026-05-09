@@ -170,7 +170,8 @@
       "@filter/(.*)$": "<rootDir>/src/filter/$1",
       "@dto/(.*)$": "<rootDir>/src/dto/$1",
       "@guard/(.*)$": "<rootDir>/src/guard/$1",
-      "@decorator/(.*)$": "<rootDir>/src/decorator/$1"
+      "@decorator/(.*)$": "<rootDir>/src/decorator/$1",
+      "@tenant/(.*)$": "<rootDir>/src/tenant/$1"
     },
     "testRegex": ".*\\.spec\\.ts$",
     "testPathIgnorePatterns": [

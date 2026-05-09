@@ -1,4 +1,13 @@
-import { EntitySubscriberInterface, EventSubscriber, InsertEvent, UpdateEvent } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import {
+  DataSource,
+  EntitySubscriberInterface,
+  EventSubscriber,
+  InsertEvent,
+  UpdateEvent,
+} from 'typeorm';
+
+import { TenantContextService } from '@tenant/tenant-context.service';
 
 /**
  * Replicates the audit-field guarantees previously enforced by the
@@ -9,15 +18,30 @@ import { EntitySubscriberInterface, EventSubscriber, InsertEvent, UpdateEvent } 
  * - updates must carry updated_by
  * - created_by is removed from update payload (immutable)
  *
- * The dead `request_id` filter and `afterBulkDestroy` deleted_by writer
- * from the old hooks are not replicated — neither was used in the
- * current codebase (see P3 investigation in docs/REFACTOR_PLAN.md).
+ * Also injects tenant_id from the AsyncLocalStorage context if the
+ * entity didn't supply one. Once P5-2 lands, every authenticated
+ * request runs inside a TenantContextInterceptor scope, so the
+ * subscriber just stamps from there. Outside of a request scope
+ * (CLI/migrations/cron) the entity must set tenant_id explicitly.
  */
+@Injectable()
 @EventSubscriber()
 export class AuditFieldsSubscriber implements EntitySubscriberInterface {
+  constructor(
+    dataSource: DataSource,
+    private readonly tenantContext: TenantContextService,
+  ) {
+    dataSource.subscribers.push(this);
+  }
+
   beforeInsert(event: InsertEvent<unknown>): void {
     const entity = event.entity as Record<string, unknown> | undefined;
     if (!entity) return;
+
+    if (entity.tenant_id === undefined || entity.tenant_id === null) {
+      const ctx = this.tenantContext.get();
+      if (ctx) entity.tenant_id = ctx.tenantId;
+    }
 
     if (entity.created_by === undefined || entity.created_by === null) {
       throw new Error('缺少created_by字段');
@@ -35,5 +59,6 @@ export class AuditFieldsSubscriber implements EntitySubscriberInterface {
       throw new Error('缺少updated_by字段');
     }
     delete entity.created_by;
+    delete entity.tenant_id;
   }
 }

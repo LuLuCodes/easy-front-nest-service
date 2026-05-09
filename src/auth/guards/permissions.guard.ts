@@ -27,6 +27,7 @@ export class PermissionsGuard implements CanActivate {
     if (!user || !Array.isArray(user.permissions)) {
       throw new ForbiddenException('缺少权限信息');
     }
+    if (user.is_super_admin) return true;
     const granted = required.every((permission) => user.permissions.includes(permission));
     if (!granted) {
       throw new ForbiddenException('权限不足');

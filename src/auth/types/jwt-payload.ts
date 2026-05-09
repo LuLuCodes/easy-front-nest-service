@@ -1,6 +1,8 @@
 export interface JwtAccessPayload {
   sub: number;
   account_id: string;
+  tenant_id: number;
+  is_super_admin?: boolean;
   login_client?: number;
   role_type?: number;
   roles: string[];
@@ -10,6 +12,7 @@ export interface JwtAccessPayload {
 export interface JwtRefreshPayload {
   sub: number;
   account_id: string;
+  tenant_id: number;
   jti: string;
 }
 

@@ -123,6 +123,8 @@ describe('AuthService', () => {
         id: 42,
         sub: 42,
         account_id: 'tester',
+        tenant_id: 0,
+        is_super_admin: false,
         login_client: 1,
         role_type: 1,
         roles: ['admin'],
@@ -187,6 +189,8 @@ describe('AuthService', () => {
         id: 7,
         sub: 7,
         account_id: 'tester',
+        tenant_id: 0,
+        is_super_admin: false,
         roles: ['admin'],
         permissions: ['p1'],
       });
@@ -218,7 +222,12 @@ describe('AuthService', () => {
       userRoleRelationRepo.find.mockResolvedValueOnce([]);
       jwtService.signAsync.mockResolvedValue('signed');
 
-      const result = await service.refresh({ sub: 7, account_id: 'tester', jti: 'j-1' });
+      const result = await service.refresh({
+        sub: 7,
+        account_id: 'tester',
+        tenant_id: 0,
+        jti: 'j-1',
+      });
 
       expect(result.accessToken).toBe('signed');
       expect(result.refreshToken).toBe('signed');
@@ -229,7 +238,9 @@ describe('AuthService', () => {
         id: 7,
         user_status: USER_STATUS.冻结,
       });
-      await expect(service.refresh({ sub: 7, account_id: 'tester', jti: 'j-1' })).rejects.toThrow();
+      await expect(
+        service.refresh({ sub: 7, account_id: 'tester', tenant_id: 0, jti: 'j-1' }),
+      ).rejects.toThrow();
     });
   });
 
