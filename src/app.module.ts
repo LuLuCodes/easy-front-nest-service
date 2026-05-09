@@ -21,6 +21,7 @@ import { CacheService } from '@service/cache.service';
 import { CronTaskService } from '@service/cron-task.service';
 import { DictCacheService } from '@service/dict-cache.service';
 
+import { AuthModule } from './auth/auth.module';
 import { InitModule } from './init.module';
 import { WxModule } from './modules/wx/wx.module';
 import { MpModule } from './modules/mp/mp.module';
@@ -31,6 +32,7 @@ import { AccessModule } from './modules/access/access.module';
 import { OpLogModule } from './modules/oplog/oplog.module';
 
 import app_config from '@config/app';
+import auth_config from '@config/auth';
 import databse_config from '@config/mysql';
 import mq_config from '@config/mq';
 import oss_config from '@config/oss';
@@ -43,6 +45,7 @@ import while_list from '@config/white-list';
     ConfigModule.forRoot({
       load: [
         app_config,
+        auth_config,
         databse_config,
         mq_config,
         oss_config,
@@ -104,6 +107,7 @@ import while_list from '@config/white-list';
     MpModule,
     WxPayModule,
     OssModule,
+    AuthModule,
     AccessModule,
     BasicModule,
     InitModule,
