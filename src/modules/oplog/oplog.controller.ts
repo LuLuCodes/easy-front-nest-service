@@ -1,9 +1,12 @@
-import { Controller, Post, Body, UsePipes, Session } from '@nestjs/common';
-import { ApiTags, ApiBody, ApiOperation, ApiHeader } from '@nestjs/swagger';
-import { ValidationPipe } from '@pipe/validation.pipe';
-import { OpLogService } from './oplog.service';
+import { Body, Controller, Post, UsePipes } from '@nestjs/common';
+import { ApiBody, ApiHeader, ApiOperation, ApiTags } from '@nestjs/swagger';
 
-import { QueryLogDto, CreateLogDto } from './oplog.dto';
+import { CurrentUser } from '@auth/decorators';
+import type { AuthenticatedUser } from '@auth/types/jwt-payload';
+import { ValidationPipe } from '@pipe/validation.pipe';
+
+import { OpLogService } from './oplog.service';
+import { CreateLogDto, QueryLogDto } from './oplog.dto';
 
 @ApiTags('用户操作日志 API')
 @ApiHeader({
@@ -31,9 +34,9 @@ export class OpLogController {
   @Post('query-oplog')
   async queryOpLog(
     @Body() body: QueryLogDto,
-    @Session() session,
+    @CurrentUser() user: AuthenticatedUser,
   ): Promise<any> {
-    return await this.opLogService.queryLog(body, session.user);
+    return this.opLogService.queryLog(body, user);
   }
 
   @ApiOperation({

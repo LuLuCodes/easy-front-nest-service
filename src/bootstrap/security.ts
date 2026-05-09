@@ -9,7 +9,7 @@ export function applySecurity(app: NestExpressApplication, config: ConfigService
 
   app.enableCors({
     origin: true,
-    allowedHeaders: 'Content-Type, X-XSRF-Token, CSRF-Token, X-CSRF-Token, X-Auth-Token',
+    allowedHeaders: 'Authorization, Content-Type, X-XSRF-Token, CSRF-Token, X-CSRF-Token',
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     credentials: true,
   });

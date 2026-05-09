@@ -14,8 +14,10 @@ import { LoggerModule } from '@common/logger/logger.module';
 import { RedisModule } from '@common/redis/redis.module';
 import { DatabaseModule } from '@database/database.module';
 import { LoggerMiddleware } from './middleware/logger.middleware';
+import { JwtAuthGuard } from '@auth/guards/jwt-auth.guard';
+import { PermissionsGuard } from '@auth/guards/permissions.guard';
+import { RolesGuard } from '@auth/guards/roles.guard';
 import { SignGuard } from '@guard/sign.guard';
-import { AuthGuard } from '@guard/auth.guard';
 import { CustomThrottlerGuard } from '@guard/custom-throttler.guard';
 import { CacheService } from '@service/cache.service';
 import { CronTaskService } from '@service/cron-task.service';
@@ -37,7 +39,6 @@ import databse_config from '@config/mysql';
 import mq_config from '@config/mq';
 import oss_config from '@config/oss';
 import redis_config from '@config/redis';
-import session_config from '@config/session';
 import while_list from '@config/white-list';
 
 @Module({
@@ -50,7 +51,6 @@ import while_list from '@config/white-list';
         mq_config,
         oss_config,
         redis_config,
-        session_config,
         while_list,
       ],
       isGlobal: true,
@@ -121,7 +121,15 @@ import while_list from '@config/white-list';
     },
     {
       provide: APP_GUARD,
-      useClass: AuthGuard,
+      useClass: JwtAuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: PermissionsGuard,
     },
     {
       provide: APP_GUARD,

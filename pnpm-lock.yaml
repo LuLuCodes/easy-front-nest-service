@@ -94,9 +94,6 @@ importers:
       compression:
         specifier: ^1.8.1
         version: 1.8.1
-      connect-redis:
-        specifier: ^7.1.1
-        version: 7.1.1(express-session@1.18.0)
       cookie-parser:
         specifier: ^1.4.6
         version: 1.4.6
@@ -121,9 +118,6 @@ importers:
       express-rate-limit:
         specifier: ^7.2.0
         version: 7.4.0(express@4.19.2)
-      express-session:
-        specifier: ^1.18.0
-        version: 1.18.0
       fast-xml-parser:
         specifier: ^4.3.6
         version: 4.4.1
@@ -178,9 +172,6 @@ importers:
       pino-http:
         specifier: ^11.0.0
         version: 11.0.0
-      redis:
-        specifier: ^4.6.13
-        version: 4.7.0
       redlock:
         specifier: 5.0.0-beta.2
         version: 5.0.0-beta.2
@@ -3545,15 +3536,6 @@ packages:
       }
     engines: { '0': node >= 6.0 }
 
-  connect-redis@7.1.1:
-    resolution:
-      {
-        integrity: sha512-M+z7alnCJiuzKa8/1qAYdGUXHYfDnLolOGAUjOioB07pP39qxjG+X9ibsud7qUBc4jMV5Mcy3ugGv8eFcgamJQ==,
-      }
-    engines: { node: '>=16' }
-    peerDependencies:
-      express-session: '>=1'
-
   consola@2.15.3:
     resolution:
       {
@@ -4518,13 +4500,6 @@ packages:
     engines: { node: '>= 16' }
     peerDependencies:
       express: 4 || 5 || ^5.0.0-beta.1
-
-  express-session@1.18.0:
-    resolution:
-      {
-        integrity: sha512-m93QLWr0ju+rOwApSsyso838LQwgfs44QtOP/WBiwtAgPIo/SAh1a5c6nn2BR6mFNZehTpqKDESzP+fRHVbxwQ==,
-      }
-    engines: { node: '>= 0.8.0' }
 
   express@4.19.2:
     resolution:
@@ -7036,13 +7011,6 @@ packages:
       }
     engines: { node: '>= 0.8' }
 
-  on-headers@1.0.2:
-    resolution:
-      {
-        integrity: sha512-pZAE+FJLoyITytdqK0U5s+FIpjN0JP3OzFi/u8Rx+EV5/W+JTWGXG8xFzevE7AjBfDqHv/8vL8qQsIhHnqRkrA==,
-      }
-    engines: { node: '>= 0.8' }
-
   on-headers@1.1.0:
     resolution:
       {
@@ -7595,13 +7563,6 @@ packages:
         integrity: sha512-WuyALRjWPDGtt/wzJiadO5AXY+8hZ80hVpe6MyivgraREW751X3SbhRvG3eLKOYN+8VEvqLcf3wdnt44Z4S4SA==,
       }
     engines: { node: '>=10' }
-
-  random-bytes@1.0.0:
-    resolution:
-      {
-        integrity: sha512-iv7LhNVO047HzYR3InF6pUcUsPQiHTM1Qal51DcGSuZFBil1aBBWG5eHPNek7bvILMaYJ/8RU1e8w1AMdHmLQQ==,
-      }
-    engines: { node: '>= 0.8' }
 
   randombytes@2.1.0:
     resolution:
@@ -9036,13 +8997,6 @@ packages:
       }
     engines: { node: '>=0.8.0' }
     hasBin: true
-
-  uid-safe@2.1.5:
-    resolution:
-      {
-        integrity: sha512-KPHm4VL5dDXKz01UuEd88Df+KzynaohSL9fBh096KWAxSKZQDI2uBrVqtvRM4rwrIrRRKsdLNML/lnaaVSRioA==,
-      }
-    engines: { node: '>= 0.8' }
 
   uid@2.0.2:
     resolution:
@@ -10694,28 +10648,34 @@ snapshots:
   '@redis/bloom@1.2.0(@redis/client@1.6.0)':
     dependencies:
       '@redis/client': 1.6.0
+    optional: true
 
   '@redis/client@1.6.0':
     dependencies:
       cluster-key-slot: 1.1.2
       generic-pool: 3.9.0
       yallist: 4.0.0
+    optional: true
 
   '@redis/graph@1.1.1(@redis/client@1.6.0)':
     dependencies:
       '@redis/client': 1.6.0
+    optional: true
 
   '@redis/json@1.0.7(@redis/client@1.6.0)':
     dependencies:
       '@redis/client': 1.6.0
+    optional: true
 
   '@redis/search@1.2.0(@redis/client@1.6.0)':
     dependencies:
       '@redis/client': 1.6.0
+    optional: true
 
   '@redis/time-series@1.1.0(@redis/client@1.6.0)':
     dependencies:
       '@redis/client': 1.6.0
+    optional: true
 
   '@sinclair/typebox@0.27.8': {}
 
@@ -11985,10 +11945,6 @@ snapshots:
       readable-stream: 3.6.2
       typedarray: 0.0.6
 
-  connect-redis@7.1.1(express-session@1.18.0):
-    dependencies:
-      express-session: 1.18.0
-
   consola@2.15.3: {}
 
   content-disposition@0.5.4:
@@ -12524,19 +12480,6 @@ snapshots:
     dependencies:
       express: 4.19.2
 
-  express-session@1.18.0:
-    dependencies:
-      cookie: 0.6.0
-      cookie-signature: 1.0.7
-      debug: 2.6.9
-      depd: 2.0.0
-      on-headers: 1.0.2
-      parseurl: 1.3.3
-      safe-buffer: 5.2.1
-      uid-safe: 2.1.5
-    transitivePeerDependencies:
-      - supports-color
-
   express@4.19.2:
     dependencies:
       accepts: 1.3.8
@@ -12882,7 +12825,8 @@ snapshots:
     dependencies:
       is-property: 1.0.2
 
-  generic-pool@3.9.0: {}
+  generic-pool@3.9.0:
+    optional: true
 
   gensync@1.0.0-beta.2: {}
 
@@ -14266,8 +14210,6 @@ snapshots:
     dependencies:
       ee-first: 1.1.1
 
-  on-headers@1.0.2: {}
-
   on-headers@1.1.0: {}
 
   once@1.4.0:
@@ -14557,8 +14499,6 @@ snapshots:
 
   quick-lru@5.1.1: {}
 
-  random-bytes@1.0.0: {}
-
   randombytes@2.1.0:
     dependencies:
       safe-buffer: 5.2.1
@@ -14621,6 +14561,7 @@ snapshots:
       '@redis/json': 1.0.7(@redis/client@1.6.0)
       '@redis/search': 1.2.0(@redis/client@1.6.0)
       '@redis/time-series': 1.1.0(@redis/client@1.6.0)
+    optional: true
 
   redlock@5.0.0-beta.2:
     dependencies:
@@ -15402,10 +15343,6 @@ snapshots:
   uglify-js@3.19.3:
     optional: true
 
-  uid-safe@2.1.5:
-    dependencies:
-      random-bytes: 1.0.0
-
   uid@2.0.2:
     dependencies:
       '@lukeed/csprng': 1.1.0
@@ -15697,7 +15634,8 @@ snapshots:
 
   yallist@3.1.1: {}
 
-  yallist@4.0.0: {}
+  yallist@4.0.0:
+    optional: true
 
   yaml@2.8.4: {}
 
