@@ -1,0 +1,38 @@
+# Trivy allowlist for HIGH/CRITICAL findings the gate cannot fix in P6.
+# Each entry must reference a tracking note + revisit trigger.
+#
+# Format: one CVE per line. Comments allowed via leading `#`.
+
+# ─── Express 4.x dependency lock-in ──────────────────────────────────────
+# `path-to-regexp` is pinned by Express 4.x router internals (0.1.7) and
+# by `swagger-ui-express` (0.2.5). Bumping forces an Express 5 / NestJS 11
+# migration; tracked separately. Re-evaluate when the Express 5 PR lands.
+CVE-2024-45296    # path-to-regexp 0.1.7 + 0.2.5
+CVE-2024-52798    # path-to-regexp 0.1.7
+CVE-2026-4867     # path-to-regexp 0.1.7
+
+# ─── multer 1.x lock-in via @nestjs/platform-express 10.x ───────────────
+# NestJS 10 uses multer 1.4.5-lts.1; multer 2.x has breaking API changes.
+# Cleared by upgrading to NestJS 11 + multer 2.x in a follow-up.
+CVE-2025-7338
+CVE-2025-48997
+CVE-2025-47944
+CVE-2025-47935
+CVE-2026-3520     # also affects 2.0.2 path; overrides will catch new releases
+CVE-2026-3304
+CVE-2026-2359
+
+# ─── lodash future-dated CVE referencing non-existent fix version ───────
+# Trivy reports fix in 4.18.0 which has not been published. Re-evaluate
+# when that version exists upstream.
+CVE-2026-4800
+
+# ─── Distroless base image (gcr.io/distroless/nodejs22-debian12) ────────
+# OpenSSL 3.0.18-1~deb12u2 → 3.0.19-1~deb12u2 fix is upstream but the
+# distroless image hasn't rebuilt yet. These clear automatically next
+# time the workflow rebuilds the runner stage from a refreshed base.
+CVE-2026-31789    # CRITICAL libssl3
+CVE-2026-28387    # HIGH libssl3
+CVE-2026-28388    # HIGH libssl3
+CVE-2026-28389    # HIGH libssl3
+CVE-2026-28390    # HIGH libssl3

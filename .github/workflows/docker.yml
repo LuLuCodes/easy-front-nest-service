@@ -88,7 +88,7 @@ jobs:
           REF=$(echo "${{ steps.meta.outputs.tags }}" | head -n1)
           echo "ref=${REF}" >> "$GITHUB_OUTPUT"
 
-      - name: Trivy image scan (HIGH,CRITICAL → fail)
+      - name: Trivy image scan (HIGH,CRITICAL → fail; allowlisted via .trivyignore)
         # Trivy releases are published as named releases but only some are
         # backed by git tags. Pinning to the master commit avoids that
         # mismatch; bump deliberately.
@@ -97,6 +97,7 @@ jobs:
           image-ref: ${{ steps.image.outputs.ref }}
           severity: HIGH,CRITICAL
           ignore-unfixed: true
+          trivyignores: .trivyignore
           format: sarif
           output: trivy-results.sarif
           exit-code: '1'
