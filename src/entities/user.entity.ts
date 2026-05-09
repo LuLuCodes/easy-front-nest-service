@@ -37,6 +37,13 @@ export class User extends AuditEntity {
   })
   user_status?: number;
 
+  @Column({
+    type: 'tinyint',
+    default: 0,
+    comment: '是否为 system 租户下的超级管理员',
+  })
+  is_system_admin!: number;
+
   @OneToOne(() => UserLogin, (login) => login.user)
   account?: UserLogin;
 }

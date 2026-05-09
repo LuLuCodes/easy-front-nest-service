@@ -13,6 +13,7 @@ import {
 } from '@entities/index';
 import auth_config from '@config/auth';
 import { OpLogService } from '@modules/oplog/oplog.service';
+import { TenantService } from '@tenant/tenant.service';
 
 import { AuthModule } from './auth.module';
 import { AuthService } from './auth.service';
@@ -24,15 +25,24 @@ describe('AuthModule wiring', () => {
   it('compiles with all strategies and AuthService resolvable', async () => {
     @Global()
     @Module({
-      providers: [{ provide: OpLogService, useValue: { createLogTask: jest.fn() } }],
-      exports: [OpLogService],
+      providers: [
+        { provide: OpLogService, useValue: { createLogTask: jest.fn() } },
+        {
+          provide: TenantService,
+          useValue: {
+            resolveMembership: jest.fn(),
+            listMyTenants: jest.fn(),
+          },
+        },
+      ],
+      exports: [OpLogService, TenantService],
     })
-    class StubOpLogModule {}
+    class StubGlobalDeps {}
 
     const moduleRef = await Test.createTestingModule({
       imports: [
         ConfigModule.forRoot({ load: [auth_config], isGlobal: true }),
-        StubOpLogModule,
+        StubGlobalDeps,
         AuthModule,
       ],
     })

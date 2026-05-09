@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Get,
   HttpCode,
@@ -17,6 +18,8 @@ import type { AuthConfig } from '@config/auth';
 import { ValidationPipe } from '@pipe/validation.pipe';
 import { ACTION_TYPE, TARGET_TYPE } from '@dto/EnumDTO';
 import { OpLogService } from '@modules/oplog/oplog.service';
+import { SwitchTenantDto } from '@tenant/dto/tenant.dto';
+import { TenantService } from '@tenant/tenant.service';
 
 import { AuthService } from './auth.service';
 import { LoginByAccountDto } from './dto/login-by-account.dto';
@@ -41,6 +44,7 @@ export class AuthController {
     private readonly authService: AuthService,
     private readonly configService: ConfigService,
     private readonly opLogService: OpLogService,
+    private readonly tenantService: TenantService,
   ) {}
 
   @Public()
@@ -122,6 +126,30 @@ export class AuthController {
   @Get('me')
   me(@CurrentUser() user: AuthenticatedUser): Omit<AuthenticatedUser, 'sub'> {
     return stripSub(user);
+  }
+
+  @ApiOperation({ summary: '列出当前用户所属的租户' })
+  @Get('my-tenants')
+  myTenants(@CurrentUser() user: AuthenticatedUser) {
+    return this.tenantService.listMyTenants(user.id);
+  }
+
+  @ApiOperation({
+    summary: '切换租户',
+    description: '验证目标租户成员身份后重签发 access + refresh token',
+  })
+  @ApiBody({ type: SwitchTenantDto })
+  @UsePipes(new ValidationPipe({ transform: true }))
+  @HttpCode(HttpStatus.OK)
+  @Post('switch-tenant')
+  async switchTenant(
+    @Body() dto: SwitchTenantDto,
+    @CurrentUser() user: AuthenticatedUser,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<{ accessToken: string; refreshToken: string; refreshExpiresIn: number }> {
+    const tokens = await this.authService.switchTenant(user.id, dto.tenant_id);
+    this.attachRefreshCookie(res, tokens.refreshToken, tokens.refreshExpiresIn);
+    return tokens;
   }
 
   private attachRefreshCookie(res: Response, token: string, ttlSeconds: number): void {
