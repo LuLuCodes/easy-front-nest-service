@@ -135,32 +135,58 @@ export class AlipayController {
 
 新增 provider 的标准流程见 [docs/CONTRIBUTING.md](./docs/CONTRIBUTING.md)。
 
-# 部署
+# 部署 (6.x+)
 
-```shell
-# 安装 pm2-intercom
-pm2 install pm2-intercom
+> 6.0.0 起，部署从 pm2 + 单阶段 keymetrics 镜像切换为多阶段 Distroless 镜像 + GitHub Actions 自动发布到 ghcr.io。
 
-# 启动服务
-pm2 start pm2.json
+## 镜像构建
+
+`Dockerfile` 是多阶段构建：
+
+| 阶段        | base                                          | 作用                                                     |
+| ----------- | --------------------------------------------- | -------------------------------------------------------- |
+| `deps`      | `node:22-bookworm-slim`                       | 装全量依赖（含 dev）                                     |
+| `build`     | `node:22-bookworm-slim`                       | 跑 `pnpm build`，产物到 `api/`                           |
+| `prod-deps` | `node:22-bookworm-slim`                       | 重新装 prod-only 依赖                                    |
+| `runtime`   | `gcr.io/distroless/nodejs22-debian12:nonroot` | 拷贝 `api/` + `node_modules` + healthcheck，非 root 运行 |
+
+本地构建：
+
+```bash
+docker build -t easy-front-nest-service:local .
+docker run --rm -p 8000:8000 \
+  -e APP_PORT=8000 \
+  -e NODE_ENV=production \
+  --env-file .env.production.local \
+  easy-front-nest-service:local
 ```
 
-# pm2.json
+## 健康检查
 
-```json
-{
-  "name": "easy-front-nest-service-v8", // 服务名
-  "script": "api/main.js", // 启动脚本
-  "ignoreWatch": ["node_modules"],
-  "instances": "2", // 启动进程数
-  "watch": false,
-  "merge_logs": true,
-  "instance_var": "INSTANCE_ID",
-  "env": {
-    "NODE_ENV": "production"
-  }
-}
+容器内置 `HEALTHCHECK`（每 30s 一次），通过运行 `node healthcheck.js` 访问 `GET /api/health`：
+
+- 200 → 健康
+- 非 200 / 网络错误 → 不健康（Docker / K8s 重启）
+
+K8s 直接用同一 endpoint 配 `livenessProbe` 即可：
+
+```yaml
+livenessProbe:
+  httpGet: { path: /api/health, port: 8000 }
+  periodSeconds: 30
+  failureThreshold: 3
 ```
+
+## CI/CD
+
+| Workflow                          | 触发                               | 用途                                              |
+| --------------------------------- | ---------------------------------- | ------------------------------------------------- |
+| `.github/workflows/ci.yml`        | push/PR to main                    | Lint / Typecheck / Test / Build                   |
+| `.github/workflows/codeql.yml`    | push/PR to main, weekly            | 静态安全分析                                      |
+| `.github/workflows/docker.yml`    | push to main, tag `v*`, related PR | 构建镜像 + Trivy HIGH/CRITICAL 阻塞 + SBOM (SPDX) |
+| `.github/workflows/pr-checks.yml` | PR                                 | semantic title + size label                       |
+
+镜像默认推到 `ghcr.io/<owner>/<repo>`，tag 形如 `main`, `sha-<short>`, `v1.2.3`, `1.2`, `latest`。镜像扫描产物 (SARIF) 自动上传到 GitHub Code Scanning，SBOM 作为 artifact 保留 30 天。
 
 # 创建数据库
 

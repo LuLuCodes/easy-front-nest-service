@@ -14,6 +14,7 @@ export default tseslint.config(
       'logs/**',
       'sequelize-generator/**',
       'db-generator/**',
+      'scripts/**',
       'eslint.config.mjs',
       'commitlint.config.js',
       '.cz-config.js',

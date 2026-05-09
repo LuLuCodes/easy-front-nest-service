@@ -33,6 +33,7 @@ import { OssModule } from './providers/oss/oss.module';
 import { BasicModule } from './modules/basic/basic.module';
 import { AccessModule } from './modules/access/access.module';
 import { OpLogModule } from './modules/oplog/oplog.module';
+import { HealthModule } from './modules/health/health.module';
 
 import app_config from '@config/app';
 import auth_config from '@config/auth';
@@ -114,6 +115,7 @@ import while_list from '@config/white-list';
     AccessModule,
     BasicModule,
     OpLogModule,
+    HealthModule,
     ScheduleModule.forRoot(),
   ],
   providers: [
