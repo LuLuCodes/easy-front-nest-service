@@ -12,7 +12,7 @@ ENV CI=true \
     COREPACK_DEFAULT_TO_LATEST=0
 RUN corepack enable
 COPY package.json pnpm-lock.yaml ./
-RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store \
+RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store,sharing=locked \
     pnpm config set store-dir /pnpm/store \
  && pnpm install --frozen-lockfile
 
@@ -35,7 +35,7 @@ COPY package.json pnpm-lock.yaml ./
 # `--ignore-scripts` skips the project's `prepare: husky` (husky is a
 # devDependency, absent in `--prod`). No native deps in this codebase
 # need their own postinstall hooks, so this is safe.
-RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store \
+RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store,sharing=locked \
     pnpm config set store-dir /pnpm/store \
  && pnpm install --frozen-lockfile --prod --ignore-scripts \
  && pnpm store prune
