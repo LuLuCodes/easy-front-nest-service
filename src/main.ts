@@ -11,7 +11,7 @@ async function bootstrap(): Promise<void> {
     bufferLogs: true,
   });
   app.useLogger(app.get(Logger));
-  await applyBootstrap(app);
+  applyBootstrap(app);
 
   const port = app.get(ConfigService).get<number>('app.port');
   await app.listen(port);
