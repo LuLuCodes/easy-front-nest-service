@@ -40,7 +40,6 @@
   },
   "dependencies": {
     "@alicloud/pop-core": "^1.7.13",
-    "@easy-front-core-sdk/kits": "^1.5.4",
     "@inquirer/prompts": "^4.3.0",
     "@nestjs/axios": "^3.1.3",
     "@nestjs/bullmq": "^11.0.4",
@@ -72,7 +71,6 @@
     "crypto-js": "^4.2.0",
     "dayjs": "^1.11.20",
     "dotenv": "^16.4.5",
-    "easy-front-core-sdk": "^1.5.4",
     "express": "^4.19.2",
     "express-rate-limit": "^7.2.0",
     "fast-xml-parser": "^4.3.6",

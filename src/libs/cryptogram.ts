@@ -30,6 +30,33 @@ export function checkSign(sign: string, body: string, url: string): boolean {
 }
 
 /**
+ * Sort an object's own keys alphabetically and join `key=value` pairs with
+ * `&`, matching the canonicalization SignGuard expects for GET requests.
+ *
+ * - Skips entries whose value is null/undefined/empty string
+ * - Keeps `false` and `0` (signature payloads can include them)
+ * - JSON-stringifies nested objects/arrays so order is stable
+ *
+ * Replaces `Kit.makeSortStr` from the now-removed `@easy-front-core-sdk/kits`.
+ */
+export function makeSortStr(params: Record<string, unknown>): string {
+  return Object.keys(params)
+    .sort()
+    .filter((k) => {
+      const v = params[k];
+      if (v === null || v === undefined) return false;
+      if (typeof v === 'string' && v.length === 0) return false;
+      return true;
+    })
+    .map((k) => {
+      const v = params[k];
+      const str = typeof v === 'object' ? JSON.stringify(v) : String(v);
+      return `${k}=${str}`;
+    })
+    .join('&');
+}
+
+/**
  * Encrypt password
  * @param password 密码
  * @param salt 密码盐
@@ -195,11 +222,7 @@ export function checkPasswordStrength(
  * @param iv   向量
  * @param data 需要加密的数据
  */
-export function aes128cbcEncrypt(
-  key: Buffer,
-  iv: Buffer,
-  data: string,
-): string {
+export function aes128cbcEncrypt(key: Buffer, iv: Buffer, data: string): string {
   const cipher = crypto.createCipheriv('aes-128-cbc', key, iv);
   let crypted = cipher.update(data, 'utf8', 'binary');
   crypted += cipher.final('binary');
@@ -213,11 +236,7 @@ export function aes128cbcEncrypt(
  * @param iv       向量
  * @param crypted  密文
  */
-export function aes128cbcDecrypt(
-  key: Buffer,
-  iv: Buffer,
-  crypted: string,
-): string {
+export function aes128cbcDecrypt(key: Buffer, iv: Buffer, crypted: string): string {
   crypted = Buffer.from(crypted, 'base64').toString('binary');
   const decipher = crypto.createDecipheriv('aes-128-cbc', key, iv);
   // 设置自动 padding 为 true，删除填充补位
@@ -233,11 +252,7 @@ export function aes128cbcDecrypt(
  * @param iv   向量
  * @param data 需要加密的数据
  */
-export function aes256ecbEncrypt(
-  key: Buffer,
-  iv: Buffer,
-  data: string,
-): string {
+export function aes256ecbEncrypt(key: Buffer, iv: Buffer, data: string): string {
   const cipher = crypto.createCipheriv('aes-256-ecb', key, iv);
   let crypted = cipher.update(data, 'utf8', 'binary');
   crypted += cipher.final('binary');
@@ -251,11 +266,7 @@ export function aes256ecbEncrypt(
  * @param iv       向量
  * @param crypted  密文
  */
-export function aes256ecbDecrypt(
-  key: Buffer,
-  iv: Buffer,
-  crypted: string,
-): string {
+export function aes256ecbDecrypt(key: Buffer, iv: Buffer, crypted: string): string {
   crypted = Buffer.from(crypted, 'base64').toString('binary');
   const decipher = crypto.createDecipheriv('aes-256-ecb', key, iv);
   // 设置自动 padding 为 true，删除填充补位
@@ -295,10 +306,7 @@ export function hashx(data: crypto.BinaryLike, algorithm: string): string {
  * @param privatekey 私钥key
  */
 export function sha256WithRsa(data: string, privatekey: Buffer): string {
-  return crypto
-    .createSign('RSA-SHA256')
-    .update(data)
-    .sign(privatekey, 'base64');
+  return crypto.createSign('RSA-SHA256').update(data).sign(privatekey, 'base64');
 }
 
 /**
@@ -307,15 +315,8 @@ export function sha256WithRsa(data: string, privatekey: Buffer): string {
  * @param signature 待验证的签名串
  * @param data 需要验证的字符串
  */
-export function sha256WithRsaVerify(
-  publicKey: Buffer,
-  signature: string,
-  data: string,
-): boolean {
-  return crypto
-    .createVerify('RSA-SHA256')
-    .update(data)
-    .verify(publicKey, signature, 'base64');
+export function sha256WithRsaVerify(publicKey: Buffer, signature: string, data: string): boolean {
+  return crypto.createVerify('RSA-SHA256').update(data).verify(publicKey, signature, 'base64');
 }
 
 /**
