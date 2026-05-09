@@ -27,8 +27,7 @@ import { AuthModule } from './auth/auth.module';
 import { TenantModule } from './tenant/tenant.module';
 import { WxOaModule } from './providers/wx-oa/wx-oa.module';
 import { WxMpModule } from './providers/wx-mp/wx-mp.module';
-import { InitModule } from './init.module';
-import { WxPayModule } from './modules/wxpay/wx.pay.module';
+import { WxPayModule } from './providers/wx-pay/wx-pay.module';
 import { OssModule } from './modules/oss/oss.module';
 import { BasicModule } from './modules/basic/basic.module';
 import { AccessModule } from './modules/access/access.module';
@@ -114,7 +113,6 @@ import while_list from '@config/white-list';
     AuthModule,
     AccessModule,
     BasicModule,
-    InitModule,
     OpLogModule,
     ScheduleModule.forRoot(),
   ],
