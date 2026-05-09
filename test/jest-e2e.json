@@ -5,5 +5,19 @@
   "testRegex": ".e2e-spec.ts$",
   "transform": {
     "^.+\\.(t|j)s$": "ts-jest"
+  },
+  "moduleNameMapper": {
+    "@common/(.*)": "<rootDir>/../src/common/$1",
+    "@config/(.*)": "<rootDir>/../src/config/$1",
+    "@database/(.*)": "<rootDir>/../src/database/$1",
+    "@entities/(.*)": "<rootDir>/../src/entities/$1",
+    "@service/(.*)": "<rootDir>/../src/service/$1",
+    "@libs/(.*)": "<rootDir>/../src/libs/$1",
+    "@modules/(.*)$": "<rootDir>/../src/modules/$1",
+    "@pipe/(.*)$": "<rootDir>/../src/pipe/$1",
+    "@filter/(.*)$": "<rootDir>/../src/filter/$1",
+    "@dto/(.*)$": "<rootDir>/../src/dto/$1",
+    "@guard/(.*)$": "<rootDir>/../src/guard/$1",
+    "@decorator/(.*)$": "<rootDir>/../src/decorator/$1"
   }
 }
