@@ -3,7 +3,10 @@
 # ─── Stage 1: install all deps (incl. dev) for build ────────────────────────
 FROM node:22-bookworm-slim AS deps
 WORKDIR /app
+# HUSKY=0 disables the `prepare: husky` script which depends on a dev
+# binary not present in --prod installs.
 ENV CI=true \
+    HUSKY=0 \
     PNPM_HOME=/pnpm \
     PATH=/pnpm:$PATH \
     COREPACK_DEFAULT_TO_LATEST=0
@@ -16,7 +19,7 @@ RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store \
 # ─── Stage 2: compile sources to api/ ───────────────────────────────────────
 FROM node:22-bookworm-slim AS build
 WORKDIR /app
-ENV PNPM_HOME=/pnpm PATH=/pnpm:$PATH
+ENV CI=true HUSKY=0 PNPM_HOME=/pnpm PATH=/pnpm:$PATH
 RUN corepack enable
 COPY --from=deps /app/node_modules ./node_modules
 COPY package.json pnpm-lock.yaml tsconfig*.json nest-cli.json ./
@@ -26,7 +29,7 @@ RUN pnpm build
 # ─── Stage 3: production-only node_modules (no devDependencies) ─────────────
 FROM node:22-bookworm-slim AS prod-deps
 WORKDIR /app
-ENV PNPM_HOME=/pnpm PATH=/pnpm:$PATH
+ENV CI=true HUSKY=0 PNPM_HOME=/pnpm PATH=/pnpm:$PATH
 RUN corepack enable
 COPY package.json pnpm-lock.yaml ./
 RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store \
