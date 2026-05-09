@@ -18,6 +18,7 @@ import { CREDENTIAL_PROVIDER } from '@entities/index';
 import { ValidationPipe } from '@pipe/validation.pipe';
 
 import { CredentialService } from './credential.service';
+import { TenantCredentialVault } from './credential-vault.service';
 import { SuperAdminOnly } from './decorators/super-admin.decorator';
 import {
   CreateCredentialDto,
@@ -32,7 +33,10 @@ import { SuperAdminGuard } from './guards/super-admin.guard';
 @UseGuards(SuperAdminGuard)
 @Controller('admin/tenants/:tenantId/credentials')
 export class CredentialController {
-  constructor(private readonly credentialService: CredentialService) {}
+  constructor(
+    private readonly credentialService: CredentialService,
+    private readonly vault: TenantCredentialVault,
+  ) {}
 
   @ApiOperation({ summary: '为租户添加凭证（secret 立即加密入库）' })
   @UsePipes(new ValidationPipe({ transform: true }))
@@ -43,6 +47,7 @@ export class CredentialController {
     @CurrentUser() user: AuthenticatedUser,
   ) {
     const credential = await this.credentialService.create(tenantId, dto, user.id);
+    await this.vault.invalidate(tenantId, dto.provider, dto.app_id);
     return {
       id: credential.id,
       tenant_id: credential.credential_tenant_id,
@@ -71,6 +76,11 @@ export class CredentialController {
     @CurrentUser() user: AuthenticatedUser,
   ) {
     const credential = await this.credentialService.updateStatus(id, dto, user.id);
+    await this.vault.invalidate(
+      credential.credential_tenant_id,
+      credential.provider,
+      credential.app_id,
+    );
     return { id: credential.id, status: credential.status };
   }
 
@@ -83,6 +93,11 @@ export class CredentialController {
     @CurrentUser() user: AuthenticatedUser,
   ) {
     const credential = await this.credentialService.rotateSecret(id, dto, user.id);
+    await this.vault.invalidate(
+      credential.credential_tenant_id,
+      credential.provider,
+      credential.app_id,
+    );
     return { id: credential.id, key_version: credential.key_version };
   }
 }

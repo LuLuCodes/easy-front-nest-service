@@ -6,6 +6,7 @@ import { Tenant, TenantCredential, TenantUserRelation, User } from '@entities/in
 
 import { CredentialController } from './credential.controller';
 import { CredentialService } from './credential.service';
+import { TenantCredentialVault } from './credential-vault.service';
 import { SuperAdminGuard } from './guards/super-admin.guard';
 import { TenantContextInterceptor } from './tenant-context.interceptor';
 import { TenantContextService } from './tenant-context.service';
@@ -20,12 +21,13 @@ import { TenantService } from './tenant.service';
     TenantContextService,
     TenantService,
     CredentialService,
+    TenantCredentialVault,
     SuperAdminGuard,
     {
       provide: APP_INTERCEPTOR,
       useClass: TenantContextInterceptor,
     },
   ],
-  exports: [TenantContextService, TenantService, CredentialService],
+  exports: [TenantContextService, TenantService, CredentialService, TenantCredentialVault],
 })
 export class TenantModule {}

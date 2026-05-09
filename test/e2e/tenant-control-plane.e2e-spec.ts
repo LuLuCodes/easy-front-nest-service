@@ -34,6 +34,7 @@ import {
 import { OpLogService } from '@modules/oplog/oplog.service';
 import { CredentialController } from '@tenant/credential.controller';
 import { CredentialService } from '@tenant/credential.service';
+import { TenantCredentialVault } from '@tenant/credential-vault.service';
 import { SuperAdminGuard } from '@tenant/guards/super-admin.guard';
 import { TenantContextInterceptor } from '@tenant/tenant-context.interceptor';
 import { TenantContextService } from '@tenant/tenant-context.service';
@@ -99,6 +100,10 @@ describe('Tenant control plane e2e', () => {
         LocalStrategy,
         TenantService,
         CredentialService,
+        {
+          provide: TenantCredentialVault,
+          useValue: { invalidate: jest.fn() },
+        },
         SuperAdminGuard,
         { provide: APP_GUARD, useClass: JwtAuthGuard },
         { provide: APP_GUARD, useClass: RolesGuard },
