@@ -1,3 +1,4 @@
+import { Global, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
@@ -11,6 +12,7 @@ import {
   UserRoleRelation,
 } from '@entities/index';
 import auth_config from '@config/auth';
+import { OpLogService } from '@modules/oplog/oplog.service';
 
 import { AuthModule } from './auth.module';
 import { AuthService } from './auth.service';
@@ -20,8 +22,19 @@ import { LocalStrategy } from './strategies/local.strategy';
 
 describe('AuthModule wiring', () => {
   it('compiles with all strategies and AuthService resolvable', async () => {
+    @Global()
+    @Module({
+      providers: [{ provide: OpLogService, useValue: { createLogTask: jest.fn() } }],
+      exports: [OpLogService],
+    })
+    class StubOpLogModule {}
+
     const moduleRef = await Test.createTestingModule({
-      imports: [ConfigModule.forRoot({ load: [auth_config], isGlobal: true }), AuthModule],
+      imports: [
+        ConfigModule.forRoot({ load: [auth_config], isGlobal: true }),
+        StubOpLogModule,
+        AuthModule,
+      ],
     })
       .overrideProvider(getRepositoryToken(UserLogin))
       .useValue({ findOne: jest.fn(), find: jest.fn() })

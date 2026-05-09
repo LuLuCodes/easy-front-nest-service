@@ -1,86 +1,97 @@
 import { APP_GUARD } from '@nestjs/core';
 import { ConfigModule } from '@nestjs/config';
+import { JwtModule } from '@nestjs/jwt';
+import { PassportModule } from '@nestjs/passport';
 import { Test, TestingModule } from '@nestjs/testing';
+import { getRepositoryToken } from '@nestjs/typeorm';
 import type { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
+import * as cookieParser from 'cookie-parser';
 
-const session: (opts: Record<string, unknown>) => unknown = require('express-session');
-
+import { AuthController } from '@auth/auth.controller';
+import { AuthService } from '@auth/auth.service';
+import { JwtRefreshStrategy } from '@auth/strategies/jwt-refresh.strategy';
+import { JwtStrategy } from '@auth/strategies/jwt.strategy';
+import { LocalStrategy } from '@auth/strategies/local.strategy';
+import { JwtAuthGuard } from '@auth/guards/jwt-auth.guard';
+import { PermissionsGuard } from '@auth/guards/permissions.guard';
+import { RolesGuard } from '@auth/guards/roles.guard';
+import auth_config from '@config/auth';
+import {
+  User,
+  UserLogin,
+  UserRight,
+  UserRightRelation,
+  UserRole,
+  UserRoleRelation,
+} from '@entities/index';
 import { AccessController } from '@modules/access/access.controller';
 import { AccessService } from '@modules/access/access.service';
 import { OpLogService } from '@modules/oplog/oplog.service';
-import { CacheService } from '@service/cache.service';
-import { AuthGuard } from '@guard/auth.guard';
-import session_config from '@config/session';
-import while_list from '@config/white-list';
+import { encryptPassword, makeSalt } from '@libs/cryptogram';
 
-const TEST_COOKIE_SECRET = 'test-cookie-secret-do-not-use-in-prod';
-const TEST_COOKIE_KEY = 'easy-front-test-key';
-
-interface AccessServiceMock {
-  login: jest.Mock;
-  checkUser: jest.Mock;
-}
-
-interface CacheServiceMock {
-  set: jest.Mock;
-  get: jest.Mock;
-}
-
-interface OpLogServiceMock {
-  createLogTask: jest.Mock;
-}
-
-describe('Access auth (e2e baseline — session + MD5 token)', () => {
+describe('Auth + Access e2e (JWT contract)', () => {
   let app: INestApplication;
-  let accessService: AccessServiceMock;
-  let cacheService: CacheServiceMock;
-  let opLogService: OpLogServiceMock;
+  let userLoginRepo: { findOne: jest.Mock; find: jest.Mock };
+  let userRepo: { findOne: jest.Mock; find: jest.Mock };
+  let userRoleRelationRepo: { findOne: jest.Mock; find: jest.Mock };
+  let userRoleRepo: { findOne: jest.Mock; find: jest.Mock };
+  let userRightRelationRepo: { findOne: jest.Mock; find: jest.Mock };
+  let userRightRepo: { findOne: jest.Mock; find: jest.Mock };
+  let accessService: { checkUser: jest.Mock };
+  let opLogService: { createLogTask: jest.Mock };
 
   beforeAll(async () => {
-    process.env.COOKIE_SECRET = TEST_COOKIE_SECRET;
-    process.env.COOKIE_KEY = TEST_COOKIE_KEY;
+    process.env.JWT_ACCESS_SECRET = 'a'.repeat(40);
+    process.env.JWT_REFRESH_SECRET = 'b'.repeat(40);
+    process.env.JWT_ACCESS_TTL = '15m';
+    process.env.JWT_REFRESH_TTL = '7d';
+    process.env.REFRESH_COOKIE_SECURE = 'false';
 
-    accessService = {
-      login: jest.fn(),
-      checkUser: jest.fn(),
-    };
-    cacheService = {
-      set: jest.fn(),
-      get: jest.fn(),
-    };
-    opLogService = {
-      createLogTask: jest.fn(),
-    };
+    userLoginRepo = makeRepo();
+    userRepo = makeRepo();
+    userRoleRelationRepo = makeRepo();
+    userRoleRepo = makeRepo();
+    userRightRelationRepo = makeRepo();
+    userRightRepo = makeRepo();
+    accessService = { checkUser: jest.fn() };
+    opLogService = { createLogTask: jest.fn() };
 
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [
-        ConfigModule.forRoot({
-          load: [session_config, while_list],
-          isGlobal: true,
-        }),
+        ConfigModule.forRoot({ load: [auth_config], isGlobal: true }),
+        PassportModule,
+        JwtModule.register({}),
       ],
-      controllers: [AccessController],
+      controllers: [AuthController, AccessController],
       providers: [
+        AuthService,
+        JwtStrategy,
+        JwtRefreshStrategy,
+        LocalStrategy,
+        { provide: APP_GUARD, useClass: JwtAuthGuard },
+        { provide: APP_GUARD, useClass: RolesGuard },
+        { provide: APP_GUARD, useClass: PermissionsGuard },
         { provide: AccessService, useValue: accessService },
-        { provide: CacheService, useValue: cacheService },
         { provide: OpLogService, useValue: opLogService },
-        { provide: APP_GUARD, useClass: AuthGuard },
+        { provide: getRepositoryToken(UserLogin), useValue: userLoginRepo },
+        { provide: getRepositoryToken(User), useValue: userRepo },
+        {
+          provide: getRepositoryToken(UserRoleRelation),
+          useValue: userRoleRelationRepo,
+        },
+        { provide: getRepositoryToken(UserRole), useValue: userRoleRepo },
+        {
+          provide: getRepositoryToken(UserRightRelation),
+          useValue: userRightRelationRepo,
+        },
+        { provide: getRepositoryToken(UserRight), useValue: userRightRepo },
       ],
     }).compile();
 
     app = moduleFixture.createNestApplication();
     app.setGlobalPrefix('api');
-    app.use(
-      session({
-        secret: TEST_COOKIE_SECRET,
-        name: TEST_COOKIE_KEY,
-        resave: true,
-        rolling: true,
-        saveUninitialized: false,
-        cookie: { httpOnly: true, secure: false, maxAge: 60_000 },
-      }),
-    );
+    app.use(cookieParser());
     await app.init();
   });
 
@@ -89,144 +100,204 @@ describe('Access auth (e2e baseline — session + MD5 token)', () => {
   });
 
   beforeEach(() => {
-    accessService.login.mockReset();
+    Object.values({
+      userLoginRepo,
+      userRepo,
+      userRoleRelationRepo,
+      userRoleRepo,
+      userRightRelationRepo,
+      userRightRepo,
+    }).forEach((r) => {
+      r.findOne.mockReset();
+      r.find.mockReset();
+    });
     accessService.checkUser.mockReset();
-    cacheService.set.mockReset();
-    cacheService.get.mockReset();
     opLogService.createLogTask.mockReset();
   });
 
-  describe('AuthGuard contract on protected routes', () => {
-    it('rejects login-by-account without auth/swagger bypass with 401', async () => {
-      await request(app.getHttpServer())
-        .post('/api/access/login-by-account')
-        .send({
-          account_id: 'tester',
-          login_client: 1,
-          account_pwd: 'password123',
-        })
-        .expect(401);
+  function seedUser(overrides: Partial<{ pwd: string }> = {}): {
+    salt: string;
+    hashedPwd: string;
+    pwd: string;
+  } {
+    const pwd = overrides.pwd ?? 's3cret123';
+    const salt = makeSalt(2);
+    const hashedPwd = encryptPassword(pwd, salt);
+    userLoginRepo.findOne.mockResolvedValueOnce({
+      id: 1,
+      account_id: 'tester',
+      account_pwd: hashedPwd,
+      pwd_salt: salt,
+      user_id: 42,
+      login_client: 1,
+      login_type: 1,
+    });
+    userRepo.findOne.mockResolvedValueOnce({
+      id: 42,
+      nick: 'Tester',
+      role_type: 1,
+      user_status: 1,
+    });
+    userRoleRelationRepo.find.mockResolvedValueOnce([{ role_id: 100 }]);
+    userRoleRepo.find.mockResolvedValueOnce([{ id: 100, role_name: 'admin', is_supper: 0 }]);
+    userRightRelationRepo.find.mockResolvedValueOnce([{ right_id: 9 }]);
+    userRightRepo.find.mockResolvedValueOnce([{ right_code: 'access:user:edit' }]);
+    return { salt, hashedPwd, pwd };
+  }
 
-      expect(accessService.login).not.toHaveBeenCalled();
+  describe('login', () => {
+    it('returns access + refresh and sets refresh_token cookie on valid credentials', async () => {
+      const { pwd } = seedUser();
+      const response = await request(app.getHttpServer())
+        .post('/api/auth/login')
+        .send({ account_id: 'tester', account_pwd: pwd, login_client: 1 })
+        .expect(200);
+
+      expect(response.body.accessToken).toEqual(expect.any(String));
+      expect(response.body.refreshToken).toEqual(expect.any(String));
+      expect(response.body.user).toMatchObject({
+        id: 42,
+        account_id: 'tester',
+        roles: ['admin'],
+        permissions: ['access:user:edit'],
+      });
+      expect(response.body.user).not.toHaveProperty('sub');
+
+      const setCookie = response.headers['set-cookie'] as unknown as string[] | undefined;
+      expect(setCookie?.some((c) => c.includes('refresh_token='))).toBe(true);
+      expect(opLogService.createLogTask).toHaveBeenCalledTimes(1);
     });
 
-    it('rejects get-session without cookie/swagger bypass with 401', async () => {
+    it('rejects with 401 on wrong password', async () => {
+      seedUser({ pwd: 's3cret123' });
+      await request(app.getHttpServer())
+        .post('/api/auth/login')
+        .send({ account_id: 'tester', account_pwd: 'wrong-pass', login_client: 1 })
+        .expect(401);
+      expect(opLogService.createLogTask).not.toHaveBeenCalled();
+    });
+
+    it('rejects with 401 when account is unknown', async () => {
+      userLoginRepo.findOne.mockResolvedValueOnce(null);
+      await request(app.getHttpServer())
+        .post('/api/auth/login')
+        .send({ account_id: 'ghost', account_pwd: 's3cret123', login_client: 1 })
+        .expect(401);
+    });
+  });
+
+  describe('protected routes', () => {
+    it('rejects /auth/me without Authorization header', async () => {
+      await request(app.getHttpServer()).get('/api/auth/me').expect(401);
+    });
+
+    it('returns the current user when a valid bearer token is sent', async () => {
+      const { pwd } = seedUser();
+      const login = await request(app.getHttpServer())
+        .post('/api/auth/login')
+        .send({ account_id: 'tester', account_pwd: pwd, login_client: 1 })
+        .expect(200);
+
+      const profile = await request(app.getHttpServer())
+        .get('/api/auth/me')
+        .set('Authorization', `Bearer ${login.body.accessToken}`)
+        .expect(200);
+      expect(profile.body).toMatchObject({ id: 42, account_id: 'tester' });
+    });
+
+    it('rejects /access/get-session without auth', async () => {
       await request(app.getHttpServer()).post('/api/access/get-session').send({}).expect(401);
     });
 
-    it('rejects with 401 when only x-auth-token header is present but cache miss', async () => {
-      cacheService.get.mockResolvedValueOnce(null);
-
-      await request(app.getHttpServer())
-        .post('/api/access/get-session')
-        .set('x-auth-token', 'unknown-token')
-        .send({})
-        .expect(401);
-    });
-  });
-
-  describe('Session-based login flow', () => {
-    it('login with x-from-source=swagger succeeds and returns md5 token', async () => {
-      accessService.login.mockResolvedValueOnce({
-        id: 7,
-        nick: 'tester',
-        account_id: 'tester',
-      });
-
-      const response = await request(app.getHttpServer())
-        .post('/api/access/login-by-account')
-        .set('x-from-source', 'swagger')
-        .send({
-          account_id: 'tester',
-          login_client: 1,
-          account_pwd: 'password123',
-        })
-        .expect(201);
-
-      expect(response.body.id).toBe(7);
-      expect(response.body.token).toEqual(expect.any(String));
-      expect(response.body.token).toHaveLength(32);
-      expect(accessService.login).toHaveBeenCalledTimes(1);
-    });
-
-    it('login sets a session cookie that authenticates subsequent requests', async () => {
-      accessService.login.mockResolvedValueOnce({
-        id: 9,
-        nick: 'tester',
-        account_id: 'tester',
-      });
+    it('returns access/get-session with bearer token', async () => {
+      const { pwd } = seedUser();
+      const login = await request(app.getHttpServer())
+        .post('/api/auth/login')
+        .send({ account_id: 'tester', account_pwd: pwd, login_client: 1 })
+        .expect(200);
       accessService.checkUser.mockResolvedValueOnce({ extra: 'profile' });
 
-      const agent = request.agent(app.getHttpServer());
-
-      await agent
-        .post('/api/access/login-by-account')
-        .set('x-from-source', 'swagger')
-        .send({
-          account_id: 'tester',
-          login_client: 1,
-          account_pwd: 'password123',
-        })
+      const result = await request(app.getHttpServer())
+        .post('/api/access/get-session')
+        .set('Authorization', `Bearer ${login.body.accessToken}`)
+        .send({})
         .expect(201);
-
-      const protectedResponse = await agent.post('/api/access/get-session').send({}).expect(201);
-
-      expect(protectedResponse.body).toMatchObject({
-        id: 9,
-        nick: 'tester',
+      expect(result.body).toMatchObject({
+        id: 42,
         account_id: 'tester',
         extra: 'profile',
       });
-      expect(protectedResponse.body.token).toEqual(expect.any(String));
-      expect(accessService.checkUser).toHaveBeenCalledWith(9);
-    });
-
-    it('logout clears the session so the same cookie is rejected afterwards', async () => {
-      accessService.login.mockResolvedValueOnce({
-        id: 11,
-        nick: 'tester',
-        account_id: 'tester',
-      });
-
-      const agent = request.agent(app.getHttpServer());
-
-      await agent
-        .post('/api/access/login-by-account')
-        .set('x-from-source', 'swagger')
-        .send({
-          account_id: 'tester',
-          login_client: 1,
-          account_pwd: 'password123',
-        })
-        .expect(201);
-
-      await agent.post('/api/access/logout').send({}).expect(201);
-      expect(opLogService.createLogTask).toHaveBeenCalledTimes(1);
-
-      await agent.post('/api/access/get-session').send({}).expect(401);
     });
   });
 
-  describe('Token-header login flow (mobile / mini-program)', () => {
-    it('honours x-auth-token header by reading the user from cache', async () => {
-      const cachedUser = { id: 21, account_id: 'mobile' };
-      const validToken = await computeAuthToken(cachedUser.id, TEST_COOKIE_KEY);
-      cacheService.get.mockResolvedValueOnce(JSON.stringify(cachedUser));
-      accessService.checkUser.mockResolvedValueOnce({ extra: 'cached' });
+  describe('public routes', () => {
+    it('allows access/check-account without auth (annotated @Public)', async () => {
+      const accessAny = accessService as unknown as { checkAccount?: jest.Mock };
+      accessAny.checkAccount = jest.fn().mockResolvedValueOnce(false);
+      await request(app.getHttpServer())
+        .post('/api/access/check-account')
+        .send({
+          account_id: 'tester',
+          login_client: 1,
+          account_pwd: 's3cret123',
+          role_id_list: [],
+        })
+        .expect(201);
+    });
+  });
+
+  describe('refresh', () => {
+    it('issues new tokens when a valid refresh cookie is present', async () => {
+      const { pwd } = seedUser();
+      const login = await request(app.getHttpServer())
+        .post('/api/auth/login')
+        .send({ account_id: 'tester', account_pwd: pwd, login_client: 1 })
+        .expect(200);
+
+      userRepo.findOne.mockResolvedValueOnce({
+        id: 42,
+        role_type: 1,
+        user_status: 1,
+      });
+      userRoleRelationRepo.find.mockResolvedValueOnce([]);
+
+      const refresh = await request(app.getHttpServer())
+        .post('/api/auth/refresh')
+        .set('Cookie', `refresh_token=${login.body.refreshToken}`)
+        .send({})
+        .expect(200);
+      expect(refresh.body.accessToken).toEqual(expect.any(String));
+      expect(refresh.body.refreshToken).toEqual(expect.any(String));
+    });
+
+    it('rejects refresh with no token', async () => {
+      await request(app.getHttpServer()).post('/api/auth/refresh').send({}).expect(401);
+    });
+  });
+
+  describe('logout', () => {
+    it('clears the refresh cookie and records an oplog entry', async () => {
+      const { pwd } = seedUser();
+      const login = await request(app.getHttpServer())
+        .post('/api/auth/login')
+        .send({ account_id: 'tester', account_pwd: pwd, login_client: 1 })
+        .expect(200);
+      opLogService.createLogTask.mockClear();
 
       const response = await request(app.getHttpServer())
-        .post('/api/access/get-session')
-        .set('x-auth-token', validToken)
+        .post('/api/auth/logout')
+        .set('Authorization', `Bearer ${login.body.accessToken}`)
         .send({})
-        .expect(201);
+        .expect(200);
 
-      expect(response.body).toEqual({ ...cachedUser, extra: 'cached' });
-      expect(cacheService.get).toHaveBeenCalledWith(`SESSION_USER_${validToken}`);
+      expect(response.body).toEqual({ success: true });
+      const setCookie = response.headers['set-cookie'] as unknown as string[] | undefined;
+      expect(setCookie?.some((c) => c.startsWith('refresh_token='))).toBe(true);
+      expect(opLogService.createLogTask).toHaveBeenCalledTimes(1);
     });
   });
 });
 
-async function computeAuthToken(id: number, cookieKey: string): Promise<string> {
-  const { md5 } = await import('@libs/cryptogram');
-  return md5(`${cookieKey}${JSON.stringify({ id, code: undefined })}${cookieKey}`).toString();
+function makeRepo(): { findOne: jest.Mock; find: jest.Mock } {
+  return { findOne: jest.fn(), find: jest.fn() };
 }

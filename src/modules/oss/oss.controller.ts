@@ -1,24 +1,19 @@
 import {
+  BadRequestException,
+  Body,
   Controller,
   Post,
-  Body,
-  Session,
+  UploadedFiles,
   UseInterceptors,
   UsePipes,
-  UploadedFiles,
-  BadRequestException,
 } from '@nestjs/common';
+
+import { Public } from '@auth/decorators';
 import { Express } from 'express';
 import { ValidationPipe } from '@pipe/validation.pipe';
 // import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { ConfigService } from '@nestjs/config';
-import {
-  ApiBody,
-  ApiTags,
-  ApiOperation,
-  ApiConsumes,
-  ApiHeader,
-} from '@nestjs/swagger';
+import { ApiBody, ApiTags, ApiOperation, ApiConsumes, ApiHeader } from '@nestjs/swagger';
 import { CatchError } from '@decorator/catch.decorator';
 import { CacheService } from '@service/cache.service';
 import { ApiMultiFile } from '@decorator/api.multi.file.decorator';
@@ -58,6 +53,7 @@ export class OssController {
     summary: '上传oss',
     description: '上传oss',
   })
+  @Public()
   @Post('upload-oss')
   @ApiConsumes('multipart/form-data')
   @ApiMultiFile({
@@ -121,10 +117,7 @@ export class OssController {
   })
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('get-upload-params')
-  async getUploadParams(
-    @Session() session,
-    @Body() body: GetUploadParamsDTO,
-  ): Promise<any> {
+  async getUploadParams(@Body() body: GetUploadParamsDTO): Promise<any> {
     const { max_size } = body;
     const helper = new AliOssHelper({
       access_key_id: this.configService.get('oss.access_key_id'),
