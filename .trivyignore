@@ -27,6 +27,17 @@ CVE-2026-2359
 # when that version exists upstream.
 CVE-2026-4800
 
+# ─── glob / minimatch transitive (jest coverage path) ───────────────────
+# Forcing glob ^10.5 and minimatch ^9.0.7 breaks jest's coverage chain
+# (test-exclude@6 → babel-plugin-istanbul) because those versions ship as
+# ESM-only named exports while the consumer expects the legacy CommonJS
+# function shape. Revisit when jest 30 lands or test-exclude/babel
+# updates upstream.
+CVE-2025-64756    # glob 10.4.5
+CVE-2026-26996    # minimatch 9.0.5
+CVE-2026-27903    # minimatch 9.0.5
+CVE-2026-27904    # minimatch 9.0.5
+
 # ─── Distroless base image (gcr.io/distroless/nodejs22-debian12) ────────
 # OpenSSL 3.0.18-1~deb12u2 → 3.0.19-1~deb12u2 fix is upstream but the
 # distroless image hasn't rebuilt yet. These clear automatically next
