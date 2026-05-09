@@ -1,0 +1,38 @@
+import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+import { JwtModule } from '@nestjs/jwt';
+import { PassportModule } from '@nestjs/passport';
+import { TypeOrmModule } from '@nestjs/typeorm';
+
+import {
+  User,
+  UserLogin,
+  UserRight,
+  UserRightRelation,
+  UserRole,
+  UserRoleRelation,
+} from '@entities/index';
+
+import { AuthService } from './auth.service';
+import { JwtRefreshStrategy } from './strategies/jwt-refresh.strategy';
+import { JwtStrategy } from './strategies/jwt.strategy';
+import { LocalStrategy } from './strategies/local.strategy';
+
+@Module({
+  imports: [
+    ConfigModule,
+    PassportModule,
+    JwtModule.register({}),
+    TypeOrmModule.forFeature([
+      User,
+      UserLogin,
+      UserRight,
+      UserRightRelation,
+      UserRole,
+      UserRoleRelation,
+    ]),
+  ],
+  providers: [AuthService, JwtStrategy, JwtRefreshStrategy, LocalStrategy],
+  exports: [AuthService, JwtModule],
+})
+export class AuthModule {}

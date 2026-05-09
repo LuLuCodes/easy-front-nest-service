@@ -41,6 +41,9 @@ jobs:
       - name: Test (with coverage)
         run: pnpm test --coverage --passWithNoTests
 
+      - name: E2E
+        run: pnpm test:e2e --passWithNoTests
+
       - name: Build
         run: pnpm build
 
