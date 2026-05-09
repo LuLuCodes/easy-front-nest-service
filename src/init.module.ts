@@ -2,7 +2,6 @@ import { Module, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { CacheService } from '@service/cache.service';
 import { MPCoreFactory } from '@easy-front-core-sdk/miniprogram';
-import { WXCoreFactory } from '@easy-front-core-sdk/wx';
 import { WXPayCoreFactory } from '@easy-front-core-sdk/wxpay';
 import * as fs from 'fs';
 import { resolve } from 'path';
@@ -22,28 +21,6 @@ export class InitModule implements OnModuleInit {
     // await this.initWX();
     // await this.initMP();
     // await this.initWXPay();
-  }
-  async initWX(): Promise<void> {
-    const dict_list = await this.dictCacheService.getDictConf('公众号配置');
-    const wx_redis_conf = {
-      host: this.configService.get('redis.host'),
-      port: this.configService.get('redis.port'),
-      password: this.configService.get('redis.password'),
-      db: this.configService.get('cache.redis_db'),
-    };
-    for (const wx of dict_list) {
-      if (!wx.field_value) {
-        console.error(`公众号配置配置异常[id=${wx.id}]`);
-        continue;
-      }
-      try {
-        const { appid, appsecret, token } = JSON.parse(wx.field_value);
-        WXCoreFactory.putCore({ appId: appid, appScrect: appsecret, token }, wx_redis_conf);
-        console.log(`加载公众号配置：${appid}`);
-      } catch (error) {
-        console.error(`公众号配置异常[id=${wx.id}]，${error.message}`);
-      }
-    }
   }
   async initMP(): Promise<void> {
     const dict_list = await this.dictCacheService.getDictConf('小程序配置');
