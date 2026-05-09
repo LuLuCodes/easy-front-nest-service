@@ -34,7 +34,8 @@
       "@decorator/*": ["./src/decorator/*"],
       "@interceptor/*": ["./src/interceptor/*"],
       "@filter/*": ["./src/filter/*"],
-      "@tenant/*": ["./src/tenant/*"]
+      "@tenant/*": ["./src/tenant/*"],
+      "@providers/*": ["./src/providers/*"]
     }
   },
   "exclude": ["node_modules", "api", "sequelize-generator", "db-generator"],
