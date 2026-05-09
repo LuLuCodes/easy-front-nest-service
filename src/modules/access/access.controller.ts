@@ -1,7 +1,7 @@
 import { Body, Controller, Post, UsePipes } from '@nestjs/common';
 import { ApiBody, ApiHeader, ApiOperation, ApiTags } from '@nestjs/swagger';
 
-import { CurrentUser, Public } from '@auth/decorators';
+import { CurrentUser, Permissions, Public } from '@auth/decorators';
 import { AuthenticatedUser } from '@auth/types/jwt-payload';
 import { DeleteRowDTO } from '@dto/BaseDTO';
 import { ValidationPipe } from '@pipe/validation.pipe';
@@ -54,6 +54,7 @@ export class AccessController {
     return this.accessService.checkAccount(body);
   }
 
+  @Permissions('access:user:create')
   @ApiOperation({ summary: '创建后台用户账号密码' })
   @ApiBody({ description: '请求参数', type: CreateUserDto })
   @UsePipes(new ValidationPipe({ transform: true }))
@@ -65,6 +66,7 @@ export class AccessController {
     return this.accessService.createUserAccount(body, { id: user.id });
   }
 
+  @Permissions('access:user:edit')
   @ApiOperation({ summary: '管理员修改用户密码' })
   @ApiBody({ description: '请求参数', type: ModifyUserPasswordDto })
   @UsePipes(new ValidationPipe({ transform: true }))
@@ -76,6 +78,7 @@ export class AccessController {
     return this.accessService.modifyUserPassword(body, { id: user.id });
   }
 
+  @Permissions('access:user:edit')
   @ApiOperation({ summary: '设置用户状态' })
   @ApiBody({ description: '请求参数', type: SetUserStatusDto })
   @UsePipes(new ValidationPipe({ transform: true }))
@@ -87,6 +90,7 @@ export class AccessController {
     return this.accessService.SetUserStatus(body, { id: user.id });
   }
 
+  @Permissions('access:role:write')
   @ApiOperation({ summary: '新增或修改角色' })
   @ApiBody({ description: '请求参数', type: CreateOrUpdateRoleDto })
   @UsePipes(new ValidationPipe({ transform: true }))
@@ -98,6 +102,7 @@ export class AccessController {
     return this.accessService.setRole(body, { id: user.id, nick: user.account_id });
   }
 
+  @Permissions('access:role:write')
   @ApiOperation({ summary: '删除角色' })
   @ApiBody({ description: '请求参数', type: DeleteRowDTO })
   @UsePipes(new ValidationPipe({ transform: true }))
@@ -109,6 +114,7 @@ export class AccessController {
     return this.accessService.deleteRole(body, { id: user.id });
   }
 
+  @Permissions('access:right:write')
   @ApiOperation({ summary: '新增或修改权限' })
   @ApiBody({ description: '请求参数', type: CreateOrUpdateRightDto })
   @UsePipes(new ValidationPipe({ transform: true }))
@@ -120,6 +126,7 @@ export class AccessController {
     return this.accessService.setRight(body, { id: user.id });
   }
 
+  @Permissions('access:right:write')
   @ApiOperation({ summary: '删除权限' })
   @ApiBody({ description: '请求参数', type: DeleteRowDTO })
   @UsePipes(new ValidationPipe({ transform: true }))
@@ -131,6 +138,7 @@ export class AccessController {
     return this.accessService.deleteRight(body, { id: user.id });
   }
 
+  @Permissions('access:user:edit')
   @ApiOperation({ summary: '分配用户角色' })
   @ApiBody({ description: '请求参数', type: SetUserRoleRelationDto })
   @UsePipes(new ValidationPipe({ transform: true }))
@@ -142,6 +150,7 @@ export class AccessController {
     return this.accessService.setUserRoleRelation(body, { id: user.id });
   }
 
+  @Permissions('access:role:write')
   @ApiOperation({ summary: '分配角色权限' })
   @ApiBody({ description: '请求参数', type: SetRoleRightRelationDto })
   @UsePipes(new ValidationPipe({ transform: true }))
@@ -153,6 +162,7 @@ export class AccessController {
     return this.accessService.setRoleRightRelation(body, { id: user.id });
   }
 
+  @Permissions('access:user:read')
   @ApiOperation({ summary: '获取用户角色与权限' })
   @ApiBody({ description: '请求参数', type: QueryUserRoleRightDto })
   @UsePipes(new ValidationPipe({ transform: true }))
@@ -164,6 +174,7 @@ export class AccessController {
     return this.accessService.getUserRoleRight(body, { id: user.id });
   }
 
+  @Permissions('access:role:read')
   @ApiOperation({ summary: '获取角色分配的权限列表' })
   @ApiBody({ description: '请求参数', type: QueryRoleRightDto })
   @UsePipes(new ValidationPipe({ transform: true }))
@@ -172,6 +183,7 @@ export class AccessController {
     return this.accessService.getRoleRightList(body);
   }
 
+  @Permissions('access:user:read')
   @ApiOperation({ summary: '获取用户列表' })
   @ApiBody({ description: '请求参数', type: QueryUserDto })
   @UsePipes(new ValidationPipe({ transform: true }))
@@ -180,6 +192,7 @@ export class AccessController {
     return this.accessService.getUserList(body);
   }
 
+  @Permissions('access:role:read')
   @ApiOperation({ summary: '获取角色列表' })
   @ApiBody({ description: '请求参数', type: QueryRoleDto })
   @UsePipes(new ValidationPipe({ transform: true }))
@@ -188,6 +201,7 @@ export class AccessController {
     return this.accessService.getRoleList(body);
   }
 
+  @Permissions('access:right:read')
   @ApiOperation({ summary: '获取权限列表' })
   @ApiBody({ description: '请求参数', type: QueryRightDto })
   @UsePipes(new ValidationPipe({ transform: true }))

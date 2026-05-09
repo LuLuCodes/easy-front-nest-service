@@ -1,14 +1,7 @@
-import {
-  Controller,
-  Post,
-  Get,
-  Body,
-  Query,
-  Param,
-  UsePipes,
-} from '@nestjs/common';
+import { Controller, Post, Get, Body, Query, Param, UsePipes } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiTags, ApiBody, ApiOperation, ApiHeader } from '@nestjs/swagger';
+import { Public } from '@auth/decorators';
 import { ValidationPipe } from '@pipe/validation.pipe';
 import { CatchError } from '@decorator/catch.decorator';
 import { CacheService } from '@service/cache.service';
@@ -25,6 +18,7 @@ import { MchIdDTO } from './wx.pay.basic.dto';
     example: 'swagger',
   },
 })
+@Public()
 @Controller('wxpay/basic')
 export class WxPayBasicController {
   constructor(
