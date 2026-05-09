@@ -29,7 +29,7 @@ import { WxOaModule } from './providers/wx-oa/wx-oa.module';
 import { WxMpModule } from './providers/wx-mp/wx-mp.module';
 import { WxPayModule } from './providers/wx-pay/wx-pay.module';
 import { AlipayModule } from './providers/alipay/alipay.module';
-import { OssModule } from './modules/oss/oss.module';
+import { OssModule } from './providers/oss/oss.module';
 import { BasicModule } from './modules/basic/basic.module';
 import { AccessModule } from './modules/access/access.module';
 import { OpLogModule } from './modules/oplog/oplog.module';
@@ -38,7 +38,6 @@ import app_config from '@config/app';
 import auth_config from '@config/auth';
 import databse_config from '@config/mysql';
 import mq_config from '@config/mq';
-import oss_config from '@config/oss';
 import redis_config from '@config/redis';
 import tenant_config from '@config/tenant';
 import while_list from '@config/white-list';
@@ -51,7 +50,6 @@ import while_list from '@config/white-list';
         auth_config,
         databse_config,
         mq_config,
-        oss_config,
         redis_config,
         tenant_config,
         while_list,
