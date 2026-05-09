@@ -48,7 +48,13 @@ export function decryptMessage(encodingAesKey: string, appId: string, encryptB64
   const stripped = stripPkcs7(raw);
 
   // Layout: 16 random bytes | 4 bytes BE msg length | msg | trailing appId
+  if (stripped.length < 20) {
+    throw new Error('Decrypted payload too short');
+  }
   const msgLen = stripped.readUInt32BE(16);
+  if (!Number.isInteger(msgLen) || msgLen < 0 || 20 + msgLen > stripped.length) {
+    throw new Error('Invalid message length in decrypted payload');
+  }
   const message = stripped.subarray(20, 20 + msgLen).toString('utf8');
   const trailingAppId = stripped.subarray(20 + msgLen).toString('utf8');
   if (trailingAppId !== appId) {

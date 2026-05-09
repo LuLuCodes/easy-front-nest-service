@@ -1,5 +1,7 @@
 import { createHash, randomBytes } from 'node:crypto';
-import { createReadStream } from 'node:fs';
+import { createReadStream, realpathSync } from 'node:fs';
+import { resolve } from 'node:path';
+import { tmpdir } from 'node:os';
 import FormData from 'form-data';
 
 import { CredentialMissingError, HttpClient, ProviderError } from '@providers/base';
@@ -154,7 +156,7 @@ export class WxOaClient {
 
   async addVideoMaterial(filePath: string, title: string, introduction: string) {
     const form = new FormData();
-    form.append('media', createReadStream(filePath));
+    form.append('media', createReadStream(assertSafeUploadPath(filePath)));
     form.append('description', JSON.stringify({ title, introduction }), {
       contentType: 'application/json',
     });
@@ -391,7 +393,7 @@ export class WxOaClient {
     fieldName: string,
   ): Promise<T> {
     const form = new FormData();
-    form.append(fieldName, createReadStream(filePath));
+    form.append(fieldName, createReadStream(assertSafeUploadPath(filePath)));
     return this.uploadForm<T>(path, form);
   }
 
@@ -421,6 +423,22 @@ export class WxOaClient {
       });
     }
   }
+}
+
+/**
+ * Defense-in-depth: refuse to open a file outside `os.tmpdir()`. Callers
+ * stage uploads through the controller's withTempFile() helper which
+ * already builds paths from server-side randomness, but enforcing the
+ * allowlist here closes the door on any future caller that accidentally
+ * passes user-controlled data through.
+ */
+function assertSafeUploadPath(filePath: string): string {
+  const resolved = realpathSync(resolve(filePath));
+  const root = realpathSync(tmpdir());
+  if (!resolved.startsWith(root + '/')) {
+    throw new Error(`Refusing to upload file outside tmpdir: ${resolved}`);
+  }
+  return resolved;
 }
 
 const TRANSIENT_ERR_CODES = new Set([

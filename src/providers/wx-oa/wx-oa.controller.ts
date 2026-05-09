@@ -67,6 +67,9 @@ export class WxOaController {
   ): Promise<void> {
     const tid = Number(tenantId);
     if (!tid) throw new BadRequestException('tenant_id query param required');
+    if (!ECHOSTR_PATTERN.test(echostr ?? '')) {
+      throw new BadRequestException('Invalid echostr');
+    }
     const client = await this.provider.getClient(tid, appId);
     const ok = client.verifyHandshake(signature, String(timestamp), nonce);
     res
@@ -316,13 +319,19 @@ export class WxOaController {
   }
 }
 
+const SAFE_EXT = /^\.[A-Za-z0-9]{1,16}$/;
+const ECHOSTR_PATTERN = /^[A-Za-z0-9_-]{1,256}$/;
+
 async function withTempFile<T>(
   file: Express.Multer.File,
   task: (path: string) => Promise<T>,
 ): Promise<T> {
-  const safeName = `${Date.now()}-${randomBytes(6).toString('hex')}-${file.originalname.replace(/[^\w.-]/g, '_')}`;
+  const ext = extractSafeExt(file.originalname);
+  // Filename built only from server-controlled randomness + a sanitized
+  // extension; the client-provided filename never reaches the FS path.
+  const safeName = `wx-oa-${Date.now()}-${randomBytes(16).toString('hex')}${ext}`;
   const path = join(tmpdir(), safeName);
-  await writeFile(path, file.buffer);
+  await writeFile(path, file.buffer, { mode: 0o600 });
   try {
     return await task(path);
   } finally {
@@ -334,7 +343,17 @@ async function withTempFile<T>(
   }
 }
 
+function extractSafeExt(originalName: string | undefined): string {
+  if (!originalName) return '';
+  const dot = originalName.lastIndexOf('.');
+  if (dot < 0) return '';
+  const ext = originalName.slice(dot);
+  return SAFE_EXT.test(ext) ? ext.toLowerCase() : '';
+}
+
 function extractEncryptElement(xml: string): string | undefined {
-  const match = xml.match(/<Encrypt><!\[CDATA\[([^\]]+)\]\]><\/Encrypt>/);
+  // Bounded, character-class-only group rules out polynomial backtracking
+  // even if the document contains many ']' characters or repeated CDATA.
+  const match = /<Encrypt><!\[CDATA\[([A-Za-z0-9+/=]{1,4096})\]\]><\/Encrypt>/.exec(xml);
   return match?.[1];
 }
