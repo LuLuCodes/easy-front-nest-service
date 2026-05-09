@@ -58,24 +58,32 @@ export class WxOaController {
   @Get('webhook/:appId')
   async webhookHandshake(
     @Param('appId') appId: string,
-    @Query('signature') signature: string,
-    @Query('timestamp') timestamp: string,
-    @Query('nonce') nonce: string,
-    @Query('echostr') echostr: string,
-    @Query('tenant_id') tenantId: string,
+    @Query('signature') signatureRaw: unknown,
+    @Query('timestamp') timestampRaw: unknown,
+    @Query('nonce') nonceRaw: unknown,
+    @Query('echostr') echostrRaw: unknown,
+    @Query('tenant_id') tenantIdRaw: unknown,
     @Res() res: Response,
   ): Promise<void> {
-    const tid = Number(tenantId);
-    if (!tid) throw new BadRequestException('tenant_id query param required');
-    if (!ECHOSTR_PATTERN.test(echostr ?? '')) {
+    const signature = ensureScalar(signatureRaw, 'signature');
+    const timestamp = ensureScalar(timestampRaw, 'timestamp');
+    const nonce = ensureScalar(nonceRaw, 'nonce');
+    const echostr = ensureScalar(echostrRaw, 'echostr');
+    const tenantIdStr = ensureScalar(tenantIdRaw, 'tenant_id');
+    const tid = Number(tenantIdStr);
+    if (!Number.isInteger(tid) || tid <= 0) {
+      throw new BadRequestException('tenant_id query param required');
+    }
+    if (!ECHOSTR_PATTERN.test(echostr)) {
       throw new BadRequestException('Invalid echostr');
     }
     const client = await this.provider.getClient(tid, appId);
-    const ok = client.verifyHandshake(signature, String(timestamp), nonce);
+    const ok = client.verifyHandshake(signature, timestamp, nonce);
+    const safeBody = ok ? echostr : 'forbidden';
     res
       .status(ok ? 200 : 403)
       .type('text/plain')
-      .send(ok ? echostr : 'forbidden');
+      .send(safeBody);
   }
 
   @Public()
@@ -83,24 +91,30 @@ export class WxOaController {
   @HttpCode(HttpStatus.OK)
   async webhookPush(
     @Param('appId') appId: string,
-    @Query('msg_signature') msgSignature: string,
-    @Query('timestamp') timestamp: string,
-    @Query('nonce') nonce: string,
-    @Query('tenant_id') tenantId: string,
+    @Query('msg_signature') msgSignatureRaw: unknown,
+    @Query('timestamp') timestampRaw: unknown,
+    @Query('nonce') nonceRaw: unknown,
+    @Query('tenant_id') tenantIdRaw: unknown,
     @Req() req: Request,
   ): Promise<{ received: boolean }> {
-    const tid = Number(tenantId);
-    if (!tid) throw new BadRequestException('tenant_id query param required');
+    const msgSignature = ensureScalar(msgSignatureRaw, 'msg_signature');
+    const timestamp = ensureScalar(timestampRaw, 'timestamp');
+    const nonce = ensureScalar(nonceRaw, 'nonce');
+    const tenantIdStr = ensureScalar(tenantIdRaw, 'tenant_id');
+    const tid = Number(tenantIdStr);
+    if (!Number.isInteger(tid) || tid <= 0) {
+      throw new BadRequestException('tenant_id query param required');
+    }
     const client = await this.provider.getClient(tid, appId);
     const xml = req.body as { xml?: { Encrypt?: string } } | string;
     const encrypt =
-      typeof xml === 'object' && xml?.xml?.Encrypt
+      typeof xml === 'object' && typeof xml?.xml?.Encrypt === 'string'
         ? xml.xml.Encrypt
         : extractEncryptElement(typeof xml === 'string' ? xml : '');
     if (!encrypt) {
       throw new BadRequestException('Missing <Encrypt> element');
     }
-    client.verifyAndDecrypt(msgSignature, String(timestamp), nonce, encrypt);
+    client.verifyAndDecrypt(msgSignature, timestamp, nonce, encrypt);
     // Production typically dispatches to a BullMQ queue here (P5-9).
     return { received: true };
   }
@@ -319,17 +333,17 @@ export class WxOaController {
   }
 }
 
-const SAFE_EXT = /^\.[A-Za-z0-9]{1,16}$/;
 const ECHOSTR_PATTERN = /^[A-Za-z0-9_-]{1,256}$/;
 
 async function withTempFile<T>(
   file: Express.Multer.File,
   task: (path: string) => Promise<T>,
 ): Promise<T> {
-  const ext = extractSafeExt(file.originalname);
-  // Filename built only from server-controlled randomness + a sanitized
-  // extension; the client-provided filename never reaches the FS path.
-  const safeName = `wx-oa-${Date.now()}-${randomBytes(16).toString('hex')}${ext}`;
+  // Path is built entirely from server-side randomness; nothing from the
+  // upload's `originalname` reaches the FS layer. WeChat's upload APIs
+  // determine media type from the request `type=` query param, not the
+  // file extension, so dropping the extension is safe.
+  const safeName = `wx-oa-${Date.now()}-${randomBytes(16).toString('hex')}`;
   const path = join(tmpdir(), safeName);
   await writeFile(path, file.buffer, { mode: 0o600 });
   try {
@@ -343,17 +357,16 @@ async function withTempFile<T>(
   }
 }
 
-function extractSafeExt(originalName: string | undefined): string {
-  if (!originalName) return '';
-  const dot = originalName.lastIndexOf('.');
-  if (dot < 0) return '';
-  const ext = originalName.slice(dot);
-  return SAFE_EXT.test(ext) ? ext.toLowerCase() : '';
-}
-
 function extractEncryptElement(xml: string): string | undefined {
   // Bounded, character-class-only group rules out polynomial backtracking
   // even if the document contains many ']' characters or repeated CDATA.
   const match = /<Encrypt><!\[CDATA\[([A-Za-z0-9+/=]{1,4096})\]\]><\/Encrypt>/.exec(xml);
   return match?.[1];
+}
+
+function ensureScalar(value: unknown, name: string): string {
+  if (typeof value !== 'string' || value.length === 0) {
+    throw new BadRequestException(`${name} must be a non-empty string`);
+  }
+  return value;
 }
