@@ -15,6 +15,8 @@ import {
 import { LOGIN_TYPE, USER_STATUS } from '@dto/EnumDTO';
 import type { AuthConfig } from '@config/auth';
 
+import { TenantService } from '@tenant/tenant.service';
+
 import { AuthService } from './auth.service';
 
 const TEST_AUTH_CONFIG: AuthConfig = {
@@ -68,6 +70,13 @@ describe('AuthService', () => {
       providers: [
         AuthService,
         { provide: JwtService, useValue: jwtService },
+        {
+          provide: TenantService,
+          useValue: {
+            resolveMembership: jest.fn(),
+            listMyTenants: jest.fn(),
+          },
+        },
         {
           provide: ConfigService,
           useValue: {

@@ -28,6 +28,7 @@ import {
 import { AccessController } from '@modules/access/access.controller';
 import { AccessService } from '@modules/access/access.service';
 import { OpLogService } from '@modules/oplog/oplog.service';
+import { TenantService } from '@tenant/tenant.service';
 import { encryptPassword, makeSalt } from '@libs/cryptogram';
 
 describe('Auth + Access e2e (JWT contract)', () => {
@@ -40,6 +41,7 @@ describe('Auth + Access e2e (JWT contract)', () => {
   let userRightRepo: { findOne: jest.Mock; find: jest.Mock };
   let accessService: { checkUser: jest.Mock };
   let opLogService: { createLogTask: jest.Mock };
+  let tenantService: { resolveMembership: jest.Mock; listMyTenants: jest.Mock };
 
   beforeAll(async () => {
     process.env.JWT_ACCESS_SECRET = 'a'.repeat(40);
@@ -56,6 +58,10 @@ describe('Auth + Access e2e (JWT contract)', () => {
     userRightRepo = makeRepo();
     accessService = { checkUser: jest.fn() };
     opLogService = { createLogTask: jest.fn() };
+    tenantService = {
+      resolveMembership: jest.fn(),
+      listMyTenants: jest.fn().mockResolvedValue([]),
+    };
 
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [
@@ -74,6 +80,7 @@ describe('Auth + Access e2e (JWT contract)', () => {
         { provide: APP_GUARD, useClass: PermissionsGuard },
         { provide: AccessService, useValue: accessService },
         { provide: OpLogService, useValue: opLogService },
+        { provide: TenantService, useValue: tenantService },
         { provide: getRepositoryToken(UserLogin), useValue: userLoginRepo },
         { provide: getRepositoryToken(User), useValue: userRepo },
         {

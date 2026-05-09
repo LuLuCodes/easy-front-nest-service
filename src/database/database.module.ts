@@ -5,6 +5,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import {
   Dictionary,
   SmsLog,
+  Tenant,
+  TenantCredential,
+  TenantUserRelation,
   User,
   UserLogin,
   UserOplog,
@@ -19,6 +22,9 @@ import { buildTypeOrmOptions } from './typeorm.config';
 const ENTITIES = [
   Dictionary,
   SmsLog,
+  Tenant,
+  TenantCredential,
+  TenantUserRelation,
   User,
   UserLogin,
   UserOplog,

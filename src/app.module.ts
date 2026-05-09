@@ -40,6 +40,7 @@ import databse_config from '@config/mysql';
 import mq_config from '@config/mq';
 import oss_config from '@config/oss';
 import redis_config from '@config/redis';
+import tenant_config from '@config/tenant';
 import while_list from '@config/white-list';
 
 @Module({
@@ -52,6 +53,7 @@ import while_list from '@config/white-list';
         mq_config,
         oss_config,
         redis_config,
+        tenant_config,
         while_list,
       ],
       isGlobal: true,

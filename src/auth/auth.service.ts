@@ -17,6 +17,7 @@ import {
 } from '@entities/index';
 import { LOGIN_TYPE, USER_STATUS } from '@dto/EnumDTO';
 import { SYSTEM_TENANT_ID } from '@tenant/constants';
+import { TenantService } from '@tenant/tenant.service';
 
 import type {
   AuthenticatedUser,
@@ -36,6 +37,7 @@ export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
+    private readonly tenantService: TenantService,
     @InjectRepository(UserLogin)
     private readonly userLoginRepo: Repository<UserLogin>,
     @InjectRepository(User)
@@ -49,6 +51,36 @@ export class AuthService {
     @InjectRepository(UserRight)
     private readonly userRightRepo: Repository<UserRight>,
   ) {}
+
+  async switchTenant(userId: number, tenantId: number): Promise<SignedTokens> {
+    await this.tenantService.resolveMembership(userId, tenantId);
+    const user = await this.userRepo.findOne({
+      select: ['id', 'role_type', 'user_status', 'is_system_admin'],
+      where: { id: userId },
+    });
+    if (!user || user.user_status !== USER_STATUS.正常) {
+      throw new UnauthorizedException('用户状态异常');
+    }
+    const login = await this.userLoginRepo.findOne({
+      select: ['account_id', 'login_client'],
+      where: { user_id: userId },
+    });
+    if (!login) {
+      throw new UnauthorizedException('账号不存在');
+    }
+    const authorities = await this.loadAuthorities(user.id!);
+    return this.signTokens({
+      id: user.id!,
+      sub: user.id!,
+      account_id: login.account_id!,
+      tenant_id: tenantId,
+      is_super_admin: user.is_system_admin === 1 && tenantId === SYSTEM_TENANT_ID,
+      login_client: login.login_client,
+      role_type: user.role_type,
+      roles: authorities.roles,
+      permissions: authorities.permissions,
+    });
+  }
 
   async validateUser(
     accountId: string,
