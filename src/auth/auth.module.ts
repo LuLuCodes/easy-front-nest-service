@@ -5,6 +5,7 @@ import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import {
+  TenantUserRelation,
   User,
   UserLogin,
   UserRight,
@@ -25,6 +26,7 @@ import { LocalStrategy } from './strategies/local.strategy';
     PassportModule,
     JwtModule.register({}),
     TypeOrmModule.forFeature([
+      TenantUserRelation,
       User,
       UserLogin,
       UserRight,

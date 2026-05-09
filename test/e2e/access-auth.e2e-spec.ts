@@ -18,6 +18,7 @@ import { PermissionsGuard } from '@auth/guards/permissions.guard';
 import { RolesGuard } from '@auth/guards/roles.guard';
 import auth_config from '@config/auth';
 import {
+  TenantUserRelation,
   User,
   UserLogin,
   UserRight,
@@ -39,6 +40,7 @@ describe('Auth + Access e2e (JWT contract)', () => {
   let userRoleRepo: { findOne: jest.Mock; find: jest.Mock };
   let userRightRelationRepo: { findOne: jest.Mock; find: jest.Mock };
   let userRightRepo: { findOne: jest.Mock; find: jest.Mock };
+  let tenantRelationRepo: { findOne: jest.Mock; find: jest.Mock };
   let accessService: { checkUser: jest.Mock };
   let opLogService: { createLogTask: jest.Mock };
   let tenantService: { resolveMembership: jest.Mock; listMyTenants: jest.Mock };
@@ -56,6 +58,7 @@ describe('Auth + Access e2e (JWT contract)', () => {
     userRoleRepo = makeRepo();
     userRightRelationRepo = makeRepo();
     userRightRepo = makeRepo();
+    tenantRelationRepo = makeRepo();
     accessService = { checkUser: jest.fn() };
     opLogService = { createLogTask: jest.fn() };
     tenantService = {
@@ -93,6 +96,10 @@ describe('Auth + Access e2e (JWT contract)', () => {
           useValue: userRightRelationRepo,
         },
         { provide: getRepositoryToken(UserRight), useValue: userRightRepo },
+        {
+          provide: getRepositoryToken(TenantUserRelation),
+          useValue: tenantRelationRepo,
+        },
       ],
     }).compile();
 
@@ -114,6 +121,7 @@ describe('Auth + Access e2e (JWT contract)', () => {
       userRoleRepo,
       userRightRelationRepo,
       userRightRepo,
+      tenantRelationRepo,
     }).forEach((r) => {
       r.findOne.mockReset();
       r.find.mockReset();
@@ -144,7 +152,9 @@ describe('Auth + Access e2e (JWT contract)', () => {
       nick: 'Tester',
       role_type: 1,
       user_status: 1,
+      is_system_admin: 0,
     });
+    tenantRelationRepo.find.mockResolvedValueOnce([{ relation_tenant_id: 1, is_default: 1 }]);
     userRoleRelationRepo.find.mockResolvedValueOnce([{ role_id: 100 }]);
     userRoleRepo.find.mockResolvedValueOnce([{ id: 100, role_name: 'admin', is_supper: 0 }]);
     userRightRelationRepo.find.mockResolvedValueOnce([{ right_id: 9 }]);

@@ -5,6 +5,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { encryptPassword } from '@libs/cryptogram';
 import {
+  TenantUserRelation,
   User,
   UserLogin,
   UserRight,
@@ -12,7 +13,7 @@ import {
   UserRole,
   UserRoleRelation,
 } from '@entities/index';
-import { LOGIN_TYPE, USER_STATUS } from '@dto/EnumDTO';
+import { USER_STATUS } from '@dto/EnumDTO';
 import type { AuthConfig } from '@config/auth';
 
 import { TenantService } from '@tenant/tenant.service';
@@ -55,6 +56,7 @@ describe('AuthService', () => {
   let userRoleRepo: RepoMock;
   let userRightRelationRepo: RepoMock;
   let userRightRepo: RepoMock;
+  let tenantRelationRepo: RepoMock;
   let jwtService: { signAsync: jest.Mock };
 
   beforeEach(async () => {
@@ -64,6 +66,7 @@ describe('AuthService', () => {
     userRoleRepo = makeRepoMock();
     userRightRelationRepo = makeRepoMock();
     userRightRepo = makeRepoMock();
+    tenantRelationRepo = makeRepoMock();
     jwtService = { signAsync: jest.fn() };
 
     const moduleRef = await Test.createTestingModule({
@@ -97,6 +100,10 @@ describe('AuthService', () => {
           useValue: userRightRelationRepo,
         },
         { provide: getRepositoryToken(UserRight), useValue: userRightRepo },
+        {
+          provide: getRepositoryToken(TenantUserRelation),
+          useValue: tenantRelationRepo,
+        },
       ],
     }).compile();
 
@@ -104,7 +111,7 @@ describe('AuthService', () => {
   });
 
   describe('validateUser', () => {
-    it('returns enriched user on correct credentials', async () => {
+    it('returns enriched user on correct credentials, scoped to default tenant', async () => {
       const salt = 'XY';
       const hash = encryptPassword('s3cret123', salt);
       userLoginRepo.findOne.mockResolvedValueOnce({
@@ -120,7 +127,9 @@ describe('AuthService', () => {
         nick: 'tester',
         role_type: 1,
         user_status: USER_STATUS.正常,
+        is_system_admin: 0,
       });
+      tenantRelationRepo.find.mockResolvedValueOnce([{ relation_tenant_id: 7, is_default: 1 }]);
       userRoleRelationRepo.find.mockResolvedValueOnce([{ role_id: 100 }]);
       userRoleRepo.find.mockResolvedValueOnce([{ id: 100, role_name: 'admin', is_supper: 0 }]);
       userRightRelationRepo.find.mockResolvedValueOnce([{ right_id: 9 }]);
@@ -132,21 +141,71 @@ describe('AuthService', () => {
         id: 42,
         sub: 42,
         account_id: 'tester',
-        tenant_id: 0,
+        tenant_id: 7,
         is_super_admin: false,
         login_client: 1,
         role_type: 1,
         roles: ['admin'],
         permissions: ['access:user:edit'],
       });
-      expect(userLoginRepo.findOne).toHaveBeenCalledWith({
-        select: ['id', 'account_id', 'account_pwd', 'pwd_salt', 'user_id', 'login_client'],
-        where: {
-          account_id: 'tester',
-          login_client: 1,
-          login_type: LOGIN_TYPE.账号名密码登录,
-        },
+      expect(tenantRelationRepo.find).toHaveBeenCalledWith({
+        select: ['relation_tenant_id', 'is_default'],
+        where: { user_id: 42 },
+        order: { is_default: 'DESC', id: 'ASC' },
       });
+    });
+
+    it('returns system-admin user with tenant_id=0 and skips tenant lookup', async () => {
+      const salt = 'XY';
+      const hash = encryptPassword('s3cret123', salt);
+      userLoginRepo.findOne.mockResolvedValueOnce({
+        id: 1,
+        account_id: 'super',
+        account_pwd: hash,
+        pwd_salt: salt,
+        user_id: 1,
+        login_client: 1,
+      });
+      userRepo.findOne.mockResolvedValueOnce({
+        id: 1,
+        nick: 'super',
+        role_type: 1,
+        user_status: USER_STATUS.正常,
+        is_system_admin: 1,
+      });
+
+      const result = await service.validateUser('super', 's3cret123', 1);
+
+      expect(result).toMatchObject({
+        id: 1,
+        tenant_id: 0,
+        is_super_admin: true,
+        roles: [],
+        permissions: [],
+      });
+      expect(tenantRelationRepo.find).not.toHaveBeenCalled();
+    });
+
+    it('returns null when a regular user has no tenant membership', async () => {
+      const salt = 'XY';
+      const hash = encryptPassword('s3cret123', salt);
+      userLoginRepo.findOne.mockResolvedValueOnce({
+        id: 1,
+        account_id: 'orphan',
+        account_pwd: hash,
+        pwd_salt: salt,
+        user_id: 99,
+        login_client: 1,
+      });
+      userRepo.findOne.mockResolvedValueOnce({
+        id: 99,
+        user_status: USER_STATUS.正常,
+        is_system_admin: 0,
+      });
+      tenantRelationRepo.find.mockResolvedValueOnce([]);
+
+      const result = await service.validateUser('orphan', 's3cret123', 1);
+      expect(result).toBeNull();
     });
 
     it('returns null when account is not found', async () => {
@@ -222,10 +281,11 @@ describe('AuthService', () => {
   });
 
   describe('refresh', () => {
-    it('reissues tokens for an active user', async () => {
+    it('reissues tokens for an active user (non-system)', async () => {
       userRepo.findOne.mockResolvedValueOnce({
         id: 7,
         role_type: 1,
+        is_system_admin: 0,
         user_status: USER_STATUS.正常,
       });
       userRoleRelationRepo.find.mockResolvedValueOnce([]);
@@ -234,7 +294,7 @@ describe('AuthService', () => {
       const result = await service.refresh({
         sub: 7,
         account_id: 'tester',
-        tenant_id: 0,
+        tenant_id: 5,
         jti: 'j-1',
       });
 
@@ -256,7 +316,7 @@ describe('AuthService', () => {
   describe('loadAuthorities', () => {
     it('returns empty bundle when user has no roles', async () => {
       userRoleRelationRepo.find.mockResolvedValueOnce([]);
-      const result = await service.loadAuthorities(42);
+      const result = await service.loadAuthorities(42, 1);
       expect(result).toEqual({ roles: [], permissions: [] });
     });
 
@@ -265,7 +325,7 @@ describe('AuthService', () => {
       userRoleRepo.find.mockResolvedValueOnce([{ id: 1, role_name: 'root', is_supper: 1 }]);
       userRightRepo.find.mockResolvedValueOnce([{ right_code: 'a' }, { right_code: 'b' }]);
 
-      const result = await service.loadAuthorities(42);
+      const result = await service.loadAuthorities(42, 1);
 
       expect(result.roles).toEqual(['root']);
       expect(result.permissions).toEqual(['a', 'b']);
@@ -289,7 +349,7 @@ describe('AuthService', () => {
         { right_code: 'p2' },
       ]);
 
-      const result = await service.loadAuthorities(42);
+      const result = await service.loadAuthorities(42, 1);
 
       expect(result.roles).toEqual(['admin']);
       expect(result.permissions).toEqual(['p1', 'p2']);

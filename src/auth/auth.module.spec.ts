@@ -4,6 +4,7 @@ import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
 import {
+  TenantUserRelation,
   User,
   UserLogin,
   UserRight,
@@ -57,6 +58,8 @@ describe('AuthModule wiring', () => {
       .overrideProvider(getRepositoryToken(UserRightRelation))
       .useValue({ findOne: jest.fn(), find: jest.fn() })
       .overrideProvider(getRepositoryToken(UserRight))
+      .useValue({ findOne: jest.fn(), find: jest.fn() })
+      .overrideProvider(getRepositoryToken(TenantUserRelation))
       .useValue({ findOne: jest.fn(), find: jest.fn() })
       .compile();
 
