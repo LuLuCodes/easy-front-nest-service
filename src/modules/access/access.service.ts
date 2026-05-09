@@ -30,6 +30,7 @@ import {
 import { ACTION_TYPE, LOGIN_CLIENT, LOGIN_TYPE, TARGET_TYPE, USER_STATUS } from '@dto/EnumDTO';
 import { encryptPassword, makeSalt } from '@libs/cryptogram';
 import { OpLogService } from '@modules/oplog/oplog.service';
+import { TenantContextService } from '@tenant/tenant-context.service';
 import { RedisLock } from '@libs/redlock';
 import { arrayToTree } from '@libs/util';
 import { DeleteRowDTO } from '@dto/BaseDTO';
@@ -88,6 +89,7 @@ export class AccessService {
     private readonly dataSource: DataSource,
     private readonly cacheService: CacheService,
     private readonly opLogService: OpLogService,
+    private readonly tenantContext: TenantContextService,
     @InjectRepository(UserLogin)
     private readonly userLoginRepo: Repository<UserLogin>,
     @InjectRepository(User)
@@ -101,6 +103,16 @@ export class AccessService {
     @InjectRepository(UserRightRelation)
     private readonly userRightRelationRepo: Repository<UserRightRelation>,
   ) {}
+
+  /**
+   * Returns the tenant filter to apply to read-side queries. Super-admin
+   * (system tenant) gets `null`, meaning no filter is applied. Regular
+   * tenants get the active tenant id from AsyncLocalStorage.
+   */
+  private tenantFilter(): { tenant_id: number } | null {
+    if (this.tenantContext.isSuperAdmin()) return null;
+    return { tenant_id: this.tenantContext.tenantId() };
+  }
 
   // 统一登录
   async login(requestBody: any, login_type: LOGIN_TYPE): Promise<any> {
@@ -421,6 +433,9 @@ export class AccessService {
     if (account_id) qb.andWhere('account.account_id = :account_id', { account_id });
     if (login_type) qb.andWhere('account.login_type = :login_type', { login_type });
 
+    const filter = this.tenantFilter();
+    if (filter) qb.andWhere('user.tenant_id = :tenantId', { tenantId: filter.tenant_id });
+
     qb.skip((page_num - 1) * page_size)
       .take(page_size)
       .orderBy('user.id', 'DESC');
@@ -463,6 +478,8 @@ export class AccessService {
     const where: Record<string, unknown> = {};
     if (role_type) where.role_type = role_type;
     if (role_name) where.role_name = Like(`${role_name}%`);
+    const tenantFilter = this.tenantFilter();
+    if (tenantFilter) where.tenant_id = tenantFilter.tenant_id;
 
     const [rows, count] = await this.userRoleRepo.findAndCount({
       select: ROLE_FIELDS,
@@ -479,6 +496,8 @@ export class AccessService {
     const where: Record<string, unknown> = {};
     if (role_type) where.role_type = role_type;
     if (right_name) where.right_name = right_name;
+    const tenantFilter = this.tenantFilter();
+    if (tenantFilter) where.tenant_id = tenantFilter.tenant_id;
 
     const right_list = await this.userRightRepo.find({
       select: RIGHT_FIELDS_WITH_TS,
