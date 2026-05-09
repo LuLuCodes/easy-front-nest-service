@@ -26,8 +26,8 @@ import { DictCacheService } from '@service/dict-cache.service';
 import { AuthModule } from './auth/auth.module';
 import { TenantModule } from './tenant/tenant.module';
 import { WxOaModule } from './providers/wx-oa/wx-oa.module';
+import { WxMpModule } from './providers/wx-mp/wx-mp.module';
 import { InitModule } from './init.module';
-import { MpModule } from './modules/mp/mp.module';
 import { WxPayModule } from './modules/wxpay/wx.pay.module';
 import { OssModule } from './modules/oss/oss.module';
 import { BasicModule } from './modules/basic/basic.module';
@@ -108,7 +108,7 @@ import while_list from '@config/white-list';
       name: 'op-log',
     }),
     WxOaModule,
-    MpModule,
+    WxMpModule,
     WxPayModule,
     OssModule,
     AuthModule,
