@@ -8,26 +8,16 @@
  *
  * Copyright (c) 2023 by ${git_name_email}, All Rights Reserved.
  */
-import {
-  Controller,
-  Post,
-  Body,
-  UsePipes,
-  UseFilters,
-  Session,
-  Version,
-  SetMetadata,
-} from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { ApiTags, ApiBody, ApiOperation, ApiHeader } from '@nestjs/swagger';
-import { ValidationPipe } from '@pipe/validation.pipe';
-import { CacheService } from '@service/cache.service';
-import { BasicService } from './basic.service';
+import { Body, Controller, Post, SetMetadata, UseFilters, UsePipes } from '@nestjs/common';
+import { ApiBody, ApiHeader, ApiOperation, ApiTags } from '@nestjs/swagger';
 
-import { OtherOkResponse, OtherErrorResponse } from '@libs/util';
+import { Public } from '@auth/decorators';
+import { OtherExceptionsFilter } from '@filter/other-exception.filter';
+import { OtherOkResponse } from '@libs/util';
+import { ValidationPipe } from '@pipe/validation.pipe';
 
 import { GetDictDto, SendSmsDto, VerifySmsCodeDto } from './basic.dto';
-import { OtherExceptionsFilter } from '@filter/other-exception.filter';
+import { BasicService } from './basic.service';
 
 @ApiTags('基础API')
 @ApiHeader({
@@ -39,13 +29,10 @@ import { OtherExceptionsFilter } from '@filter/other-exception.filter';
     example: 'swagger',
   },
 })
+@Public()
 @Controller('basic')
 export class BasicController {
-  constructor(
-    private readonly cacheService: CacheService,
-    private readonly configService: ConfigService,
-    private readonly basicService: BasicService,
-  ) {}
+  constructor(private readonly basicService: BasicService) {}
 
   @ApiOperation({
     summary: '获取字典',

@@ -1,7 +1,7 @@
 import { Body, Controller, Post, UsePipes } from '@nestjs/common';
 import { ApiBody, ApiHeader, ApiOperation, ApiTags } from '@nestjs/swagger';
 
-import { CurrentUser } from '@auth/decorators';
+import { CurrentUser, Permissions } from '@auth/decorators';
 import type { AuthenticatedUser } from '@auth/types/jwt-payload';
 import { ValidationPipe } from '@pipe/validation.pipe';
 
@@ -30,6 +30,7 @@ export class OpLogController {
     description: '请求参数',
     type: QueryLogDto,
   })
+  @Permissions('oplog:read')
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('query-oplog')
   async queryOpLog(

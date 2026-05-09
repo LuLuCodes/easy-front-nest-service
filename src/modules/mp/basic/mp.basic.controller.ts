@@ -1,21 +1,8 @@
-import {
-  Controller,
-  Post,
-  Get,
-  Body,
-  Query,
-  Param,
-  UsePipes,
-} from '@nestjs/common';
+import { Controller, Post, Get, Body, Query, Param, UsePipes } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { inspect } from 'util';
-import {
-  ApiTags,
-  ApiBody,
-  ApiOperation,
-  ApiQuery,
-  ApiHeader,
-} from '@nestjs/swagger';
+import { ApiTags, ApiBody, ApiOperation, ApiQuery, ApiHeader } from '@nestjs/swagger';
+import { Public } from '@auth/decorators';
 import { ValidationPipe } from '@pipe/validation.pipe';
 
 import { CacheService } from '@service/cache.service';
@@ -39,6 +26,7 @@ import {
     example: 'swagger',
   },
 })
+@Public()
 @Controller('mp/basic')
 export class MpBasicController {
   constructor(

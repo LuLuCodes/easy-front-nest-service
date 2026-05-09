@@ -115,8 +115,64 @@ gh pr create --fill
 
 > 旧密码仍残留在 git 历史 commit `89bab0f` 中。由于密码已 rotate 失效、且重写历史会破坏现有 clone 与 tag，决定保留历史。如未来要开源仓库，需重新评估。
 
-## 7. P0 之后即将启用的进阶规则（预告）
+## 7. 认证 (5.0+)
+
+5.0.0 起，认证从 session+MD5 切换为 JWT + Passport。下游必须配合升级，没有双轨期。
+
+### 7.1 必要环境变量
+
+```env
+JWT_ACCESS_SECRET=<≥ 32 位随机字符串>
+JWT_REFRESH_SECRET=<≥ 32 位随机字符串>
+JWT_ACCESS_TTL=15m
+JWT_REFRESH_TTL=7d
+REFRESH_COOKIE_NAME=refresh_token
+REFRESH_COOKIE_SECURE=true
+REFRESH_COOKIE_SAMESITE=lax
+REFRESH_COOKIE_PATH=/api/auth
+```
+
+生产环境未设置 `JWT_*_SECRET` 时启动失败。Dev/test 环境会落在确定性占位值上，不阻塞本地开发。
+
+### 7.2 客户端契约
+
+| 端点                     | 鉴权                            | 用途                                                                                                    |
+| ------------------------ | ------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| `POST /api/auth/login`   | `@Public()`                     | 账号密码登录，返回 `{ accessToken, refreshToken, refreshExpiresIn, user }` + Set-Cookie `refresh_token` |
+| `POST /api/auth/refresh` | `@Public()`，校验 refresh token | Web 自动带 cookie；Mobile/小程序在 body 传 `{ refreshToken }`。返回新 access + refresh                  |
+| `POST /api/auth/logout`  | Bearer access                   | 清 cookie + 写 oplog                                                                                    |
+| `GET /api/auth/me`       | Bearer access                   | 返回当前用户（不含 `sub`）                                                                              |
+| 所有受保护接口           | Bearer access                   | 默认全局 `JwtAuthGuard` 拦截，未通过返回 401                                                            |
+
+关键变更：
+
+- 不再读 `X-Auth-Token` header
+- 不再下发 session cookie
+- access token 默认 15 分钟过期；权限变更通过 refresh 一轮即生效
+
+### 7.3 服务端装饰器
+
+```ts
+import { Public, Roles, Permissions, CurrentUser } from '@auth/decorators';
+import type { AuthenticatedUser } from '@auth/types/jwt-payload';
+
+@Public()                           // 跳过 JwtAuthGuard
+@Roles('admin')                     // 角色名匹配（来自 t_user_role.role_name）
+@Permissions('access:user:edit')    // 权限码匹配（来自 t_user_right.right_code）
+async handler(@CurrentUser() user: AuthenticatedUser) { ... }
+```
+
+`@Roles` / `@Permissions` 都按"任一即放行"语义校验 token 中携带的列表。`@Public()` 优先于其它装饰器。
+
+### 7.4 强制下线
+
+JWT 是无状态签发，不可单点撤销。强制下线方案：
+
+- 短 access TTL（默认 15m）配合 refresh 重新签发，权限变化即生效
+- 必要时在 `CacheService` 中维护 refresh 黑名单，`AuthService.refresh` 命中黑名单即拒绝（钩子已预留）
+
+## 8. P0 之后即将启用的进阶规则（预告）
 
 - 测试覆盖率门槛：先 50%，下期 80%（P7）
-- 分支 owner 按目录细化（P3 / P4 完成后）
+- 分支 owner 按目录细化（P5 完成后）
 - 自动发版：`release-please` 或 `changeset`（P6）

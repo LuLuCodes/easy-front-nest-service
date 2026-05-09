@@ -11,13 +11,8 @@ import {
 import { Express } from 'express';
 import { FilesInterceptor, FileInterceptor } from '@nestjs/platform-express';
 import { ConfigService } from '@nestjs/config';
-import {
-  ApiTags,
-  ApiBody,
-  ApiOperation,
-  ApiConsumes,
-  ApiHeader,
-} from '@nestjs/swagger';
+import { ApiTags, ApiBody, ApiOperation, ApiConsumes, ApiHeader } from '@nestjs/swagger';
+import { Public } from '@auth/decorators';
 import { ValidationPipe } from '@pipe/validation.pipe';
 import { CatchError } from '@decorator/catch.decorator';
 import { CacheService } from '@service/cache.service';
@@ -45,6 +40,7 @@ import { resolve } from 'path';
     example: 'swagger',
   },
 })
+@Public()
 @Controller('wx/media')
 export class WxMediaController {
   constructor(
@@ -93,10 +89,7 @@ export class WxMediaController {
       await outputFile(filePath, file.buffer);
       filePathList.push(filePath);
     }
-    const data = await this.wxMediaService.uploadTemporaryMaterial(
-      body,
-      filePathList,
-    );
+    const data = await this.wxMediaService.uploadTemporaryMaterial(body, filePathList);
     const delPromises = filePathList.map((path) => {
       return remove(path);
     });
