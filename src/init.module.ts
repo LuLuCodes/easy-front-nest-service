@@ -1,7 +1,6 @@
 import { Module, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { CacheService } from '@service/cache.service';
-import { MPCoreFactory } from '@easy-front-core-sdk/miniprogram';
 import { WXPayCoreFactory } from '@easy-front-core-sdk/wxpay';
 import * as fs from 'fs';
 import { resolve } from 'path';
@@ -21,35 +20,6 @@ export class InitModule implements OnModuleInit {
     // await this.initWX();
     // await this.initMP();
     // await this.initWXPay();
-  }
-  async initMP(): Promise<void> {
-    const dict_list = await this.dictCacheService.getDictConf('小程序配置');
-    const mp_redis_conf = {
-      host: this.configService.get('redis.host'),
-      port: this.configService.get('redis.port'),
-      password: this.configService.get('redis.password'),
-      db: this.configService.get('cache.redis_db'),
-    };
-    for (const mp of dict_list) {
-      if (!mp.field_value) {
-        console.error(`小程序配置异常[id=${mp.id}]`);
-        continue;
-      }
-      try {
-        const conf: any = JSON.parse(mp.field_value);
-        // {"appid":"","appsecret":""}
-        MPCoreFactory.putCore(
-          {
-            appId: conf.appid,
-            appScrect: conf.appsecret,
-          },
-          mp_redis_conf,
-        );
-        console.log(`加载小程序配置：${conf.appid}`);
-      } catch (error) {
-        console.error(`小程序配置异常[id=${mp.id}]，${error.message}`);
-      }
-    }
   }
   async initWXPay(): Promise<void> {
     const dict_list = await this.dictCacheService.getDictConf('微信支付配置');
