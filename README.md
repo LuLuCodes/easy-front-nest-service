@@ -53,6 +53,88 @@ async someHandler(@CurrentUser() user: AuthenticatedUser) { ... }
 
 JWT payload 一次性灌入用户的 `roles`（角色名）与 `permissions`（right_code）；access TTL 15m，权限变更次轮 refresh 即生效。强制下线可在 refresh 阶段加黑名单（预留 `CacheService` 钩子）。
 
+# 多租户 (5.x+)
+
+> 5.0.0 起本服务以 SaaS 形态运行：每个调用都绑定一个 `tenant_id`，凭证（公众号 / 小程序 / 微信支付 / 支付宝 / OSS）按租户隔离。
+
+## 隔离模型
+
+- **共享 schema + tenant_id 列**：所有业务表新增 `tenant_id` 列，TypeORM subscriber 自动注入；`AuditEntity` 基类承载该字段。
+- **JWT claim**：access token 携带 `tenant_id`、`is_super_admin`，通过 `TenantContextInterceptor` 注入 `AsyncLocalStorage`，下游 service / repo / provider 一律从 context 取值，禁止直接读 `req`。
+- **超级管理员**：system 租户 (id=0) 下的 `is_super_admin=true` 用户跨租户读写，所有调用记 audit log；用 `@SuperAdminOnly()` 装饰器守护控制平面接口。
+- **租户切换**：`POST /api/auth/switch-tenant { tenant_id }` 校验 `t_tenant_user_relation` 后重签 token。
+
+## 必要环境变量
+
+```env
+TENANT_MASTER_KEY=<≥ 32 字节, base64; 用于 t_tenant_credential AES-256-GCM>
+```
+
+`TENANT_MASTER_KEY` 启动时强校验；不存在或长度不够直接拒绝启动。
+
+## 控制平面（仅 super-admin）
+
+| 端点                                                   | 用途                    |
+| ------------------------------------------------------ | ----------------------- |
+| `POST /api/admin/tenants`                              | 创建租户                |
+| `GET  /api/admin/tenants`                              | 列出租户                |
+| `GET  /api/admin/tenants/:id`                          | 租户详情                |
+| `POST /api/admin/tenants/:id/users`                    | 添加用户到租户          |
+| `DELETE /api/admin/tenants/:id/users/:userId`          | 移除用户                |
+| `POST /api/admin/tenants/:id/credentials`              | 添加凭证（即加密入库）  |
+| `GET  /api/admin/tenants/:id/credentials`              | 列出凭证（不含 secret） |
+| `PATCH /api/admin/tenants/:id/credentials/:cid/status` | 启用 / 禁用             |
+| `PATCH /api/admin/tenants/:id/credentials/:cid/secret` | 轮换 secret / cert      |
+
+## Provider 配置
+
+每条凭证存于 `t_tenant_credential`：`secret_cipher` / `cert_cipher` AES-256-GCM 加密，`metadata` JSON 存非密配置。下表是各 provider 的字段约定：
+
+| Provider | `app_id`      | `secret`          | `cert`             | `metadata` 关键字段                                                                 |
+| -------- | ------------- | ----------------- | ------------------ | ----------------------------------------------------------------------------------- |
+| `wx_oa`  | 公众号 AppID  | 公众号 AppSecret  | -                  | `token`, `encoding_aes_key`                                                         |
+| `wx_mp`  | 小程序 AppID  | 小程序 AppSecret  | -                  | (无)                                                                                |
+| `wx_pay` | 商户号 mch_id | -                 | 商户私钥 PEM       | `api_v3_key`, `appid`, `notify_url?`, `refund_notify_url?`                          |
+| `alipay` | 支付宝 app_id | 商户私钥 PEM      | 支付宝平台公钥 PEM | `gateway?`, `sign_type?`, `key_type?`, `encrypt_key?`, `notify_url?`, `return_url?` |
+| `oss`    | bucket 名     | access_key_secret | access_key_id      | `region`, `endpoint?`, `internal?`, `domain?`, `secure?`, `timeout_ms?`             |
+
+`cert_serial_no` 仅 wx_pay 使用（商户证书序列号）。
+
+## Provider 调用约定
+
+每个 provider 实现统一接口：
+
+```ts
+interface Provider<TClient> {
+  readonly name: CREDENTIAL_PROVIDER;
+  getClient(tenantId: number, appId?: string): Promise<TClient>;
+  invalidate(tenantId: number, appId?: string): Promise<void>;
+}
+```
+
+- `getClient` 内部走 `TenantCredentialVault.get(tenantId, name, appId)` 取凭证（LRU + Redis 双层缓存，5min TTL，30s 负缓存），按 `(tenantId, app_id)` 缓存客户端实例。
+- 凭证更新 / 轮换会通过 `vault.invalidate` 击穿缓存。
+- 上游错误统一封 `ProviderError`（带 `provider` 标签 + `upstreamCode` + `retryable`），`CredentialMissingError` 是没配凭证时的特化。
+
+## 何时需要写 controller / service
+
+业务代码常态下不需要直接接触 vault：
+
+```ts
+@Controller('alipay')
+export class AlipayController {
+  constructor(private readonly provider: AlipayProvider) {}
+
+  @Post('precreate')
+  async precreate(@Body() body: PrecreateDto, @CurrentUser() user: AuthenticatedUser) {
+    const client = await this.provider.getClient(user.tenant_id, body.app_id);
+    return client.precreate(stripAppId(body));
+  }
+}
+```
+
+新增 provider 的标准流程见 [docs/CONTRIBUTING.md](./docs/CONTRIBUTING.md)。
+
 # 部署
 
 ```shell

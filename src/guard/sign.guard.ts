@@ -16,8 +16,7 @@ import {
   ExecutionContext,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { checkSign } from '@libs/cryptogram';
-import { Kit } from '@easy-front-core-sdk/kits';
+import { checkSign, makeSortStr } from '@libs/cryptogram';
 
 @Injectable()
 export class SignGuard implements CanActivate {
@@ -57,7 +56,7 @@ export class SignGuard implements CanActivate {
       delete request_data.sign;
       let isOk = false;
       if (method === 'GET') {
-        isOk = checkSign(sign, Kit.makeSortStr(request_data), url);
+        isOk = checkSign(sign, makeSortStr(request_data), url);
       } else {
         isOk = checkSign(sign, JSON.stringify(request_data), url);
       }
@@ -69,10 +68,7 @@ export class SignGuard implements CanActivate {
       throw new HttpException('签名错误', HttpStatus.FORBIDDEN);
     } catch (e) {
       console.log('to sign', e.message);
-      throw new HttpException(
-        `签名校验异常:${e.message}`,
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new HttpException(`签名校验异常:${e.message}`, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
