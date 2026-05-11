@@ -326,7 +326,10 @@ P3-1 完成后到 P3-3 之前（即 access 切换中），**main 上 Sequelize +
 - **改**：jest `coverageThreshold.global.lines: 50`（下期升 80）；`.github/workflows/ci.yml` 加 `--coverage` 强制
 - **退出条件**：`pnpm test:cov` lines ≥ 50%；e2e 可在 CI 跑通无 host 依赖；PR 覆盖率回退即 fail
 
-### P8 · Bun 引入评估 spike（**可选，2-3 PD，不阻塞主线**）
+### P8 · Bun 引入评估 spike（**已完成 — 决策：Deferred，2026-05-11**）
+
+> 实际产出见 [docs/decisions/2026-05-11-bun-evaluation.md](./decisions/2026-05-11-bun-evaluation.md)。
+> Step 1（`bun install`）绿；Step 2（`bun test`）在 NestJS `@InjectRepository` 上撞 oven-sh/bun#4575 红灯；Step 3 未启动。下次重新评估：2026-11 或上游 fix 落地。
 
 - **背景**：Bun 在 NestJS + Express 场景下相比 Node 有 ~2.4× QPS 提升，但与 NestJS 装饰器、TypeORM、原生模块叠加存在已知风险（截至 2026 Q2）
 - **已知风险清单**（全部带可查证 issue）：
