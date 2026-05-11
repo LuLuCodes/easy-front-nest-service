@@ -30,6 +30,7 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
+    "test:integration": "jest --config ./test/jest-integration.json --forceExit",
     "typeorm": "node --require ts-node/register --require tsconfig-paths/register ./node_modules/typeorm/cli.js -d src/database/data-source.ts",
     "migration:generate": "pnpm typeorm migration:generate",
     "migration:run": "pnpm typeorm migration:run",
@@ -170,7 +171,8 @@
       "@guard/(.*)$": "<rootDir>/src/guard/$1",
       "@decorator/(.*)$": "<rootDir>/src/decorator/$1",
       "@tenant/(.*)$": "<rootDir>/src/tenant/$1",
-      "@providers/(.*)$": "<rootDir>/src/providers/$1"
+      "@providers/(.*)$": "<rootDir>/src/providers/$1",
+      "@interceptor/(.*)$": "<rootDir>/src/interceptor/$1"
     },
     "testRegex": ".*\\.spec\\.ts$",
     "testPathIgnorePatterns": [
@@ -188,6 +190,14 @@
       "!src/main.ts"
     ],
     "coverageDirectory": "./coverage",
+    "coverageThreshold": {
+      "global": {
+        "statements": 50,
+        "branches": 35,
+        "functions": 50,
+        "lines": 50
+      }
+    },
     "testEnvironment": "node"
   },
   "config": {

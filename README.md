@@ -135,6 +135,41 @@ export class AlipayController {
 
 新增 provider 的标准流程见 [docs/CONTRIBUTING.md](./docs/CONTRIBUTING.md)。
 
+# 测试 (7.x+)
+
+> 7.0.0 起，jest 强制覆盖率门槛（lines/statements/functions ≥ 50%，branches ≥ 35%）。CI 覆盖率回退立刻 fail。
+
+## 三层测试套件
+
+| 层级        | 命令                             | 内容                                                            |
+| ----------- | -------------------------------- | --------------------------------------------------------------- |
+| Unit        | `pnpm test` (或 `pnpm test:cov`) | `src/**/*.spec.ts`，无外部依赖，含 `coverageThreshold` 阻塞门槛 |
+| E2E         | `pnpm test:e2e`                  | `test/e2e/*.e2e-spec.ts`，TestingModule + supertest + stub repo |
+| Integration | `pnpm test:integration`          | `test/**/*.integration.spec.ts`，**需要本地 mysql + redis**     |
+
+## 本地跑 Integration
+
+```bash
+docker compose -f docker-compose.test.yml up -d   # 起 mysql:8 + redis:7
+pnpm test:integration
+docker compose -f docker-compose.test.yml down -v
+```
+
+## CI 流水线
+
+- `.github/workflows/ci.yml`
+  - **ci job**：unit + e2e + build + 覆盖率门槛阻塞
+  - **integration-test job** (`needs: ci`)：GitHub Actions services 起 mysql + redis，跑 `pnpm test:integration`
+- `.github/workflows/docker.yml`：build + Trivy + SBOM（详见下文部署章节）
+- `.github/workflows/codeql.yml`：静态安全分析
+
+## 写新测试
+
+- 单测放 `src/**/*.spec.ts`，与源码同目录
+- E2E 放 `test/e2e/*.e2e-spec.ts`，用 TestingModule + supertest + stub repo
+- Integration 放 `test/**/*.integration.spec.ts`；不被默认 `pnpm test` 跑，由 CI 单独 job 跑
+- 增加新模块时**同步**写 controller spec（mock service）+ service spec（mock repo），避免覆盖率回退
+
 # 部署 (6.x+)
 
 > 6.0.0 起，部署从 pm2 + 单阶段 keymetrics 镜像切换为多阶段 Distroless 镜像 + GitHub Actions 自动发布到 ghcr.io。
