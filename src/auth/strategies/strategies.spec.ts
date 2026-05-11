@@ -1,6 +1,6 @@
 import { ConfigService } from '@nestjs/config';
 import { UnauthorizedException } from '@nestjs/common';
-import type { Request } from 'express';
+import type { FastifyRequest } from 'fastify';
 
 import type { AuthConfig } from '@config/auth';
 
@@ -63,7 +63,7 @@ describe('JwtRefreshStrategy', () => {
     const req = {
       cookies: { refresh_token: 'cookie-token' },
       body: {},
-    } as unknown as Request;
+    } as unknown as FastifyRequest;
     const out = strategy.validate(req, { sub: 7, account_id: 't', tenant_id: 0, jti: 'j' });
     expect(out.token).toBe('cookie-token');
   });
@@ -73,7 +73,7 @@ describe('JwtRefreshStrategy', () => {
     const req = {
       cookies: {},
       body: { refreshToken: 'body-token' },
-    } as unknown as Request;
+    } as unknown as FastifyRequest;
     const out = strategy.validate(req, { sub: 7, account_id: 't', tenant_id: 0, jti: 'j' });
     expect(out.token).toBe('body-token');
   });
@@ -83,7 +83,7 @@ describe('LocalStrategy', () => {
   it('rejects when login_client is missing or non-numeric', async () => {
     const authService = { validateUser: jest.fn() } as unknown as AuthService;
     const strategy = new LocalStrategy(authService);
-    const req = { body: {} } as unknown as Request;
+    const req = { body: {} } as unknown as FastifyRequest;
     await expect(strategy.validate(req, 'a', 'p')).rejects.toThrow(UnauthorizedException);
     expect(authService.validateUser).not.toHaveBeenCalled();
   });
@@ -93,7 +93,7 @@ describe('LocalStrategy', () => {
       validateUser: jest.fn().mockResolvedValue(null),
     } as unknown as AuthService;
     const strategy = new LocalStrategy(authService);
-    const req = { body: { login_client: 1 } } as unknown as Request;
+    const req = { body: { login_client: 1 } } as unknown as FastifyRequest;
     await expect(strategy.validate(req, 'a', 'p')).rejects.toThrow(UnauthorizedException);
   });
 
@@ -110,7 +110,7 @@ describe('LocalStrategy', () => {
       validateUser: jest.fn().mockResolvedValue(user),
     } as unknown as AuthService;
     const strategy = new LocalStrategy(authService);
-    const req = { body: { login_client: 1 } } as unknown as Request;
+    const req = { body: { login_client: 1 } } as unknown as FastifyRequest;
     await expect(strategy.validate(req, 'a', 'p')).resolves.toEqual(user);
     expect(authService.validateUser).toHaveBeenCalledWith('a', 'p', 1);
   });

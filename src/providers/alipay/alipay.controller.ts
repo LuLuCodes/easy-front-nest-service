@@ -12,7 +12,7 @@ import {
   UsePipes,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import type { Response } from 'express';
+import type { FastifyReply } from 'fastify';
 
 import { CurrentUser, Public } from '@auth/decorators';
 import type { AuthenticatedUser } from '@auth/types/jwt-payload';
@@ -128,7 +128,7 @@ export class AlipayController {
     @Param('tenantId', ParseIntPipe) tenantId: number,
     @Param('appId') appId: string,
     @Body() body: unknown,
-    @Res() res: Response,
+    @Res() res: FastifyReply,
   ): Promise<void> {
     if (!isStringRecord(body)) {
       throw new BadRequestException('Notify body must be urlencoded form fields');
@@ -140,7 +140,7 @@ export class AlipayController {
     client.verifyNotify(body);
     // Alipay expects literal "success" (text/plain) within 5s — production
     // wires the decoded payload into BullMQ for retry-safe handling.
-    res.type('text/plain').send('success');
+    void res.type('text/plain').send('success');
   }
 }
 

@@ -10,13 +10,10 @@ import {
   Query,
   Req,
   Res,
-  UploadedFile,
-  UseInterceptors,
   UsePipes,
 } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import type { Express, Request, Response } from 'express';
+import type { FastifyReply, FastifyRequest } from 'fastify';
 import { writeFile, unlink } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -63,7 +60,7 @@ export class WxOaController {
     @Query('nonce') nonceRaw: unknown,
     @Query('echostr') echostrRaw: unknown,
     @Query('tenant_id') tenantIdRaw: unknown,
-    @Res() res: Response,
+    @Res() res: FastifyReply,
   ): Promise<void> {
     const signature = ensureScalar(signatureRaw, 'signature');
     const timestamp = ensureScalar(timestampRaw, 'timestamp');
@@ -80,7 +77,7 @@ export class WxOaController {
     const client = await this.provider.getClient(tid, appId);
     const ok = client.verifyHandshake(signature, timestamp, nonce);
     const safeBody = ok ? echostr : 'forbidden';
-    res
+    void res
       .status(ok ? 200 : 403)
       .type('text/plain')
       .send(safeBody);
@@ -95,7 +92,7 @@ export class WxOaController {
     @Query('timestamp') timestampRaw: unknown,
     @Query('nonce') nonceRaw: unknown,
     @Query('tenant_id') tenantIdRaw: unknown,
-    @Req() req: Request,
+    @Req() req: FastifyRequest,
   ): Promise<{ received: boolean }> {
     const msgSignature = ensureScalar(msgSignatureRaw, 'msg_signature');
     const timestamp = ensureScalar(timestampRaw, 'timestamp');
@@ -166,13 +163,9 @@ export class WxOaController {
   // ─── Materials ────────────────────────────────────────────────────────
 
   @Post('media/upload-temp')
-  @UseInterceptors(FileInterceptor('file'))
-  async uploadTempMedia(
-    @UploadedFile() file: Express.Multer.File,
-    @Body() body: UploadTempMediaDto,
-    @CurrentUser() user: AuthenticatedUser,
-  ) {
-    if (!file) throw new BadRequestException('file is required');
+  async uploadTempMedia(@Req() req: FastifyRequest, @CurrentUser() user: AuthenticatedUser) {
+    const { file, fields } = await consumeSingleFile(req);
+    const body = fields as unknown as UploadTempMediaDto;
     const client = await this.provider.getClient(user.tenant_id, body.app_id);
     return withTempFile(file, (path) => client.uploadTempMedia(path, body.type));
   }
@@ -182,12 +175,12 @@ export class WxOaController {
   async getTempMedia(
     @Body() body: GetTempMediaDto,
     @CurrentUser() user: AuthenticatedUser,
-    @Res() res: Response,
+    @Res() res: FastifyReply,
   ) {
     const client = await this.provider.getClient(user.tenant_id, body.app_id);
     const result = await client.getTempMedia(body.media_id);
-    if (result.contentType) res.type(result.contentType);
-    res.send(result.buffer);
+    if (result.contentType) void res.type(result.contentType);
+    void res.send(result.buffer);
   }
 
   @Post('media/get-jssdk')
@@ -195,12 +188,12 @@ export class WxOaController {
   async getJssdkMedia(
     @Body() body: MaterialIdDto,
     @CurrentUser() user: AuthenticatedUser,
-    @Res() res: Response,
+    @Res() res: FastifyReply,
   ) {
     const client = await this.provider.getClient(user.tenant_id, body.app_id);
     const result = await client.getJssdkMedia(body.media_id);
-    if (result.contentType) res.type(result.contentType);
-    res.send(result.buffer);
+    if (result.contentType) void res.type(result.contentType);
+    void res.send(result.buffer);
   }
 
   @Post('media/add-news')
@@ -218,37 +211,25 @@ export class WxOaController {
   }
 
   @Post('media/upload-img')
-  @UseInterceptors(FileInterceptor('file'))
-  async uploadImg(
-    @UploadedFile() file: Express.Multer.File,
-    @Body() body: AppIdOptionalDto,
-    @CurrentUser() user: AuthenticatedUser,
-  ) {
-    if (!file) throw new BadRequestException('file is required');
+  async uploadImg(@Req() req: FastifyRequest, @CurrentUser() user: AuthenticatedUser) {
+    const { file, fields } = await consumeSingleFile(req);
+    const body = fields as unknown as AppIdOptionalDto;
     const client = await this.provider.getClient(user.tenant_id, body.app_id);
     return withTempFile(file, (path) => client.uploadImg(path));
   }
 
   @Post('media/add-permanent')
-  @UseInterceptors(FileInterceptor('file'))
-  async addPermanentMedia(
-    @UploadedFile() file: Express.Multer.File,
-    @Body() body: AddPermanentMediaDto,
-    @CurrentUser() user: AuthenticatedUser,
-  ) {
-    if (!file) throw new BadRequestException('file is required');
+  async addPermanentMedia(@Req() req: FastifyRequest, @CurrentUser() user: AuthenticatedUser) {
+    const { file, fields } = await consumeSingleFile(req);
+    const body = fields as unknown as AddPermanentMediaDto;
     const client = await this.provider.getClient(user.tenant_id, body.app_id);
     return withTempFile(file, (path) => client.addMaterial(path, body.type));
   }
 
   @Post('media/add-video')
-  @UseInterceptors(FileInterceptor('file'))
-  async addVideoMaterial(
-    @UploadedFile() file: Express.Multer.File,
-    @Body() body: AddVideoMaterialDto,
-    @CurrentUser() user: AuthenticatedUser,
-  ) {
-    if (!file) throw new BadRequestException('file is required');
+  async addVideoMaterial(@Req() req: FastifyRequest, @CurrentUser() user: AuthenticatedUser) {
+    const { file, fields } = await consumeSingleFile(req);
+    const body = fields as unknown as AddVideoMaterialDto;
     const client = await this.provider.getClient(user.tenant_id, body.app_id);
     return withTempFile(file, (path) =>
       client.addVideoMaterial(path, body.title, body.introduction),
@@ -335,14 +316,53 @@ export class WxOaController {
 
 const ECHOSTR_PATTERN = /^[A-Za-z0-9_-]{1,256}$/;
 
-async function withTempFile<T>(
-  file: Express.Multer.File,
-  task: (path: string) => Promise<T>,
-): Promise<T> {
+interface UploadedFile {
+  buffer: Buffer;
+  filename: string;
+  mimetype: string;
+}
+
+interface MultipartFilePart {
+  type: 'file';
+  filename: string;
+  mimetype: string;
+  fieldname: string;
+  toBuffer(): Promise<Buffer>;
+}
+
+interface MultipartFieldPart {
+  type: 'field';
+  fieldname: string;
+  value: unknown;
+}
+
+type MultipartPart = MultipartFilePart | MultipartFieldPart;
+
+async function consumeSingleFile(
+  req: FastifyRequest,
+): Promise<{ file: UploadedFile; fields: Record<string, string> }> {
+  const reqWithParts = req as FastifyRequest & {
+    parts: () => AsyncIterableIterator<MultipartPart>;
+  };
+  const fields: Record<string, string> = {};
+  let file: UploadedFile | null = null;
+  for await (const part of reqWithParts.parts()) {
+    if (part.type === 'file') {
+      if (file) continue; // keep first
+      file = { buffer: await part.toBuffer(), filename: part.filename, mimetype: part.mimetype };
+    } else if (typeof part.value === 'string') {
+      fields[part.fieldname] = part.value;
+    }
+  }
+  if (!file) throw new BadRequestException('file is required');
+  return { file, fields };
+}
+
+async function withTempFile<T>(file: UploadedFile, task: (path: string) => Promise<T>): Promise<T> {
   // Path is built entirely from server-side randomness; nothing from the
-  // upload's `originalname` reaches the FS layer. WeChat's upload APIs
-  // determine media type from the request `type=` query param, not the
-  // file extension, so dropping the extension is safe.
+  // upload's filename reaches the FS layer. WeChat's upload APIs determine
+  // media type from the request `type=` query param, not the file extension.
+  void file;
   const safeName = `wx-oa-${Date.now()}-${randomBytes(16).toString('hex')}`;
   const path = join(tmpdir(), safeName);
   await writeFile(path, file.buffer, { mode: 0o600 });

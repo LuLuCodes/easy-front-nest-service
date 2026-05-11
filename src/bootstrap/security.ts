@@ -1,10 +1,15 @@
 import type { ConfigService } from '@nestjs/config';
-import type { NestExpressApplication } from '@nestjs/platform-express';
-import helmet from 'helmet';
+import type { NestFastifyApplication } from '@nestjs/platform-fastify';
+import fastifyHelmet from '@fastify/helmet';
 
-export function applySecurity(app: NestExpressApplication, config: ConfigService): void {
+export async function applySecurity(
+  app: NestFastifyApplication,
+  config: ConfigService,
+): Promise<void> {
   if (config.get('app.node_env') === 'production') {
-    app.use(helmet());
+    // Cast: see note in body.ts about Fastify plugin type augmentation.
+
+    await app.register(fastifyHelmet as any);
   }
 
   app.enableCors({

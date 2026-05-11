@@ -1,17 +1,17 @@
 import { ConfigService } from '@nestjs/config';
-import type { NestExpressApplication } from '@nestjs/platform-express';
+import type { NestFastifyApplication } from '@nestjs/platform-fastify';
 
 import { applyBodyParsers } from './body';
 import { applyGlobalProviders } from './global';
 import { applySecurity } from './security';
 import { applySwagger } from './swagger';
 
-export function applyBootstrap(app: NestExpressApplication): void {
+export async function applyBootstrap(app: NestFastifyApplication): Promise<void> {
   const config = app.get(ConfigService);
 
   app.setGlobalPrefix('api');
-  applySecurity(app, config);
-  applyBodyParsers(app);
+  await applySecurity(app, config);
+  await applyBodyParsers(app);
   applyGlobalProviders(app);
   applySwagger(app, config);
 }
