@@ -10,11 +10,12 @@ function makeSubscriber(ctxValue: { tenantId: number } | undefined = undefined) 
     get: jest.fn().mockReturnValue(ctxValue),
   } as unknown as jest.Mocked<TenantContextService>;
   const sub = new AuditFieldsSubscriber(dataSource, tenantContext);
+  sub.onModuleInit();
   return { sub, tenantContext, dataSource };
 }
 
 describe('AuditFieldsSubscriber', () => {
-  it('registers itself with the data source on construction', () => {
+  it('registers itself with the data source on onModuleInit', () => {
     const { sub, dataSource } = makeSubscriber();
     expect(dataSource.subscribers).toContain(sub);
   });

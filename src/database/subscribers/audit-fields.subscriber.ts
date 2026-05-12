@@ -1,11 +1,6 @@
-import { Injectable } from '@nestjs/common';
-import {
-  DataSource,
-  EntitySubscriberInterface,
-  EventSubscriber,
-  InsertEvent,
-  UpdateEvent,
-} from 'typeorm';
+import { Injectable, OnModuleInit } from '@nestjs/common';
+import { InjectDataSource } from '@nestjs/typeorm';
+import { DataSource, EntitySubscriberInterface, InsertEvent, UpdateEvent } from 'typeorm';
 
 import { TenantContextService } from '@tenant/tenant-context.service';
 
@@ -23,15 +18,26 @@ import { TenantContextService } from '@tenant/tenant-context.service';
  * request runs inside a TenantContextInterceptor scope, so the
  * subscriber just stamps from there. Outside of a request scope
  * (CLI/migrations/cron) the entity must set tenant_id explicitly.
+ *
+ * Registration: deliberately NOT using TypeORM's `@EventSubscriber()`
+ * decorator. That decorator side-effect-registers the class globally
+ * and TypeORM constructs an extra instance via its own (DI-less)
+ * container during `DataSource.initialize` — which crashes whenever
+ * the load order leaves Nest's DI override of TypeORM's container
+ * not-yet-installed (observed under ts-node in the openapi:export
+ * script). Pushing manually inside `onModuleInit` runs after Nest DI
+ * has finished wiring, so the only instance the broadcaster sees is
+ * the one with proper dependencies.
  */
 @Injectable()
-@EventSubscriber()
-export class AuditFieldsSubscriber implements EntitySubscriberInterface {
+export class AuditFieldsSubscriber implements EntitySubscriberInterface, OnModuleInit {
   constructor(
-    dataSource: DataSource,
+    @InjectDataSource() private readonly dataSource: DataSource,
     private readonly tenantContext: TenantContextService,
-  ) {
-    dataSource.subscribers.push(this);
+  ) {}
+
+  onModuleInit(): void {
+    this.dataSource.subscribers.push(this);
   }
 
   beforeInsert(event: InsertEvent<unknown>): void {
