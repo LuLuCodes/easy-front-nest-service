@@ -5,6 +5,10 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  # Mirror of ci.yml: pull_request_target lets the release-please bot PR
+  # satisfy required-checks gates without bypassing branch protection.
+  pull_request_target:
+    branches: [main]
   schedule:
     - cron: '21 6 * * 1'
 
@@ -17,6 +21,10 @@ jobs:
       actions: read
       contents: read
       security-events: write
+    if: |
+      github.event_name != 'pull_request_target' ||
+      (github.actor == 'github-actions[bot]' &&
+       github.event.pull_request.head.repo.full_name == github.repository)
 
     strategy:
       fail-fast: false
@@ -26,6 +34,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v4

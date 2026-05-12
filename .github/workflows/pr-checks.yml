@@ -3,11 +3,18 @@ name: PR Checks
 on:
   pull_request:
     types: [opened, edited, reopened, synchronize]
+  # Bot PRs (release-please) — see ci.yml for the rationale.
+  pull_request_target:
+    types: [opened, edited, reopened, synchronize]
 
 jobs:
   semantic-pr-title:
     name: Semantic PR title
     runs-on: ubuntu-latest
+    if: |
+      github.event_name != 'pull_request_target' ||
+      (github.actor == 'github-actions[bot]' &&
+       github.event.pull_request.head.repo.full_name == github.repository)
     steps:
       - uses: amannn/action-semantic-pull-request@v6
         env:
@@ -29,6 +36,10 @@ jobs:
   size-label:
     name: PR size label
     runs-on: ubuntu-latest
+    if: |
+      github.event_name != 'pull_request_target' ||
+      (github.actor == 'github-actions[bot]' &&
+       github.event.pull_request.head.repo.full_name == github.repository)
     steps:
       - uses: codelytv/pr-size-labeler@v1
         with:
