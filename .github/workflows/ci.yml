@@ -47,6 +47,9 @@ jobs:
       - name: Build
         run: pnpm build
 
+      - name: Entity-init smoke (catches SWC circular-import regressions)
+        run: node -e "require('./api/entities/index.js'); console.log('entities OK')"
+
       - name: Upload coverage
         if: always()
         uses: actions/upload-artifact@v4

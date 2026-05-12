@@ -1,4 +1,5 @@
 import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import type { Relation } from 'typeorm';
 import { AuditEntity } from './audit.entity';
 import { UserLogin } from './user-login.entity';
 
@@ -45,5 +46,5 @@ export class User extends AuditEntity {
   is_system_admin!: number;
 
   @OneToOne(() => UserLogin, (login) => login.user)
-  account?: UserLogin;
+  account?: Relation<UserLogin>;
 }
