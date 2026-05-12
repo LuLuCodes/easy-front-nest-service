@@ -49,3 +49,6 @@ lerna-debug.log*
 
 # Local Claude Code workspace state
 /.claude
+
+# Generated OpenAPI spec — built fresh in CI / on demand
+/openapi.json
