@@ -3,8 +3,11 @@ import { NestFactory } from '@nestjs/core';
 import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
 import { Logger } from 'nestjs-pino';
 
+import { bootstrapTracing } from './observability/tracing';
 import { applyBootstrap, printBanner } from './bootstrap';
 import { AppModule } from './app.module';
+
+bootstrapTracing();
 
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create<NestFastifyApplication>(
