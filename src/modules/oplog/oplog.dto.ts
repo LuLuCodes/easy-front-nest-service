@@ -41,7 +41,6 @@ export class CreateLogDto {
 
   @ApiPropertyOptional({
     description: '目标模块',
-    type: TARGET_TYPE,
     enum: TARGET_TYPE,
     example: TARGET_TYPE.其他,
   })
@@ -57,7 +56,6 @@ export class CreateLogDto {
 
   @ApiProperty({
     description: '动作',
-    type: ACTION_TYPE,
     enum: ACTION_TYPE,
     example: ACTION_TYPE.其他,
   })
