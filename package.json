@@ -77,7 +77,7 @@
     "fastify": "^5.8.5",
     "fastify-xml-body-parser": "^3.0.0",
     "form-data": "^4.0.5",
-    "fs-extra": "^11.2.0",
+    "fs-extra": "^11.3.5",
     "ioredis": "^5.10.1",
     "jsdom": "^25.0.1",
     "lodash": "^4.17.21",
