@@ -73,9 +73,7 @@
     "crypto-js": "^4.2.0",
     "dayjs": "^1.11.20",
     "dotenv": "^16.4.5",
-    "fast-xml-parser": "^4.3.6",
     "fastify": "^5.8.5",
-    "fastify-xml-body-parser": "^3.0.0",
     "form-data": "^4.0.5",
     "fs-extra": "^11.3.5",
     "ioredis": "^5.10.1",
@@ -95,7 +93,6 @@
     "reflect-metadata": "^0.2.1",
     "rxjs": "^7.8.2",
     "typeorm": "^0.3.28",
-    "uuid": "^9.0.1",
     "vm": "^0.1.0"
   },
   "devDependencies": {
@@ -206,7 +203,6 @@
     "overrides": {
       "cross-spawn": "^7.0.6",
       "fast-uri": "^3.1.2",
-      "fast-xml-parser": "^4.5.5",
       "fastify": "^5.8.5",
       "validator": "^13.15.22"
     },

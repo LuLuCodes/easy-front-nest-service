@@ -1,12 +1,11 @@
 import * as crypto from 'crypto';
 import * as cryptoJS from 'crypto-js';
-import { v4 as uuidv4 } from 'uuid';
 
 /**
  * Make uuid
  */
 export function uuid(replace = true): string {
-  const uuid = uuidv4();
+  const uuid = crypto.randomUUID();
   return replace ? uuid.replace(/-/gi, '') : uuid;
 }
 

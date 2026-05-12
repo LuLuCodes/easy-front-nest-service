@@ -7,7 +7,6 @@ settings:
 overrides:
   cross-spawn: ^7.0.6
   fast-uri: ^3.1.2
-  fast-xml-parser: ^4.5.5
   fastify: ^5.8.5
   validator: ^13.15.22
 
@@ -113,15 +112,9 @@ importers:
       dotenv:
         specifier: ^16.4.5
         version: 16.4.5
-      fast-xml-parser:
-        specifier: ^4.5.5
-        version: 4.5.6
       fastify:
         specifier: ^5.8.5
         version: 5.8.5
-      fastify-xml-body-parser:
-        specifier: ^3.0.0
-        version: 3.0.0
       form-data:
         specifier: ^4.0.5
         version: 4.0.5
@@ -179,9 +172,6 @@ importers:
       typeorm:
         specifier: ^0.3.28
         version: 0.3.28(ioredis@5.10.1)(mysql2@3.11.0)(redis@4.7.0)(ts-node@10.9.2(@swc/core@1.15.33)(@types/node@22.19.18)(typescript@5.9.3))
-      uuid:
-        specifier: ^9.0.1
-        version: 9.0.1
       vm:
         specifier: ^0.1.0
         version: 0.1.0
@@ -1808,30 +1798,6 @@ packages:
         integrity: sha512-jCs9ldd7NwzpgXDIf6P3+NrHh9/sD6CQdxHyjQI+h/6rDNo88ypBxxz45UDuZHz9r3tNz7N/VInSVoVdtXEI4A==,
       }
     engines: { node: ^14.21.3 || >=16 }
-
-  '@nodable/base-output-builder@1.0.5':
-    resolution:
-      {
-        integrity: sha512-3q3YM7r/CLtVBREUPmWoPAqjK4d8amNHqP558SLJT0dC9VDRKvCMxhmapzfl0gfoBuPL6NlyYSlr53bOmRY38Q==,
-      }
-
-  '@nodable/compact-builder@1.0.7':
-    resolution:
-      {
-        integrity: sha512-g5rl5mSS+8JzzQl83SZxJOQC0W4hlLXmfloVSNx57FD2DurIYzaOsqGHbUvYjZgXfi5al3/vvTwuLNZHRWFAsQ==,
-      }
-
-  '@nodable/entities@2.1.0':
-    resolution:
-      {
-        integrity: sha512-nyT7T3nbMyBI/lvr6L5TyWbFJAI9FTgVRakNoBqCD+PmID8DzFrrNdLLtHMwMszOtqZa8PAOV24ZqDnQrhQINA==,
-      }
-
-  '@nodable/flexible-xml-parser@1.1.1':
-    resolution:
-      {
-        integrity: sha512-qbs249PMtswdHyDF5AQQORpBsAG7DmBivCOajvtviOjHeAJ/II6sMgwmWw0fK5BhD64D1b6fVKfO2NgPtjmnfQ==,
-      }
 
   '@nodelib/fs.scandir@2.1.5':
     resolution:
@@ -4778,23 +4744,10 @@ packages:
         integrity: sha512-rVjf7ArG3LTk+FS6Yw81V1DLuZl1bRbNrev6Tmd/9RaroeeRRJhAt7jg/6YFxbvAQXUCavSoZhPPj6oOx+5KjQ==,
       }
 
-  fast-xml-parser@4.5.6:
-    resolution:
-      {
-        integrity: sha512-Yd4vkROfJf8AuJrDIVMVmYfULKmIJszVsMv7Vo71aocsKgFxpdlpSHXSaInvyYfgw2PRuObQSW2GFpVMUjxu9A==,
-      }
-    hasBin: true
-
   fastify-plugin@5.1.0:
     resolution:
       {
         integrity: sha512-FAIDA8eovSt5qcDgcBvDuX/v0Cjz0ohGhENZ/wpc3y+oZCY2afZ9Baqql3g/lC+OHRnciQol4ww7tuthOb9idw==,
-      }
-
-  fastify-xml-body-parser@3.0.0:
-    resolution:
-      {
-        integrity: sha512-h2TjIgT2tp5P71sL/n5B03zuumSByhqI+/haz8fCY56FUbyXc76gXDZKG8VyoVpYhyLh22Oic2xIU+DpQ4xAHQ==,
       }
 
   fastify@5.8.5:
@@ -7231,13 +7184,6 @@ packages:
       }
     engines: { node: ^12.20.0 || ^14.13.1 || >=16.0.0 }
 
-  path-expression-matcher@1.5.0:
-    resolution:
-      {
-        integrity: sha512-cbrerZV+6rvdQrrD+iGMcZFEiiSrbv9Tfdkvnusy6y0x0GKBXREFg/Y65GhIfm0tnLntThhzCnfKwp1WRjeCyQ==,
-      }
-    engines: { node: '>=14.0.0' }
-
   path-is-absolute@1.0.1:
     resolution:
       {
@@ -8354,18 +8300,6 @@ packages:
       }
     engines: { node: '>=14.16' }
 
-  strnum@1.0.5:
-    resolution:
-      {
-        integrity: sha512-J8bbNyKKXl5qYcR36TIO8W3mVGVHrmmxsd5PAItGkmyzwJvybiw2IVq5nqd0i4LSNSkB/sx9VHllbfFdr9k1JA==,
-      }
-
-  strnum@2.3.0:
-    resolution:
-      {
-        integrity: sha512-ums3KNd42PGyx5xaoVTO1mjU1bH3NpY4vsrVlnv9PNGqQj8wd7rJ6nEypLrJ7z5vxK5RP0yMLo6J/Gsm62DI5Q==,
-      }
-
   strtok3@10.3.5:
     resolution:
       {
@@ -9014,14 +8948,6 @@ packages:
       {
         integrity: sha512-vIYxrBCC/N/K+Js3qSN88go7kIfNPssr/hHCesKCQNAjmgvYS2oqr69kIufEG+O4+PfezOH4EbIeHCfFov8ZgQ==,
       }
-    hasBin: true
-
-  uuid@9.0.1:
-    resolution:
-      {
-        integrity: sha512-b+1eJOlsR9K8HJpow9Ok3fiWOWSIcIzXodvv0rQjVoOVNpWMpxf1wZNpt4y9h10odCNrqnYp1OBzRktckBe3sA==,
-      }
-    deprecated: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).
     hasBin: true
 
   v8-compile-cache-lib@3.0.1:
@@ -10588,25 +10514,6 @@ snapshots:
       typeorm: 0.3.28(ioredis@5.10.1)(mysql2@3.11.0)(redis@4.7.0)(ts-node@10.9.2(@swc/core@1.15.33)(@types/node@22.19.18)(typescript@5.9.3))
 
   '@noble/hashes@1.8.0': {}
-
-  '@nodable/base-output-builder@1.0.5':
-    dependencies:
-      '@nodable/entities': 2.1.0
-      strnum: 2.3.0
-
-  '@nodable/compact-builder@1.0.7':
-    dependencies:
-      '@nodable/base-output-builder': 1.0.5
-      path-expression-matcher: 1.5.0
-
-  '@nodable/entities@2.1.0': {}
-
-  '@nodable/flexible-xml-parser@1.1.1':
-    dependencies:
-      '@nodable/base-output-builder': 1.0.5
-      '@nodable/compact-builder': 1.0.7
-      path-expression-matcher: 1.5.0
-      strnum: 2.3.0
 
   '@nodelib/fs.scandir@2.1.5':
     dependencies:
@@ -12437,16 +12344,7 @@ snapshots:
 
   fast-uri@3.1.2: {}
 
-  fast-xml-parser@4.5.6:
-    dependencies:
-      strnum: 1.0.5
-
   fastify-plugin@5.1.0: {}
-
-  fastify-xml-body-parser@3.0.0:
-    dependencies:
-      '@nodable/flexible-xml-parser': 1.1.1
-      fastify-plugin: 5.1.0
 
   fastify@5.8.5:
     dependencies:
@@ -14024,8 +13922,6 @@ snapshots:
 
   path-exists@5.0.0: {}
 
-  path-expression-matcher@1.5.0: {}
-
   path-is-absolute@1.0.1: {}
 
   path-key@2.0.1: {}
@@ -14631,10 +14527,6 @@ snapshots:
 
   strip-json-comments@5.0.3: {}
 
-  strnum@1.0.5: {}
-
-  strnum@2.3.0: {}
-
   strtok3@10.3.5:
     dependencies:
       '@tokenizer/token': 0.3.0
@@ -15045,8 +14937,6 @@ snapshots:
   utils-merge@1.0.1: {}
 
   uuid@11.1.1: {}
-
-  uuid@9.0.1: {}
 
   v8-compile-cache-lib@3.0.1: {}
 

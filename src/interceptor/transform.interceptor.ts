@@ -16,9 +16,9 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 
+import { randomUUID } from 'node:crypto';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { v4 as uuidv4 } from 'uuid';
 import { OkResponse } from '@libs/util';
 import { envBoolean, env } from '@libs/env-unit';
 import { apiCipher } from '@libs/cryptogram';
@@ -30,7 +30,7 @@ export class TransformInterceptor implements NestInterceptor {
     const ctx = context.switchToHttp();
     const req = ctx.getRequest();
     const res = ctx.getResponse();
-    const request_id = uuidv4().replace(/-/g, '');
+    const request_id = randomUUID().replace(/-/g, '');
     req.body.request_id = request_id;
     req.query.request_id = request_id;
     const responseFun = Reflect.getMetadata('OkResponse', context.getHandler());
