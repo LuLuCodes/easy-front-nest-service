@@ -3,11 +3,11 @@ import * as Core from '@alicloud/pop-core';
 import { ISms, ISmsSendRes, ISmsconfig, ISmsSendconfig } from './index';
 
 export class AliyunSms implements ISms {
-  private smsClient;
+  private smsClient!: Core;
   constructor(config: ISmsconfig) {
     this.createClient(config);
   }
-  createClient(config: ISmsconfig): any {
+  createClient(config: ISmsconfig): void {
     this.smsClient = new Core({
       accessKeyId: config.app_key,
       accessKeySecret: config.app_secret,
@@ -29,18 +29,17 @@ export class AliyunSms implements ISms {
 
     const send_res: ISmsSendRes = { success: false, err_msg: '' };
     try {
-      const res = await this.smsClient.request('SendSms', template, {
+      const res = (await this.smsClient.request('SendSms', template, {
         method: 'POST',
-      });
+      })) as { Code?: string; Message?: string };
       if (res.Code !== 'OK') {
-        // throw new Error(`aliyun短信发送失败：${res.Message}`)
-        send_res.err_msg = res.Message;
+        send_res.err_msg = res.Message ?? 'unknown error';
       } else {
         send_res.err_msg = 'ok';
         send_res.success = true;
       }
     } catch (error) {
-      send_res.err_msg = `aliyun短信发送失败：${error.Message}`;
+      send_res.err_msg = `aliyun短信发送失败：${(error as { Message?: string }).Message ?? (error as Error).message}`;
     }
     return send_res;
     // {  "RequestId": "614048FB-0619-4439-A1D5-AA8B218A****",  "Message": "OK",  "BizId": "386715418801811068^0",  "Code": "OK"}

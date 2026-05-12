@@ -8,15 +8,15 @@
  *
  * Copyright (c) 2022 by leyi leyi@myun.info, All Rights Reserved.
  */
-import RedLock from 'redlock';
-import Redis from 'ioredis';
+import RedLock, { Lock } from 'redlock';
+import Redis, { RedisOptions } from 'ioredis';
 
 export class RedisLock {
-  private static redis = null;
-  private static redlock = null;
+  private static redis: Redis | null = null;
+  private static redlock: RedLock | null = null;
 
-  public static async init(config) {
-    this.redis = new Redis({ ...config, legacyMode: true });
+  public static async init(config: RedisOptions): Promise<void> {
+    this.redis = new Redis({ ...config, legacyMode: true } as RedisOptions);
     this.redlock = new RedLock([this.redis], {
       // the expected clock drift; for more details
       // see http://redis.io/topics/distlock
@@ -40,34 +40,34 @@ export class RedisLock {
     return this.redlock;
   }
 
-  public static async lock(key: string, lock_time: number) {
+  public static async lock(key: string, lock_time: number): Promise<Lock | null> {
     if (!this.redlock) {
       return null;
     }
     try {
       return await this.redlock.acquire([key], lock_time);
     } catch (error) {
-      console.error(`redlock lock error: ${error.message}`);
+      console.error(`redlock lock error: ${(error as Error).message}`);
     }
     return null;
   }
 
-  public static async unlock(lock: any) {
+  public static async unlock(lock: Lock | null): Promise<void> {
     if (!lock) {
-      return null;
+      return;
     }
     try {
       await lock.release();
     } catch (error) {
-      console.error(`redlock unlock error: ${error.message}`);
+      console.error(`redlock unlock error: ${(error as Error).message}`);
     }
   }
 
-  public static async using(
+  public static async using<T>(
     key: string,
     lock_time: number,
-    async_func: (lock) => Promise<any>,
-  ) {
+    async_func: (lock: Lock | null) => Promise<T>,
+  ): Promise<T | null> {
     if (!this.redlock) {
       return null;
     }
@@ -75,23 +75,21 @@ export class RedisLock {
     try {
       return await async_func(lock);
     } catch (error) {
-      // Include the original error stack in the new error
-      throw new Error(
-        `Internal Error: ${error.message}\nOriginal stack: ${error.stack}`,
-      );
+      const err = error as Error;
+      throw new Error(`Internal Error: ${err.message}\nOriginal stack: ${err.stack}`);
     } finally {
       await this.unlock(lock);
     }
   }
 
-  public static async extend(lock: any, lock_time: number) {
+  public static async extend(lock: Lock | null, lock_time: number): Promise<void> {
     if (!lock) {
-      return null;
+      return;
     }
     try {
       await lock.extend(lock_time);
     } catch (error) {
-      console.error(`redlock extend error: ${error.message}`);
+      console.error(`redlock extend error: ${(error as Error).message}`);
     }
   }
 }

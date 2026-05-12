@@ -28,7 +28,7 @@ describe('ValidationPipe', () => {
     it('returns the class instance when transform=true and validation passes', async () => {
       const pipe = new ValidationPipe({ transform: true });
       const value = { account: 'leyi', age: 30 };
-      const out = await pipe.transform(value, { metatype: SampleDto });
+      const out = (await pipe.transform(value, { metatype: SampleDto, type: 'body' })) as SampleDto;
       expect(out).toBeInstanceOf(SampleDto);
       expect(out.account).toBe('leyi');
     });
@@ -36,21 +36,24 @@ describe('ValidationPipe', () => {
     it('returns the raw value when transform=false and validation passes', async () => {
       const pipe = new ValidationPipe({ transform: false });
       const value = { account: 'leyi', age: 30 };
-      const out = await pipe.transform(value, { metatype: SampleDto });
+      const out = await pipe.transform(value, { metatype: SampleDto, type: 'body' });
       expect(out).toBe(value);
     });
 
     it('throws BadRequestException for the first constraint message', async () => {
       const pipe = new ValidationPipe({ transform: true });
       await expect(
-        pipe.transform({ account: '', age: 1 }, { metatype: SampleDto }),
+        pipe.transform({ account: '', age: 1 }, { metatype: SampleDto, type: 'body' }),
       ).rejects.toBeInstanceOf(BadRequestException);
     });
 
     it('drills into nested children to find a constraint', async () => {
       const pipe = new ValidationPipe({ transform: true });
       await expect(
-        pipe.transform({ account: 'leyi', age: 30, inner: { name: '' } }, { metatype: SampleDto }),
+        pipe.transform(
+          { account: 'leyi', age: 30, inner: { name: '' } },
+          { metatype: SampleDto, type: 'body' },
+        ),
       ).rejects.toBeInstanceOf(BadRequestException);
     });
   });
@@ -59,7 +62,7 @@ describe('ValidationPipe', () => {
     it('passes through plain object query/param when there is no metatype', async () => {
       const pipe = new ValidationPipe({ transform: true });
       const value = { x: 1 };
-      const out = await pipe.transform(value, { metatype: undefined });
+      const out = await pipe.transform(value, { metatype: undefined, type: 'body' });
       expect(out).toBe(value);
     });
 

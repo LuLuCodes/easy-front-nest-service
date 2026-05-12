@@ -1,22 +1,33 @@
-import { Injectable, Logger, PipeTransform, BadRequestException } from '@nestjs/common';
-import { validate } from 'class-validator';
+import {
+  ArgumentMetadata,
+  Injectable,
+  Logger,
+  PipeTransform,
+  BadRequestException,
+} from '@nestjs/common';
+import { validate, ValidationError } from 'class-validator';
 import { plainToInstance } from 'class-transformer';
+
+export interface ValidationPipeOptions {
+  transform?: boolean;
+}
 
 @Injectable()
 export class ValidationPipe implements PipeTransform {
   private readonly logger = new Logger(ValidationPipe.name);
-  private isTransformEnabled;
-  constructor(options) {
-    const { transform } = options;
-    this.isTransformEnabled = !!transform;
+  private readonly isTransformEnabled: boolean;
+
+  constructor(options: ValidationPipeOptions = {}) {
+    this.isTransformEnabled = !!options.transform;
   }
-  async transform(value: any, metadata: any): Promise<any> {
+
+  async transform(value: unknown, metadata: ArgumentMetadata): Promise<unknown> {
     const { metatype } = metadata;
     if (!metatype || !this.toValidate(metatype)) {
       return this.isTransformEnabled ? this.transformPrimitive(value, metadata) : value;
     }
     const object = plainToInstance(metatype, value);
-    const errors = await validate(object);
+    const errors = await validate(object as object);
     if (errors.length > 0) {
       const constraints = this.getConstraints(errors[0]);
       if (constraints) {
@@ -34,11 +45,11 @@ export class ValidationPipe implements PipeTransform {
     return value;
   }
 
-  private getConstraints(error) {
+  private getConstraints(error: ValidationError): Record<string, string> | null {
     if (error.constraints) {
       return error.constraints;
     }
-    for (const child of error.children) {
+    for (const child of error.children ?? []) {
       const constraints = this.getConstraints(child);
       if (constraints) {
         return constraints;
@@ -47,14 +58,13 @@ export class ValidationPipe implements PipeTransform {
     return null;
   }
 
-  private toValidate(metatype: any): boolean {
-    const types: any[] = [String, Boolean, Number, Array, Object];
+  private toValidate(metatype: unknown): boolean {
+    const types: unknown[] = [String, Boolean, Number, Array, Object];
     return !types.includes(metatype);
   }
 
-  private transformPrimitive(value, metadata) {
+  private transformPrimitive(value: unknown, metadata: ArgumentMetadata): unknown {
     if (!metadata.data) {
-      // leave top-level query/param objects unmodified
       return value;
     }
     const { type, metatype } = metadata;
@@ -65,7 +75,7 @@ export class ValidationPipe implements PipeTransform {
       return value === true || value === 'true';
     }
     if (metatype === Number) {
-      return +value;
+      return Number(value);
     }
     return value;
   }

@@ -337,7 +337,7 @@ export function aes256gcmDecrypt(
   const decipherIv = crypto.createDecipheriv('aes-256-gcm', key, nonce);
   decipherIv.setAuthTag(Buffer.from(authTag));
   decipherIv.setAAD(Buffer.from(associatedData));
-  const decryptStr = decipherIv.update(data, null, 'utf8');
+  const decryptStr = decipherIv.update(data, undefined, 'utf8');
   decipherIv.final();
   return decryptStr;
 }

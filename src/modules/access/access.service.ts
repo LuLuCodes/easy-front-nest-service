@@ -602,7 +602,7 @@ export class AccessService {
       throw new Error(`角色名[${role_name}]重复，请使用其他名称`);
     }
 
-    const is_update = role_id > 0;
+    const is_update = (role_id ?? 0) > 0;
     const payload: Partial<UserRole> = {
       role_name,
       is_supper,
@@ -676,7 +676,7 @@ export class AccessService {
       }
     }
 
-    const is_update = right_id > 0;
+    const is_update = (right_id ?? 0) > 0;
     const payload: Partial<UserRight> = {
       parent_id,
       right_name,

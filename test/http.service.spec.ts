@@ -46,7 +46,13 @@ describe.skip('CatsController', () => {
     return data;
   };
 
-  const getGoodsDetail = async ({ goods_id, token }): Promise<any> => {
+  const getGoodsDetail = async ({
+    goods_id,
+    token,
+  }: {
+    goods_id: string;
+    token: string;
+  }): Promise<any> => {
     const url = `${base_url}/tool/accounts/item-info-low-price?url=${goods_id}`;
     const res_data = await httpService.axiosRef.get(url, {
       headers: {

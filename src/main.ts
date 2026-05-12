@@ -18,7 +18,7 @@ async function bootstrap(): Promise<void> {
   app.useLogger(app.get(Logger));
   await applyBootstrap(app);
 
-  const port = app.get(ConfigService).get<number>('app.port');
+  const port = app.get(ConfigService).get<number>('app.port') ?? 8000;
   await app.listen(port, '0.0.0.0');
 
   printBanner(await app.getUrl());

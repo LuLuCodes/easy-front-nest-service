@@ -47,11 +47,18 @@ export class SmsCoreService {
       app_key: sms_conf.app_key,
       app_secret: sms_conf.app_secret,
     });
+    if (!smsFactory) {
+      throw new Error(`不支持的短信渠道：${sms_conf.渠道}`);
+    }
+    const template = sms_conf.模板?.[sms_type];
+    if (!template) {
+      throw new Error(`未找到 ${sms_type} 的短信模板`);
+    }
 
     const res = await smsFactory.send({
-      template_code: sms_conf.模板[sms_type],
+      template_code: template,
       template_param: sms_param,
-      sms_content: sms_conf.模板[sms_type],
+      sms_content: template,
       phones,
       sign_name: sms_conf.签名,
     });

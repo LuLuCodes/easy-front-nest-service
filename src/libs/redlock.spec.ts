@@ -13,21 +13,21 @@ describe('RedisLock', () => {
   });
 
   it('unlock(null) is a no-op', async () => {
-    await expect(RedisLock.unlock(null)).resolves.toBeNull();
+    await expect(RedisLock.unlock(null)).resolves.toBeUndefined();
   });
 
   it('unlock() swallows errors from lock.release()', async () => {
     const fakeLock = { release: jest.fn().mockRejectedValue(new Error('x')) };
-    await expect(RedisLock.unlock(fakeLock)).resolves.toBeUndefined();
+    await expect(RedisLock.unlock(fakeLock as never)).resolves.toBeUndefined();
   });
 
   it('extend(null) is a no-op', async () => {
-    await expect(RedisLock.extend(null, 1000)).resolves.toBeNull();
+    await expect(RedisLock.extend(null, 1000)).resolves.toBeUndefined();
   });
 
   it('extend() swallows errors from lock.extend()', async () => {
     const fakeLock = { extend: jest.fn().mockRejectedValue(new Error('x')) };
-    await expect(RedisLock.extend(fakeLock, 1000)).resolves.toBeUndefined();
+    await expect(RedisLock.extend(fakeLock as never, 1000)).resolves.toBeUndefined();
   });
 
   it('using() returns null when redlock is uninitialised', async () => {
