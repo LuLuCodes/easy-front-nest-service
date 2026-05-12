@@ -1,3 +1,6 @@
+import { EventEmitter } from 'node:events';
+import type { IncomingMessage, ServerResponse } from 'node:http';
+
 import { LoggerMiddleware } from './logger.middleware';
 
 describe('LoggerMiddleware', () => {
@@ -5,7 +8,6 @@ describe('LoggerMiddleware', () => {
 
   beforeEach(() => {
     middleware = new LoggerMiddleware();
-    // Silence the embedded Logger so failure modes don't spam test output.
     jest
       .spyOn((middleware as unknown as { logger: { error: jest.Mock } }).logger, 'error')
       .mockImplementation(() => undefined);
@@ -20,37 +22,29 @@ describe('LoggerMiddleware', () => {
   function fakeReqRes(statusCode: number) {
     const req = {
       headers: { 'x-forwarded-for': '1.2.3.4', 'user-agent': 'jest', referer: 'r' },
-      connection: { remoteAddress: '5.6.7.8' },
-      ip: '7.7.7.7',
+      socket: { remoteAddress: '5.6.7.8' },
       method: 'GET',
-      originalUrl: '/api/x',
-      session: {},
-      params: {},
-      query: {},
-      body: { a: 1 },
-    };
-    const res = {
+      url: '/api/x',
+    } as unknown as IncomingMessage;
+    const res = Object.assign(new EventEmitter(), {
       statusCode,
-      write: jest.fn(),
-      end: jest.fn(),
-    };
+    }) as unknown as ServerResponse;
     return { req, res };
   }
 
-  it('calls next() and patches res.write / res.end', () => {
+  it('calls next() and attaches a finish listener', () => {
     const { req, res } = fakeReqRes(200);
-    const originalWrite = res.write;
     const next = jest.fn();
     middleware.use(req, res, next);
     expect(next).toHaveBeenCalled();
-    expect(res.write).not.toBe(originalWrite);
+    expect((res as unknown as EventEmitter).listenerCount('finish')).toBe(1);
   });
 
-  it('routes 5xx responses to logger.error', () => {
-    const { req, res } = fakeReqRes(500);
+  it('routes 5xx responses to logger.error on finish', () => {
     const errSpy = (middleware as unknown as { logger: { error: jest.Mock } }).logger.error;
+    const { req, res } = fakeReqRes(500);
     middleware.use(req, res, jest.fn());
-    res.end('boom');
+    (res as unknown as EventEmitter).emit('finish');
     expect(errSpy).toHaveBeenCalled();
   });
 
@@ -60,12 +54,12 @@ describe('LoggerMiddleware', () => {
 
     const { req: r1, res: res1 } = fakeReqRes(404);
     middleware.use(r1, res1, jest.fn());
-    res1.end('not found');
+    (res1 as unknown as EventEmitter).emit('finish');
     expect(warnSpy).toHaveBeenCalled();
 
     const { req: r2, res: res2 } = fakeReqRes(200);
     middleware.use(r2, res2, jest.fn());
-    res2.end('ok');
+    (res2 as unknown as EventEmitter).emit('finish');
     expect(logSpy).toHaveBeenCalled();
   });
 });

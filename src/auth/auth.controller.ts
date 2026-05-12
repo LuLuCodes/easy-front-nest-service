@@ -12,7 +12,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
-import type { Request, Response } from 'express';
+import type { FastifyReply, FastifyRequest } from 'fastify';
 
 import type { AuthConfig } from '@config/auth';
 import { ValidationPipe } from '@pipe/validation.pipe';
@@ -56,7 +56,7 @@ export class AuthController {
   @Post('login')
   async login(
     @CurrentUser() user: AuthenticatedUser,
-    @Res({ passthrough: true }) res: Response,
+    @Res({ passthrough: true }) res: FastifyReply,
   ): Promise<LoginResponse> {
     const tokens = await this.authService.signTokens(user);
     this.attachRefreshCookie(res, tokens.refreshToken, tokens.refreshExpiresIn);
@@ -82,8 +82,8 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @Post('refresh')
   async refresh(
-    @Req() req: Request & { user?: JwtRefreshPayload },
-    @Res({ passthrough: true }) res: Response,
+    @Req() req: FastifyRequest & { user?: JwtRefreshPayload },
+    @Res({ passthrough: true }) res: FastifyReply,
   ): Promise<{ accessToken: string; refreshToken: string; refreshExpiresIn: number }> {
     const payload = req.user;
     if (!payload) {
@@ -100,14 +100,14 @@ export class AuthController {
   @Post('logout')
   async logout(
     @CurrentUser() user: AuthenticatedUser,
-    @Res({ passthrough: true }) res: Response,
+    @Res({ passthrough: true }) res: FastifyReply,
   ): Promise<{ success: boolean }> {
     const auth = this.requireAuthConfig();
     res.clearCookie(auth.refreshCookie.name, {
       path: auth.refreshCookie.path,
       httpOnly: auth.refreshCookie.httpOnly,
       secure: auth.refreshCookie.secure,
-      sameSite: auth.refreshCookie.sameSite,
+      sameSite: auth.refreshCookie.sameSite as 'lax' | 'strict' | 'none',
     });
     if (user) {
       await this.opLogService.createLogTask({
@@ -145,19 +145,19 @@ export class AuthController {
   async switchTenant(
     @Body() dto: SwitchTenantDto,
     @CurrentUser() user: AuthenticatedUser,
-    @Res({ passthrough: true }) res: Response,
+    @Res({ passthrough: true }) res: FastifyReply,
   ): Promise<{ accessToken: string; refreshToken: string; refreshExpiresIn: number }> {
     const tokens = await this.authService.switchTenant(user.id, dto.tenant_id);
     this.attachRefreshCookie(res, tokens.refreshToken, tokens.refreshExpiresIn);
     return tokens;
   }
 
-  private attachRefreshCookie(res: Response, token: string, ttlSeconds: number): void {
+  private attachRefreshCookie(res: FastifyReply, token: string, ttlSeconds: number): void {
     const auth = this.requireAuthConfig();
-    res.cookie(auth.refreshCookie.name, token, {
+    res.setCookie(auth.refreshCookie.name, token, {
       httpOnly: auth.refreshCookie.httpOnly,
       secure: auth.refreshCookie.secure,
-      sameSite: auth.refreshCookie.sameSite,
+      sameSite: auth.refreshCookie.sameSite as 'lax' | 'strict' | 'none',
       path: auth.refreshCookie.path,
       maxAge: ttlSeconds * 1000,
     });

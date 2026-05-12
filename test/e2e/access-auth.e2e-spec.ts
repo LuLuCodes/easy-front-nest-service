@@ -4,9 +4,9 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import type { INestApplication } from '@nestjs/common';
+import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
 import * as request from 'supertest';
-import * as cookieParser from 'cookie-parser';
+import fastifyCookie from '@fastify/cookie';
 
 import { AuthController } from '@auth/auth.controller';
 import { AuthService } from '@auth/auth.service';
@@ -33,7 +33,7 @@ import { TenantService } from '@tenant/tenant.service';
 import { encryptPassword, makeSalt } from '@libs/cryptogram';
 
 describe('Auth + Access e2e (JWT contract)', () => {
-  let app: INestApplication;
+  let app: NestFastifyApplication;
   let userLoginRepo: { findOne: jest.Mock; find: jest.Mock };
   let userRepo: { findOne: jest.Mock; find: jest.Mock };
   let userRoleRelationRepo: { findOne: jest.Mock; find: jest.Mock };
@@ -103,10 +103,12 @@ describe('Auth + Access e2e (JWT contract)', () => {
       ],
     }).compile();
 
-    app = moduleFixture.createNestApplication();
+    app = moduleFixture.createNestApplication<NestFastifyApplication>(new FastifyAdapter());
     app.setGlobalPrefix('api');
-    app.use(cookieParser());
+
+    await app.register(fastifyCookie as any);
     await app.init();
+    await app.getHttpAdapter().getInstance().ready();
   });
 
   afterAll(async () => {

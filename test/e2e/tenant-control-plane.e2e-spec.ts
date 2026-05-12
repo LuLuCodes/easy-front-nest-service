@@ -4,9 +4,9 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getDataSourceToken, getRepositoryToken } from '@nestjs/typeorm';
-import type { INestApplication } from '@nestjs/common';
+import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
 import * as request from 'supertest';
-import * as cookieParser from 'cookie-parser';
+import fastifyCookie from '@fastify/cookie';
 import { randomBytes } from 'node:crypto';
 
 import { AuthController } from '@auth/auth.controller';
@@ -43,7 +43,7 @@ import { TenantService } from '@tenant/tenant.service';
 import { open } from '@tenant/crypto/aes-gcm';
 
 describe('Tenant control plane e2e', () => {
-  let app: INestApplication;
+  let app: NestFastifyApplication;
   let tenantSeq: number;
   let credentialSeq: number;
   let relationSeq: number;
@@ -124,10 +124,12 @@ describe('Tenant control plane e2e', () => {
       ],
     }).compile();
 
-    app = moduleFixture.createNestApplication();
+    app = moduleFixture.createNestApplication<NestFastifyApplication>(new FastifyAdapter());
     app.setGlobalPrefix('api');
-    app.use(cookieParser());
+
+    await app.register(fastifyCookie as any);
     await app.init();
+    await app.getHttpAdapter().getInstance().ready();
   });
 
   afterAll(async () => {
@@ -283,7 +285,7 @@ async function repoSaveDispatch<T>(
 }
 
 async function issueToken(
-  app: INestApplication,
+  app: NestFastifyApplication,
   payload: { is_super_admin: boolean; tenant_id?: number; sub?: number },
 ): Promise<string> {
   const { JwtService } = await import('@nestjs/jwt');

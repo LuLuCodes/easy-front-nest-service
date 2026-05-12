@@ -1,24 +1,12 @@
-/*
- * @Author: leyi leyi@myun.info
- * @Date: 2021-09-22 21:55:56
- * @LastEditors: leyi leyi@myun.info
- * @LastEditTime: 2023-02-16 21:05:29
- * @FilePath: /easy-front-nest-service/src/filter/http-exception.filter.ts
- * @Description:
- *
- * Copyright (c) 2023 by ${git_name_email}, All Rights Reserved.
- */
 import {
-  ExceptionFilter,
-  Catch,
   ArgumentsHost,
+  Catch,
+  ExceptionFilter,
   HttpException,
   HttpStatus,
   Logger,
 } from '@nestjs/common';
-import { Request, Response } from 'express';
-import { ErrorResponse } from '@libs/util';
-import { ResponseCode } from '@config/global';
+import type { FastifyReply, FastifyRequest } from 'fastify';
 
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
@@ -26,22 +14,24 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
   catch(exception: HttpException, host: ArgumentsHost): void {
     const ctx = host.switchToHttp();
-    const response = ctx.getResponse<Response>();
-    const request = ctx.getRequest<Request>();
+    const response = ctx.getResponse<FastifyReply>();
+    const request = ctx.getRequest<FastifyRequest>();
     const status =
       exception instanceof HttpException ? exception.getStatus() : HttpStatus.INTERNAL_SERVER_ERROR;
     const message = exception.message;
 
-    const logFormat = ` <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-    Request original url: ${request.originalUrl}
+    this.logger.error(
+      ` <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+    Request original url: ${request.url}
     Method: ${request.method}
     IP: ${request.ip}
     Status code: ${status}
     Response: ${exception.toString()} \n  <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-    `;
-    this.logger.error(logFormat);
-    response.status(status);
-    response.header('Content-Type', 'application/json; charset=utf-8');
-    response.send(message);
+    `,
+    );
+    void response
+      .status(status)
+      .header('Content-Type', 'application/json; charset=utf-8')
+      .send(message);
   }
 }

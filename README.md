@@ -135,6 +135,32 @@ export class AlipayController {
 
 新增 provider 的标准流程见 [docs/CONTRIBUTING.md](./docs/CONTRIBUTING.md)。
 
+# HTTP 适配器 (7.x+)
+
+> 7.1.0 起，HTTP 适配器从 Express 切换到 **Fastify**（NestJS 10 + `@nestjs/platform-fastify` + Fastify 4）。基线 QPS 提升约 2-3×，几乎零业务代码改动。
+
+## 关键变更
+
+- `NestFactory.create<NestExpressApplication>` → `NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter())`
+- 中间件栈整体替换为 Fastify 插件：
+  - `helmet` → `@fastify/helmet`
+  - `cookie-parser` → `@fastify/cookie`（reply API 是 `setCookie` / `clearCookie`，不是 Express 的 `cookie`）
+  - `compression` → `@fastify/compress`
+  - `body-parser` JSON 是 Fastify 内置；urlencoded 用 `@fastify/formbody`
+  - `multer` 文件上传 → `@fastify/multipart`（用 `req.parts()` async iterator）
+- Express `Request` / `Response` 类型 → Fastify `FastifyRequest` / `FastifyReply`
+- `LoggerMiddleware` 不再 patch `res.write`/`res.end`，改成在 raw socket 上挂 `finish` 事件，记一行紧凑摘要
+- e2e 测试创建 `NestFastifyApplication` 时需要 `await app.getHttpAdapter().getInstance().ready()` 后再发请求
+
+## 调用方注意
+
+无破坏性改动：
+
+- 所有路由 path 不变
+- 请求 / 响应的 JSON body 不变
+- Refresh token cookie 名 / 路径 / sameSite 全部沿用 `@config/auth` 配置
+- OSS 多文件上传字段名仍是 `files`（Fastify `@fastify/multipart` 自动识别）
+
 # 测试 (7.x+)
 
 > 7.0.0 起，jest 强制覆盖率门槛（lines/statements/functions ≥ 50%，branches ≥ 35%）。CI 覆盖率回退立刻 fail。

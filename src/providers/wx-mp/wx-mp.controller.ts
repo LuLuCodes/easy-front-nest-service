@@ -1,6 +1,6 @@
 import { Body, Controller, Post, Res, UsePipes } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import type { Response } from 'express';
+import type { FastifyReply } from 'fastify';
 
 import { CurrentUser } from '@auth/decorators';
 import type { AuthenticatedUser } from '@auth/types/jwt-payload';
@@ -49,7 +49,7 @@ export class WxMpController {
   async createQrCode(
     @Body() body: CreateQrCodeDto,
     @CurrentUser() user: AuthenticatedUser,
-    @Res() res: Response,
+    @Res() res: FastifyReply,
   ) {
     const client = await this.provider.getClient(user.tenant_id, body.app_id);
     const buf = await client.createQrCode({
@@ -59,7 +59,7 @@ export class WxMpController {
       line_color: body.line_color,
       is_hyaline: body.is_hyaline,
     });
-    res.type('image/png').send(buf);
+    void res.type('image/png').send(buf);
   }
 
   @Post('qrcode/wxacode')
@@ -67,7 +67,7 @@ export class WxMpController {
   async getWxaCode(
     @Body() body: CreateQrCodeDto,
     @CurrentUser() user: AuthenticatedUser,
-    @Res() res: Response,
+    @Res() res: FastifyReply,
   ) {
     const client = await this.provider.getClient(user.tenant_id, body.app_id);
     const buf = await client.getWxaCode({
@@ -77,7 +77,7 @@ export class WxMpController {
       line_color: body.line_color,
       is_hyaline: body.is_hyaline,
     });
-    res.type('image/png').send(buf);
+    void res.type('image/png').send(buf);
   }
 
   @Post('qrcode/unlimited')
@@ -85,7 +85,7 @@ export class WxMpController {
   async getUnlimitedQrCode(
     @Body() body: CreateUnlimitedQrCodeDto,
     @CurrentUser() user: AuthenticatedUser,
-    @Res() res: Response,
+    @Res() res: FastifyReply,
   ) {
     const client = await this.provider.getClient(user.tenant_id, body.app_id);
     const buf = await client.getUnlimitedQrCode({
@@ -98,7 +98,7 @@ export class WxMpController {
       is_hyaline: body.is_hyaline,
       env_version: body.env_version,
     });
-    res.type('image/png').send(buf);
+    void res.type('image/png').send(buf);
   }
 
   @Post('url-scheme')

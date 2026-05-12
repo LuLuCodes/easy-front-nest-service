@@ -1,6 +1,6 @@
 import type { INestApplication } from '@nestjs/common';
 import type { ConfigService } from '@nestjs/config';
-import type { NestExpressApplication } from '@nestjs/platform-express';
+import type { NestFastifyApplication } from '@nestjs/platform-fastify';
 
 import { applyGlobalProviders } from './global';
 import { applySecurity } from './security';
@@ -28,23 +28,27 @@ describe('bootstrap helpers', () => {
   });
 
   describe('applySecurity', () => {
-    it('enables CORS in any env and adds helmet in production', () => {
+    it('enables CORS in any env and registers helmet in production', async () => {
+      const register = jest.fn().mockResolvedValue(undefined);
       const app = {
-        use: jest.fn(),
+        register,
         enableCors: jest.fn(),
-      } as unknown as NestExpressApplication;
-      applySecurity(app, fakeConfig({ 'app.node_env': 'production' }));
-      expect(app.use).toHaveBeenCalled();
+        getHttpAdapter: () => ({ getInstance: () => ({ register }) }),
+      } as unknown as NestFastifyApplication;
+      await applySecurity(app, fakeConfig({ 'app.node_env': 'production' }));
+      expect(register).toHaveBeenCalled();
       expect(app.enableCors).toHaveBeenCalled();
     });
 
-    it('skips helmet in non-production envs', () => {
+    it('skips helmet in non-production envs', async () => {
+      const register = jest.fn().mockResolvedValue(undefined);
       const app = {
-        use: jest.fn(),
+        register,
         enableCors: jest.fn(),
-      } as unknown as NestExpressApplication;
-      applySecurity(app, fakeConfig({ 'app.node_env': 'development' }));
-      expect(app.use).not.toHaveBeenCalled();
+        getHttpAdapter: () => ({ getInstance: () => ({ register }) }),
+      } as unknown as NestFastifyApplication;
+      await applySecurity(app, fakeConfig({ 'app.node_env': 'development' }));
+      expect(register).not.toHaveBeenCalled();
       expect(app.enableCors).toHaveBeenCalled();
     });
   });

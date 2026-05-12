@@ -1,7 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-local';
-import type { Request } from 'express';
+import type { FastifyRequest } from 'fastify';
 
 import { AuthService } from '../auth.service';
 import type { AuthenticatedUser } from '../types/jwt-payload';
@@ -16,7 +16,11 @@ export class LocalStrategy extends PassportStrategy(Strategy, 'local') {
     });
   }
 
-  async validate(req: Request, accountId: string, password: string): Promise<AuthenticatedUser> {
+  async validate(
+    req: FastifyRequest,
+    accountId: string,
+    password: string,
+  ): Promise<AuthenticatedUser> {
     const loginClient = (req.body as Record<string, unknown>)?.login_client;
     if (typeof loginClient !== 'number') {
       throw new UnauthorizedException('login_client is required');

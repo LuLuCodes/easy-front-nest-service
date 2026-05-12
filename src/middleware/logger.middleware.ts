@@ -1,51 +1,36 @@
 import { Injectable, Logger, NestMiddleware } from '@nestjs/common';
-import { NextFunction } from 'express';
+import type { FastifyReply, FastifyRequest } from 'fastify';
 
+/**
+ * Fastify-friendly request logger. Runs as a Nest middleware (which under
+ * the Fastify adapter wraps a preHandler hook), records request shape on
+ * entry, then schedules a one-shot 'finish' listener on the underlying
+ * raw response to capture status code.
+ *
+ * The previous Express version patched `res.write` / `res.end` to capture
+ * the response body. Fastify doesn't expose those on FastifyReply, and
+ * capturing the response body is rarely worth its cost; this version logs
+ * a compact summary on completion.
+ */
 @Injectable()
 export class LoggerMiddleware implements NestMiddleware {
   private readonly logger = new Logger(LoggerMiddleware.name);
 
-  use(req: any, res: any, next: NextFunction): void {
-    const oldWrite = res.write;
-    const oldEnd = res.end;
-    const chunks: Buffer[] = [];
+  use(req: FastifyRequest['raw'], res: FastifyReply['raw'], next: (err?: unknown) => void): void {
+    const start = Date.now();
+    const ip =
+      (req.headers['x-forwarded-for'] as string | undefined) ?? req.socket?.remoteAddress ?? '';
+    const ua = req.headers['user-agent'] as string | undefined;
+    const referer = req.headers.referer as string | undefined;
 
-    res.write = function (...restArgs: any[]) {
-      chunks.push(Buffer.from(restArgs[0]));
-      return oldWrite.apply(res, restArgs);
-    };
-
-    res.end = (...restArgs: any[]) => {
-      if (restArgs[0]) {
-        chunks.push(Buffer.from(restArgs[0]));
-      }
-      const data = Buffer.concat(chunks).toString('utf8');
-
-      oldEnd.apply(res, restArgs);
-
-      const logFormat = ` >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-        time: ${Date.now()},
-        fromIP: ${req.headers['x-forwarded-for'] || req.connection.remoteAddress || req.ip},
-        method: ${req.method},
-        originalUri: ${req.originalUrl},
-        session: ${JSON.stringify(req.session)},
-        requestParmas: ${JSON.stringify(req.params)},
-        requestQuery: ${JSON.stringify(req.query)},
-        requestBody: ${JSON.stringify(req.body)},
-        statusCode: ${res.statusCode},
-        responseData: ${JSON.stringify(data)},
-        referer: ${req.headers.referer || ''},
-        ua: ${req.headers['user-agent']}, \n  >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-      `;
-
-      if (res.statusCode >= 500) {
-        this.logger.error(logFormat);
-      } else if (res.statusCode >= 400) {
-        this.logger.warn(logFormat);
-      } else {
-        this.logger.log(logFormat);
-      }
-    };
+    res.on('finish', () => {
+      const status = res.statusCode ?? 0;
+      const elapsed = Date.now() - start;
+      const line = `${req.method} ${req.url} ${status} ${elapsed}ms ip=${ip} ref=${referer ?? ''} ua=${ua ?? ''}`;
+      if (status >= 500) this.logger.error(line);
+      else if (status >= 400) this.logger.warn(line);
+      else this.logger.log(line);
+    });
 
     next();
   }

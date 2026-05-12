@@ -1,29 +1,27 @@
-import type { NestExpressApplication } from '@nestjs/platform-express';
-import bodyParser from 'body-parser';
-import bodyParserXml from 'body-parser-xml';
-import compression from 'compression';
-import cookieParser from 'cookie-parser';
-import multer from 'multer';
+import type { NestFastifyApplication } from '@nestjs/platform-fastify';
+import fastifyCookie from '@fastify/cookie';
+import fastifyFormbody from '@fastify/formbody';
+import fastifyMultipart from '@fastify/multipart';
+import fastifyCompress from '@fastify/compress';
 
-bodyParserXml(bodyParser);
+/**
+ * Register body / payload plugins on the Fastify instance.
+ *
+ * - JSON parsing is built into Fastify.
+ * - urlencoded forms need `@fastify/formbody` (alipay async notify).
+ * - multipart/form-data via `@fastify/multipart`; controllers pull files
+ *   through `req.parts()` / `req.file()`. Max file size = 50 MB.
+ * - cookie parsing comes from `@fastify/cookie`, populating `req.cookies`.
+ * - response compression via `@fastify/compress`.
+ */
+export async function applyBodyParsers(app: NestFastifyApplication): Promise<void> {
+  // The Fastify v4 type system can't reconcile multiple plugins' shared
+  // declaration-merging on FastifyInstance. Cast on register only.
 
-export function applyBodyParsers(app: NestExpressApplication): void {
-  app.use((req: any, _res: any, next: any) => {
-    const ct = req.headers['content-type'];
-    if (typeof ct === 'string' && ct.includes('utf8')) {
-      req.headers['content-type'] = ct.replace('utf8', 'utf-8');
-    }
-    next();
-  });
+  const register = (plugin: unknown, opts?: unknown) => app.register(plugin as any, opts as any);
 
-  app.use(compression());
-  app.use(multer().any());
-  app.use(bodyParser.json({ limit: '50mb' }));
-  app.use(bodyParser.urlencoded({ limit: '50mb', extended: false }));
-  app.use(
-    (bodyParser as any).xml({
-      xmlParseOptions: { explicitArray: false },
-    }),
-  );
-  app.use(cookieParser());
+  await register(fastifyCookie);
+  await register(fastifyFormbody);
+  await register(fastifyMultipart, { limits: { fileSize: 50 * 1024 * 1024 } });
+  await register(fastifyCompress);
 }

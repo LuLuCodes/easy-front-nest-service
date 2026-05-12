@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import type { Request } from 'express';
+import type { FastifyRequest } from 'fastify';
 
 import type { AuthConfig } from '@config/auth';
 import type { JwtRefreshPayload } from '../types/jwt-payload';
@@ -28,8 +28,8 @@ export class JwtRefreshStrategy extends PassportStrategy(Strategy, 'jwt-refresh'
     this.cookieName = auth.refreshCookie.name;
   }
 
-  validate(req: Request, payload: JwtRefreshPayload): JwtRefreshPayload & { token: string } {
-    const cookies = (req as Request & { cookies?: Record<string, string> }).cookies;
+  validate(req: FastifyRequest, payload: JwtRefreshPayload): JwtRefreshPayload & { token: string } {
+    const cookies = (req as FastifyRequest & { cookies?: Record<string, string> }).cookies;
     const body = req.body as Record<string, unknown> | undefined;
     const token =
       cookies?.[this.cookieName] ??
@@ -39,13 +39,13 @@ export class JwtRefreshStrategy extends PassportStrategy(Strategy, 'jwt-refresh'
 }
 
 function cookieRefreshTokenExtractor(cookieName: string) {
-  return (req: Request): string | null => {
-    const cookies = (req as Request & { cookies?: Record<string, string> }).cookies;
+  return (req: FastifyRequest): string | null => {
+    const cookies = (req as FastifyRequest & { cookies?: Record<string, string> }).cookies;
     return cookies?.[cookieName] ?? null;
   };
 }
 
-function bodyRefreshTokenExtractor(req: Request): string | null {
+function bodyRefreshTokenExtractor(req: FastifyRequest): string | null {
   const body = req.body as Record<string, unknown> | undefined;
   const token = body?.refreshToken;
   return typeof token === 'string' ? token : null;

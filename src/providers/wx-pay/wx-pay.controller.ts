@@ -12,7 +12,7 @@ import {
   UsePipes,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import type { Request } from 'express';
+import type { FastifyRequest } from 'fastify';
 
 import { CurrentUser, Public } from '@auth/decorators';
 import type { AuthenticatedUser } from '@auth/types/jwt-payload';
@@ -110,7 +110,7 @@ export class WxPayController {
     @Headers('Wechatpay-Serial') serial: string,
     @Headers('Wechatpay-Timestamp') timestamp: string,
     @Headers('Wechatpay-Nonce') nonce: string,
-    @Req() req: Request,
+    @Req() req: FastifyRequest,
   ): Promise<{ code: 'SUCCESS'; message: string }> {
     if (type !== 'payment' && type !== 'refund') {
       throw new BadRequestException('Unsupported notify type');
@@ -118,10 +118,9 @@ export class WxPayController {
     if (!signature || !serial || !timestamp || !nonce) {
       throw new BadRequestException('Missing Wechatpay-* headers');
     }
+    const withRaw = req as FastifyRequest & { rawBody?: string };
     const rawBody =
-      typeof (req as Request & { rawBody?: unknown }).rawBody === 'string'
-        ? ((req as Request & { rawBody: string }).rawBody as string)
-        : JSON.stringify(req.body ?? {});
+      typeof withRaw.rawBody === 'string' ? withRaw.rawBody : JSON.stringify(req.body ?? {});
     const client = await this.provider.getClient(tenantId, mchId);
     await client.verifyAndDecryptNotify(rawBody, { signature, serial, timestamp, nonce });
     // Production wires this into a BullMQ queue so handlers can be retried
