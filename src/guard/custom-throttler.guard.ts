@@ -15,9 +15,9 @@ import { ThrottlerRequest } from '@nestjs/throttler/dist/throttler.guard.interfa
 @Injectable()
 export class CustomThrottlerGuard extends ThrottlerGuard {
   protected getTracker(req: Record<string, any>): Promise<string> {
-    return new Promise<string>((resolve, reject) => {
+    return new Promise<string>((resolve) => {
       const tracker = req.headers['x-forwarded-for'] || req.ip;
-      resolve(tracker);
+      resolve(String(tracker));
     });
   }
 
@@ -27,15 +27,16 @@ export class CustomThrottlerGuard extends ThrottlerGuard {
     const { context, limit, ttl, throttler, blockDuration } = requestProps;
     const request = this.getRequestResponse(context).req;
 
-    const ip = request.headers['x-forwarded-for'] || request.ip;
-    const key = this.generateKey(context, ip, throttler.name);
+    const ip = String(request.headers['x-forwarded-for'] ?? request.ip ?? '');
+    const throttlerName = throttler.name ?? 'default';
+    const key = this.generateKey(context, ip, throttlerName);
 
     const { totalHits, timeToExpire } = await this.storageService.increment(
       key,
       ttl,
       limit,
       blockDuration,
-      throttler.name,
+      throttlerName,
     );
     console.log('totalHits:', totalHits);
     console.log('timeToExpire:', timeToExpire);

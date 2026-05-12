@@ -23,11 +23,7 @@ if (process.env.NODE_ENV === 'development') {
  * @param defaultValue 默认值
  * @param callback 格式化函数
  */
-const fromatValue = <T>(
-  key: string,
-  defaultValue: T,
-  callback: (value: string) => T,
-): T => {
+const fromatValue = <T>(key: string, defaultValue: T, callback: (value: string) => T): T => {
   const value: string | undefined = process.env[key];
   if (typeof value === 'undefined' || value === '') {
     return defaultValue;
@@ -44,12 +40,8 @@ export const envNumber = (key: string, defaultValue = 0): number =>
 export const envBoolean = (key: string, defaultValue = false): boolean =>
   fromatValue(key, defaultValue, (value) => value === 'true');
 
-export const envArray = (
-  key: string,
-  split = ',',
-  defaultValue = [],
-): string[] =>
-  fromatValue(key, defaultValue, (value) => {
+export const envArray = (key: string, split = ',', defaultValue: string[] = []): string[] =>
+  fromatValue<string[]>(key, defaultValue, (value) => {
     if (!value.trim()) {
       return [];
     }

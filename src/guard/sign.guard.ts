@@ -32,7 +32,7 @@ export class SignGuard implements CanActivate {
     }
     if (
       headers['x-from-source'] === 'swagger' ||
-      this.hasUrl(this.configService.get('while_list.sign'), url)
+      this.hasUrl(this.configService.get<string[]>('while_list.sign') ?? [], url)
     ) {
       delete request_data.sign;
       delete request_data.timestamp;

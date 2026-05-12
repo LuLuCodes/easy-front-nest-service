@@ -22,7 +22,7 @@ describe('redlock test', () => {
     RedisLock.init(config);
 
     // 这个函数抛出一个错误
-    async function taskThatThrows(lock) {
+    async function taskThatThrows(_lock: unknown): Promise<number> {
       // throw new Error('An error occurred');
       // await RedisLock.extend(lock, 5000);
       return 1;

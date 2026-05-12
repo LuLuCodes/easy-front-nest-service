@@ -218,6 +218,6 @@ export class AccessController {
   async getSession(@CurrentUser() user: AuthenticatedUser): Promise<unknown> {
     if (!user) return {};
     const fill = await this.accessService.checkUser(user.id);
-    return { id: user.id, account_id: user.account_id, ...fill };
+    return { ...fill, id: user.id, account_id: user.account_id };
   }
 }

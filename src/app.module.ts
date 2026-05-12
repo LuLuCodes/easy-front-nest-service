@@ -64,8 +64,8 @@ import while_list from '@config/white-list';
       useFactory: (configService: ConfigService) => ({
         throttlers: [
           {
-            ttl: configService.get('app.throttle_ttl'),
-            limit: configService.get('app.throttle_limit'),
+            ttl: configService.get<number>('app.throttle_ttl') ?? 60,
+            limit: configService.get<number>('app.throttle_limit') ?? 100,
           },
         ],
         storage: new ThrottlerStorageRedisService(

@@ -86,10 +86,7 @@ class MarkdownToText {
    * 处理链接
    */
   private processLinks(text: string): string {
-    return text.replace(
-      /\[([^\]]+)\]\(([^)]+)\)/g,
-      this.options.preserveLinks ? '$1 ($2)' : '$1',
-    );
+    return text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, this.options.preserveLinks ? '$1 ($2)' : '$1');
   }
 
   /**
@@ -156,10 +153,10 @@ class MarkdownToText {
     // 移除表格分隔符行
     text = text.replace(/^\|?(?:[-:]|[:]-|:-:|\|-)+\|?$/gm, '');
     // 处理表格内容行，保留单元格内容
-    text = text.replace(/^\|(.+)\|$/gm, (_, cells) => {
+    text = text.replace(/^\|(.+)\|$/gm, (_, cells: string) => {
       return cells
         .split('|')
-        .map((cell) => cell.trim())
+        .map((cell: string) => cell.trim())
         .join(' ');
     });
     return text;

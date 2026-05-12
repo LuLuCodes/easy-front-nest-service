@@ -38,7 +38,7 @@ export interface ISmsDictConf {
 }
 
 export class SmsFactory {
-  static create(config: ISmsconfig): AliyunSms {
+  static create(config: ISmsconfig): AliyunSms | null {
     switch (config.channel) {
       case SMS_CHHANEL.阿里云:
         return new AliyunSms(config);
