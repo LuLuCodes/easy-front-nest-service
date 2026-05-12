@@ -1,6 +1,6 @@
 import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { BullModule } from '@nestjs/bullmq';
-import { APP_GUARD } from '@nestjs/core';
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { HttpModule } from '@nestjs/axios';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ScheduleModule } from '@nestjs/schedule';
@@ -34,6 +34,7 @@ import { BasicModule } from './modules/basic/basic.module';
 import { AccessModule } from './modules/access/access.module';
 import { OpLogModule } from './modules/oplog/oplog.module';
 import { HealthModule } from './modules/health/health.module';
+import { TenantSpanInterceptor } from './observability/tenant-span.interceptor';
 
 import app_config from '@config/app';
 import auth_config from '@config/auth';
@@ -138,6 +139,10 @@ import while_list from '@config/white-list';
     {
       provide: APP_GUARD,
       useClass: CustomThrottlerGuard,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: TenantSpanInterceptor,
     },
     CacheService,
     CronTaskService,
