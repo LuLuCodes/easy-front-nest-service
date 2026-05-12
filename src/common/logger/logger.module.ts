@@ -44,7 +44,9 @@ import { LoggerModule as PinoLoggerModule } from 'nestjs-pino';
             autoLogging: {
               ignore: (req) => {
                 const url = (req as { url?: string }).url ?? '';
-                return url === '/api/health' || url === '/favicon.ico';
+                return (
+                  url === '/api/health' || url === '/api/health/ready' || url === '/favicon.ico'
+                );
               },
             },
           },
