@@ -29,7 +29,11 @@ async function main(): Promise<void> {
   writeFileSync(out, JSON.stringify(document, null, 2) + '\n');
   console.log(`openapi: wrote ${Object.keys(document.paths ?? {}).length} paths → ${out}`);
 
-  await app.close();
+  // app.close() doesn't always release every handle (BullMQ workers,
+  // ioredis idle connections, TypeORM pool tail) within a reasonable
+  // window. Spec is on disk; no reason to wait — hard-exit.
+  await app.close().catch(() => undefined);
+  process.exit(0);
 }
 
 main().catch((err) => {
