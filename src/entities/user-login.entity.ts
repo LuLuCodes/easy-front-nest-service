@@ -1,4 +1,5 @@
 import { Column, Entity, Index, JoinColumn, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import type { Relation } from 'typeorm';
 import { AuditEntity } from './audit.entity';
 import { User } from './user.entity';
 import { bigintTransformer } from '@database/transformers/bigint.transformer';
@@ -43,5 +44,5 @@ export class UserLogin extends AuditEntity {
 
   @OneToOne(() => User, (user) => user.account)
   @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
-  user?: User;
+  user?: Relation<User>;
 }
