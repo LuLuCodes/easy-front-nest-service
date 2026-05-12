@@ -1,25 +1,4 @@
-import {
-  IsNotEmpty,
-  IsString,
-  IsNumber,
-  IsInt,
-  IsDateString,
-  Min,
-  Max,
-  IsArray,
-  ArrayNotEmpty,
-  IsOptional,
-  IsEnum,
-  Length,
-  ValidateNested,
-  MaxLength,
-  MinLength,
-  ArrayMaxSize,
-  ArrayMinSize,
-  IsEmpty,
-  Matches,
-  IsIn,
-} from 'class-validator';
+import { IsArray, IsIn, IsInt, IsNotEmpty, IsOptional, IsString, Matches } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { QueryDTO, BaseDTO } from '@dto/BaseDTO';
 import { regCNMobile } from '@libs/reg-util';

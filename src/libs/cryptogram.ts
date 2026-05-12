@@ -332,8 +332,8 @@ export function aes256gcmDecrypt(
   ciphertext: string,
 ): string {
   const ciphertextBuffer = Buffer.from(ciphertext, 'base64');
-  const authTag = ciphertextBuffer.slice(ciphertextBuffer.length - 16);
-  const data = ciphertextBuffer.slice(0, ciphertextBuffer.length - 16);
+  const authTag = ciphertextBuffer.subarray(ciphertextBuffer.length - 16);
+  const data = ciphertextBuffer.subarray(0, ciphertextBuffer.length - 16);
   const decipherIv = crypto.createDecipheriv('aes-256-gcm', key, nonce);
   decipherIv.setAuthTag(Buffer.from(authTag));
   decipherIv.setAAD(Buffer.from(associatedData));
