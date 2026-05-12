@@ -1,3 +1,4 @@
+import { VERSION_NEUTRAL, VersioningType } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
 import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
@@ -105,6 +106,10 @@ describe('Auth + Access e2e (JWT contract)', () => {
 
     app = moduleFixture.createNestApplication<NestFastifyApplication>(new FastifyAdapter());
     app.setGlobalPrefix('api');
+    app.enableVersioning({
+      type: VersioningType.URI,
+      defaultVersion: [VERSION_NEUTRAL, '1'],
+    });
 
     await app.register(fastifyCookie as any);
     await app.init();
@@ -194,6 +199,15 @@ describe('Auth + Access e2e (JWT contract)', () => {
         .send({ account_id: 'tester', account_pwd: 'wrong-pass', login_client: 1 })
         .expect(401);
       expect(opLogService.createLogTask).not.toHaveBeenCalled();
+    });
+
+    it('also resolves at /api/v1/auth/login for explicit version pinning', async () => {
+      const { pwd } = seedUser();
+      const response = await request(app.getHttpServer())
+        .post('/api/v1/auth/login')
+        .send({ account_id: 'tester', account_pwd: pwd, login_client: 1 })
+        .expect(200);
+      expect(response.body.accessToken).toEqual(expect.any(String));
     });
 
     it('rejects with 401 when account is unknown', async () => {

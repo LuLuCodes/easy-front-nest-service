@@ -1,3 +1,4 @@
+import { VERSION_NEUTRAL, VersioningType } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
 import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
@@ -126,6 +127,10 @@ describe('Tenant control plane e2e', () => {
 
     app = moduleFixture.createNestApplication<NestFastifyApplication>(new FastifyAdapter());
     app.setGlobalPrefix('api');
+    app.enableVersioning({
+      type: VersioningType.URI,
+      defaultVersion: [VERSION_NEUTRAL, '1'],
+    });
 
     await app.register(fastifyCookie as any);
     await app.init();
