@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.1.0](https://github.com/LuLuCodes/easy-front-nest-service/compare/v6.0.0...v6.1.0) (2026-05-12)
+
+
+### Features
+
+* **openapi:** export openapi.json as ci artifact (P25) ([#99](https://github.com/LuLuCodes/easy-front-nest-service/issues/99)) ([c3fe898](https://github.com/LuLuCodes/easy-front-nest-service/commit/c3fe898431a3ce5afdd438f4d0ae394a9e222335))
+
 ## [6.0.0](https://github.com/LuLuCodes/easy-front-nest-service/compare/v5.0.0...v6.0.0) (2026-05-12)
 
 
