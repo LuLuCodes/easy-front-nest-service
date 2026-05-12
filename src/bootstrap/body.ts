@@ -15,8 +15,9 @@ import fastifyCompress from '@fastify/compress';
  * - response compression via `@fastify/compress`.
  */
 export async function applyBodyParsers(app: NestFastifyApplication): Promise<void> {
-  // The Fastify v4 type system can't reconcile multiple plugins' shared
-  // declaration-merging on FastifyInstance. Cast on register only.
+  // Each plugin augments FastifyInstance via declaration merging, so chained
+  // `app.register(...)` calls hit irreconcilable instance-shape conflicts in
+  // TS. Cast on register only; runtime is well-defined.
 
   const register = (plugin: unknown, opts?: unknown) => app.register(plugin as any, opts as any);
 

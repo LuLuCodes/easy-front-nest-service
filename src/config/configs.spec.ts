@@ -7,10 +7,8 @@ import redis_config from './redis';
 import tenant_config from './tenant';
 import while_list_config from './white-list';
 
-function callConfig<T>(cfg: { KEY?: string } & ((...args: unknown[]) => T)): T {
-  // registerAs returns a ConfigFactory with a KEY symbol; calling it returns
-  // the resolved config object.
-  return (cfg as unknown as () => T)();
+function callConfig<T>(cfg: unknown): T {
+  return (cfg as () => T)();
 }
 
 describe('config factories', () => {

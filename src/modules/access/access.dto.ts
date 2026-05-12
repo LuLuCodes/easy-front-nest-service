@@ -11,13 +11,7 @@ import {
 } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { BaseDTO, QueryDTO } from '@dto/BaseDTO';
-import {
-  LOGIN_CLIENT,
-  LOGIN_TYPE,
-  RIGHT_TYPE,
-  ROLE_TYPE,
-  USER_STATUS,
-} from '@dto/EnumDTO';
+import { LOGIN_CLIENT, LOGIN_TYPE, RIGHT_TYPE, ROLE_TYPE, USER_STATUS } from '@dto/EnumDTO';
 export class LoginBaseDto extends BaseDTO {
   @ApiProperty({
     description: '登录账号',
@@ -32,7 +26,6 @@ export class LoginBaseDto extends BaseDTO {
   @ApiProperty({
     title: '登录端',
     description: ' 1-平台端 2-企业端 3-小程序端',
-    type: LOGIN_CLIENT,
     enum: LOGIN_CLIENT,
     example: LOGIN_CLIENT.平台端,
   })
@@ -132,7 +125,6 @@ export class ModifyUserPasswordDto extends BaseDTO {
   @ApiProperty({
     title: '登录端',
     description: ' 1-平台端 2-企业端 3-小程序端',
-    type: LOGIN_CLIENT,
     enum: LOGIN_CLIENT,
     example: LOGIN_CLIENT.平台端,
   })
@@ -161,7 +153,6 @@ export class CreateOrUpdateRoleDto extends BaseDTO {
 
   @ApiPropertyOptional({
     description: '角色类型 1-平台端 2-商家端 3-小程序端',
-    type: ROLE_TYPE,
     enum: ROLE_TYPE,
     example: ROLE_TYPE.平台端,
   })
@@ -213,7 +204,6 @@ export class CreateOrUpdateRightDto extends BaseDTO {
 
   @ApiPropertyOptional({
     description: '角色类型 1-平台端 2-商家端 3-小程序端',
-    type: ROLE_TYPE,
     enum: ROLE_TYPE,
     example: ROLE_TYPE.平台端,
   })
@@ -247,7 +237,6 @@ export class CreateOrUpdateRightDto extends BaseDTO {
 
   @ApiPropertyOptional({
     description: '权限类型 1-菜单 2-按钮',
-    type: RIGHT_TYPE,
     enum: RIGHT_TYPE,
     example: RIGHT_TYPE.菜单,
   })
@@ -378,7 +367,6 @@ export class SetUserStatusDto extends BaseDTO {
   @ApiProperty({
     title: '账户状态',
     description: '账户状态 1-正常 11-注销 12-冻结',
-    type: USER_STATUS,
     enum: USER_STATUS,
     example: USER_STATUS.正常,
   })
@@ -406,7 +394,6 @@ export class QueryUserDto extends QueryDTO {
   @ApiPropertyOptional({
     title: '登录端',
     description: ' 1-平台端 2-企业端 3-小程序端',
-    type: LOGIN_CLIENT,
     enum: LOGIN_CLIENT,
     example: LOGIN_CLIENT.平台端,
   })
@@ -416,9 +403,7 @@ export class QueryUserDto extends QueryDTO {
 
   @ApiPropertyOptional({
     title: '登录类型',
-    description:
-      '登录类型：1-账号名密码 2-手机号 3-微信公众号授权 4-小程序授权 5-微信unionid登录',
-    type: LOGIN_TYPE,
+    description: '登录类型：1-账号名密码 2-手机号 3-微信公众号授权 4-小程序授权 5-微信unionid登录',
     enum: LOGIN_TYPE,
     example: LOGIN_TYPE.账号名密码登录,
   })
@@ -428,7 +413,6 @@ export class QueryUserDto extends QueryDTO {
 
   @ApiPropertyOptional({
     description: '角色类型 1-平台端 2-商家端 3-小程序端',
-    type: ROLE_TYPE,
     enum: ROLE_TYPE,
     example: ROLE_TYPE.平台端,
   })
@@ -440,7 +424,6 @@ export class QueryUserDto extends QueryDTO {
 export class QueryRoleDto extends QueryDTO {
   @ApiPropertyOptional({
     description: '角色类型 1-平台端 2-商家端 3-小程序端',
-    type: ROLE_TYPE,
     enum: ROLE_TYPE,
     example: ROLE_TYPE.平台端,
   })
@@ -461,7 +444,6 @@ export class QueryRoleDto extends QueryDTO {
 export class QueryRightDto extends QueryDTO {
   @ApiPropertyOptional({
     description: '角色类型 1-平台端 2-商家端 3-小程序端',
-    type: ROLE_TYPE,
     enum: ROLE_TYPE,
     example: ROLE_TYPE.平台端,
   })
@@ -471,7 +453,6 @@ export class QueryRightDto extends QueryDTO {
 
   @ApiPropertyOptional({
     description: '权限类型 1-菜单 2-按钮',
-    type: RIGHT_TYPE,
     enum: RIGHT_TYPE,
     example: RIGHT_TYPE.菜单,
   })

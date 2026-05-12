@@ -59,7 +59,6 @@ export class SendSmsDto extends BaseDTO {
     description: '根据业务自己定义',
     example: SMS_TYPE.验证码,
     enum: SMS_TYPE,
-    type: SMS_TYPE,
   })
   @IsIn(Object.values(SMS_TYPE), {
     message: `sms_type必须为指定类型${Object.values(SMS_TYPE)}`,
