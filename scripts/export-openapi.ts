@@ -16,24 +16,13 @@ import { resolve } from 'node:path';
 import { createOpenApiDocument } from '../src/bootstrap/swagger';
 import { AppModule } from '../src/app.module';
 
-process.on('uncaughtException', (err) => {
-  console.error('openapi export uncaughtException:', err);
-  process.exit(1);
-});
-process.on('unhandledRejection', (err) => {
-  console.error('openapi export unhandledRejection:', err);
-  process.exit(1);
-});
-
 async function main(): Promise<void> {
-  console.log('openapi: creating Nest app');
   const app = await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter(), {
+    logger: ['error', 'warn'],
     abortOnError: false,
   });
-  console.log('openapi: app created, init');
   app.setGlobalPrefix('api');
   await app.init();
-  console.log('openapi: init done, building document');
 
   const document = createOpenApiDocument(app, app.get(ConfigService));
   const out = resolve(__dirname, '..', 'openapi.json');
