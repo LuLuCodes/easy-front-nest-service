@@ -13,6 +13,12 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import type { FastifyReply, FastifyRequest } from 'fastify';
+// Side-effect import: brings @fastify/cookie's FastifyReply.setCookie /
+// clearCookie declaration merging into this file's type space.
+// tsc --noEmit picks it up via the project include set; ts-node (used
+// by `pnpm openapi:export`) walks imports lazily and needs the
+// reference at the point of use.
+import '@fastify/cookie';
 
 import type { AuthConfig } from '@config/auth';
 import { ValidationPipe } from '@pipe/validation.pipe';

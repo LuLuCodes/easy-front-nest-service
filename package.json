@@ -35,7 +35,7 @@
     "migration:generate": "pnpm typeorm migration:generate",
     "migration:run": "pnpm typeorm migration:run",
     "migration:revert": "pnpm typeorm migration:revert",
-    "openapi:export": "node --require ts-node/register --require tsconfig-paths/register scripts/export-openapi.ts",
+    "openapi:export": "TS_NODE_TRANSPILE_ONLY=true node --require ts-node/register --require tsconfig-paths/register scripts/export-openapi.ts",
     "cz": "git-cz",
     "ncu": "ncu -u",
     "prepare": "husky"
