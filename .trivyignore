@@ -38,6 +38,18 @@ CVE-2026-26996    # minimatch 9.0.5
 CVE-2026-27903    # minimatch 9.0.5
 CVE-2026-27904    # minimatch 9.0.5
 
+# ─── Fastify 4 lock-in via @nestjs/platform-fastify@10 (P9) ─────────────
+# NestJS 10 ships its Fastify adapter against Fastify 4.x. Fastify 5
+# fixes these but requires NestJS 11. Clears with the Nest 10 → 11
+# migration; tracked as a follow-up.
+CVE-2026-25223    # fastify 4.29.1 → fix in 5.7.2
+CVE-2026-33011    # @nestjs/platform-fastify 10.4.22
+CVE-2026-2293     # @nestjs/platform-fastify 10.4.22
+CVE-2026-22031    # @fastify/middie 8.3.3 → fix in 9.1.0
+CVE-2026-2880     # @fastify/middie 8.3.3 → fix in 9.2.0
+CVE-2026-33804    # @fastify/middie 8.3.3 → fix in 9.3.2
+CVE-2026-6270     # @fastify/middie 8.3.3 CRITICAL → fix in 9.3.2
+
 # ─── Distroless base image (gcr.io/distroless/nodejs22-debian12) ────────
 # OpenSSL 3.0.18-1~deb12u2 → 3.0.19-1~deb12u2 fix is upstream but the
 # distroless image hasn't rebuilt yet. These clear automatically next
