@@ -6,6 +6,7 @@ import {
   HttpStatus,
   Logger,
 } from '@nestjs/common';
+import { trace } from '@opentelemetry/api';
 import type { FastifyReply, FastifyRequest } from 'fastify';
 
 import { OtherErrorResponse } from '@libs/util';
@@ -37,11 +38,12 @@ export class OtherExceptionsFilter implements ExceptionFilter {
     const body = (request.body ?? {}) as Record<string, unknown>;
     const query = (request.query ?? {}) as Record<string, unknown>;
     const request_id = (body.request_id ?? query.request_id) as string | undefined;
+    const trace_id = trace.getActiveSpan()?.spanContext().traceId;
     const code = exception instanceof BusinessException ? exception.code : ResponseCode.SYS_ERROR;
     const errorResponse = OtherErrorResponse(code, message);
     void response
       .status(200)
       .header('Content-Type', 'application/json; charset=utf-8')
-      .send({ ...errorResponse, code, request_id });
+      .send({ ...errorResponse, code, request_id, trace_id });
   }
 }

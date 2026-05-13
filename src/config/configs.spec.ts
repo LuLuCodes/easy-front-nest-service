@@ -62,4 +62,11 @@ describe('config factories', () => {
     const c = callConfig(while_list_config) as { sign: string[] };
     expect(c.sign).toContain('/api/oss/upload-oss');
   });
+
+  it('while_list: bypasses sign for /api/metrics + /api/health probes', () => {
+    const c = callConfig(while_list_config) as { sign: string[] };
+    expect(c.sign).toEqual(
+      expect.arrayContaining(['/api/metrics', '/api/health', '/api/health/ready']),
+    );
+  });
 });

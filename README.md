@@ -146,9 +146,27 @@ URI-style versioning is on. Every controller responds at **both** `/api/<resourc
 
 Liveness stays minimal on purpose so a downstream flap doesn't restart-loop the container. Readiness rolls a pod out of the load balancer when DB or Redis is unreachable.
 
-### Observability (P20)
+### Observability (P20 + P32)
 
-Opt-in OpenTelemetry tracing. When `OTEL_EXPORTER_OTLP_ENDPOINT` is set the SDK auto-instruments HTTP / Fastify / ioredis / mysql2, plus `TenantSpanInterceptor` stamps `tenant.id` + `tenant.is_super_admin` on every active span. When the env var is unset everything stays zero-overhead. See [docs/decisions/2026-05-12-opentelemetry.md](./docs/decisions/2026-05-12-opentelemetry.md).
+Three pillars wired:
+
+| Pillar  | Source                                                                 | Where to read it                                               |
+| ------- | ---------------------------------------------------------------------- | -------------------------------------------------------------- |
+| Traces  | OpenTelemetry SDK, OTLP HTTP exporter, auto-instrumentation            | Tempo / Jaeger / Honeycomb (set `OTEL_EXPORTER_OTLP_ENDPOINT`) |
+| Logs    | pino + pino-http, structured per-request, trace-correlated             | stdout → Loki / ELK / CloudWatch                               |
+| Metrics | prom-client registry, exposed at `GET /api/metrics` (no auth, no sign) | Prometheus scrape → Grafana                                    |
+
+**Tracing (P20)** — when `OTEL_EXPORTER_OTLP_ENDPOINT` is set the SDK auto-instruments HTTP / Fastify / ioredis / mysql2, plus `TenantSpanInterceptor` stamps `tenant.id` + `tenant.is_super_admin` on every active span. Unset = zero overhead. See [docs/decisions/2026-05-12-opentelemetry.md](./docs/decisions/2026-05-12-opentelemetry.md).
+
+**Metrics (P32)** — `MetricsModule` owns a prom-client `Registry` and ships:
+
+- `http_requests_total{method, route, status_code}` — counter
+- `http_request_duration_seconds{method, route, status_code}` — histogram (buckets `5ms…10s`)
+- Default Node runtime metrics (heap, GC, event loop lag, CPU) on a 10s tick
+
+Routes are bound to the _route template_ (`/api/v1/foo/:id`), not the literal URL — keeps label cardinality bounded.
+
+**Error correlation (P32)** — every error response envelope now carries both `request_id` (caller-supplied) and `trace_id` (active OTel span id). The frontend can deep-link straight to the trace UI from an error toast.
 
 ### Tests (P18)
 
