@@ -1,5 +1,17 @@
 # Changelog
 
+## [6.1.2](https://github.com/LuLuCodes/easy-front-nest-service/compare/v6.1.1...v6.1.2) (2026-05-13)
+
+
+### Code Refactoring
+
+* **decorator:** replace any with typed bridges (P31) ([#109](https://github.com/LuLuCodes/easy-front-nest-service/issues/109)) ([b9c2e02](https://github.com/LuLuCodes/easy-front-nest-service/commit/b9c2e024f4aa723cc5e7f9629ca276ae9e8a11cd))
+
+
+### Miscellaneous Chores
+
+* **quality:** raise coverage gate to 63/55/60/63 + drop cron stub ([#107](https://github.com/LuLuCodes/easy-front-nest-service/issues/107)) ([3ab8426](https://github.com/LuLuCodes/easy-front-nest-service/commit/3ab8426a6f63a410a41ad59554ca979908c28156))
+
 ## [6.1.1](https://github.com/LuLuCodes/easy-front-nest-service/compare/v6.1.0...v6.1.1) (2026-05-13)
 
 
