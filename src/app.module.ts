@@ -3,7 +3,6 @@ import { BullModule } from '@nestjs/bullmq';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { HttpModule } from '@nestjs/axios';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { ScheduleModule } from '@nestjs/schedule';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { ThrottlerModule, seconds } from '@nestjs/throttler';
 import { ThrottlerStorageRedisService } from '@nest-lab/throttler-storage-redis';
@@ -20,7 +19,6 @@ import { RolesGuard } from '@auth/guards/roles.guard';
 import { SignGuard } from '@guard/sign.guard';
 import { CustomThrottlerGuard } from '@guard/custom-throttler.guard';
 import { CacheService } from '@service/cache.service';
-import { CronTaskService } from '@service/cron-task.service';
 import { DictCacheService } from '@service/dict-cache.service';
 
 import { AuthModule } from './auth/auth.module';
@@ -117,7 +115,6 @@ import while_list from '@config/white-list';
     BasicModule,
     OpLogModule,
     HealthModule,
-    ScheduleModule.forRoot(),
   ],
   providers: [
     {
@@ -145,7 +142,6 @@ import while_list from '@config/white-list';
       useClass: TenantSpanInterceptor,
     },
     CacheService,
-    CronTaskService,
     DictCacheService,
   ],
 })

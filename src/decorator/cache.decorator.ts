@@ -4,8 +4,7 @@ import * as _ from 'lodash';
 
 // 访问数据库，并缓存结果
 export const SaveCache =
-  (): MethodDecorator =>
-  (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
+  (): MethodDecorator => (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
     const originalMethod = descriptor.value;
     descriptor.value = async function (...args: any[]) {
       try {
@@ -22,12 +21,7 @@ export const SaveCache =
           if (cache_key) {
             cache_mode = cache_mode || 'EX';
             cache_time = cache_time || Math.floor(Math.random() * 20);
-            await this.cacheService.set(
-              cache_key,
-              JSON.stringify(result),
-              cache_mode,
-              cache_time,
-            );
+            await this.cacheService.set(cache_key, JSON.stringify(result), cache_mode, cache_time);
           }
         }
         return OkResponse(result);
@@ -40,8 +34,7 @@ export const SaveCache =
 
 // 先从缓存中获取，获取不到则访问数据库，并将结果缓存
 export const UseCache =
-  (): MethodDecorator =>
-  (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
+  (): MethodDecorator => (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
     const originalMethod = descriptor.value;
     descriptor.value = async function (...args: any[]) {
       try {
@@ -70,12 +63,7 @@ export const UseCache =
         result = await originalMethod.apply(this, args);
         cache_mode = cache_mode || 'EX';
         cache_time = cache_time || Math.floor(Math.random() * 20);
-        await this.cacheService.set(
-          cache_key,
-          JSON.stringify(result),
-          cache_mode,
-          cache_time,
-        );
+        await this.cacheService.set(cache_key, JSON.stringify(result), cache_mode, cache_time);
         return OkResponse(result);
       } catch (error) {
         return ErrorResponse(ResponseCode.SYS_ERROR, error);
@@ -86,8 +74,7 @@ export const UseCache =
 
 // 清除缓存，并访问数据库
 export const ClearCache =
-  (): MethodDecorator =>
-  (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
+  (): MethodDecorator => (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
     const originalMethod = descriptor.value;
     descriptor.value = async function (...args: any[]) {
       try {
