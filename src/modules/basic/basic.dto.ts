@@ -18,7 +18,7 @@ export class GetDictDto extends QueryDTO {
     type: [String],
   })
   @IsOptional()
-  @IsArray({ message: 'field_name必须为数组' })
+  @IsArray({ message: 'field_name_list必须为数组' })
   readonly field_name_list?: string[];
 }
 
