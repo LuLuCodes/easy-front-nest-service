@@ -1,8 +1,14 @@
 import { ApiBody } from '@nestjs/swagger';
+import type {
+  SchemaObject,
+  ReferenceObject,
+} from '@nestjs/swagger/dist/interfaces/open-api-spec.interface';
+
+type SchemaProps = Record<string, SchemaObject | ReferenceObject>;
 
 export const ApiMultiFile =
-  (params = {}, fileName = 'files'): MethodDecorator =>
-  (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
+  (params: SchemaProps = {}, fileName = 'files'): MethodDecorator =>
+  (target, propertyKey, descriptor) => {
     ApiBody({
       type: 'multipart/form-data',
       required: true,
