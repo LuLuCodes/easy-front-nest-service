@@ -1,108 +1,102 @@
-<!--
- * @Author: leyi leyi@myun.info
- * @Date: 2021-11-25 17:08:33
- * @LastEditors: leyi leyi@myun.info
- * @LastEditTime: 2023-08-18 11:02:48
- * @FilePath: /easy-front-nest-service/README.md
- * @Description:
- *
- * Copyright (c) 2023 by ${git_name_email}, All Rights Reserved.
--->
+# easy-front-nest-service
 
-# 开发
+NestJS 11 + Fastify 5 backend for a multi-tenant SaaS. JWT auth, row-level
+tenant isolation, self-built provider SDKs for WeChat (OA / MP / Pay v3),
+Alipay, and aliyun OSS — every provider tenant-scoped via the credential
+vault.
 
-本地调试时，请手动创建.env 文件，参考.env.production
+| Layer          | Choice                                                               |
+| -------------- | -------------------------------------------------------------------- |
+| Runtime        | Node 22 (managed via `.nvmrc`)                                       |
+| HTTP           | NestJS 11 + Fastify 5 (`@nestjs/platform-fastify`)                   |
+| ORM            | TypeORM 0.3 + mysql2                                                 |
+| Cache / Queues | ioredis + BullMQ                                                     |
+| Auth           | JWT (access + refresh) + Passport                                    |
+| Logging        | pino (via `nestjs-pino`)                                             |
+| Tracing        | OpenTelemetry (opt-in, OTLP HTTP)                                    |
+| Tests          | jest, 60% / 45% / 55% / 60% coverage gate                            |
+| Image          | Multi-stage Distroless `gcr.io/distroless/nodejs22-debian12:nonroot` |
+| Releases       | `release-please` — conventional commits drive semver + CHANGELOG     |
 
-# 认证 (5.x+)
+---
 
-> 5.0.0 起，认证从 session+MD5 切换为 JWT + Passport。详见 [docs/CONTRIBUTING.md](./docs/CONTRIBUTING.md)。
+## Quick start
 
-## 必要环境变量（生产）
+```bash
+# Local dev (requires .env in project root — copy & edit .env.production)
+pnpm install
+pnpm start:dev
 
-```env
-JWT_ACCESS_SECRET=<随机字符串 ≥ 32 位>
-JWT_REFRESH_SECRET=<随机字符串 ≥ 32 位>
-JWT_ACCESS_TTL=15m
-JWT_REFRESH_TTL=7d
-REFRESH_COOKIE_NAME=refresh_token
-REFRESH_COOKIE_SECURE=true
-REFRESH_COOKIE_SAMESITE=lax
-REFRESH_COOKIE_PATH=/api/auth
+# Unit + e2e
+pnpm test
+pnpm test:e2e
+
+# Integration (needs mysql + redis)
+docker compose -f docker-compose.test.yml up -d
+pnpm test:integration
+docker compose -f docker-compose.test.yml down -v
+
+# Production build
+pnpm build && node api/main.js
+
+# Export OpenAPI spec
+pnpm openapi:export   # writes openapi.json at repo root
 ```
 
-> 开发/测试环境未设置时会使用占位值；生产环境必填，否则启动失败。
+---
 
-## 客户端契约
+## Architecture
+
+### Auth (5.x+)
+
+Session+MD5 was replaced by JWT + Passport in 5.0.0.
 
 - `POST /api/auth/login` → `{ user, accessToken, refreshToken, refreshExpiresIn }` + `Set-Cookie: refresh_token`
-- 后续请求带 `Authorization: Bearer <accessToken>`
-- access 过期后调用 `POST /api/auth/refresh`：Web 自动带 cookie；移动/小程序在 body 中传 `{ refreshToken }`
-- `POST /api/auth/logout` 清除 cookie + 记录登出日志
-- `GET /api/auth/me` 返回当前用户
+- Subsequent requests carry `Authorization: Bearer <accessToken>`
+- `POST /api/auth/refresh` — web auto-sends cookie; mobile / mini-program send `{ refreshToken }` in body
+- `POST /api/auth/logout` — clears cookie + writes audit log
+- `GET  /api/auth/me` — returns current user
 
-## 服务端权限
+Server-side guards:
 
 ```ts
-import { Public, Roles, Permissions, CurrentUser } from '@auth/decorators';
-
-@Public()                         // 跳过 JwtAuthGuard
-@Permissions('access:user:edit')  // 需具备权限码
-@Roles('admin')                   // 需具备角色名
+@Public()                         // bypass JwtAuthGuard
+@Permissions('access:user:edit')  // require permission code
+@Roles('admin')                   // require role name
 async someHandler(@CurrentUser() user: AuthenticatedUser) { ... }
 ```
 
-JWT payload 一次性灌入用户的 `roles`（角色名）与 `permissions`（right_code）；access TTL 15m，权限变更次轮 refresh 即生效。强制下线可在 refresh 阶段加黑名单（预留 `CacheService` 钩子）。
+JWT payload carries `roles` (names) + `permissions` (right_code); access TTL 15m, so permission changes take effect on the next refresh.
 
-# 多租户 (5.x+)
-
-> 5.0.0 起本服务以 SaaS 形态运行：每个调用都绑定一个 `tenant_id`，凭证（公众号 / 小程序 / 微信支付 / 支付宝 / OSS）按租户隔离。
-
-## 隔离模型
-
-- **共享 schema + tenant_id 列**：所有业务表新增 `tenant_id` 列，TypeORM subscriber 自动注入；`AuditEntity` 基类承载该字段。
-- **JWT claim**：access token 携带 `tenant_id`、`is_super_admin`，通过 `TenantContextInterceptor` 注入 `AsyncLocalStorage`，下游 service / repo / provider 一律从 context 取值，禁止直接读 `req`。
-- **超级管理员**：system 租户 (id=0) 下的 `is_super_admin=true` 用户跨租户读写，所有调用记 audit log；用 `@SuperAdminOnly()` 装饰器守护控制平面接口。
-- **租户切换**：`POST /api/auth/switch-tenant { tenant_id }` 校验 `t_tenant_user_relation` 后重签 token。
-
-## 必要环境变量
+**Required env (production)**:
 
 ```env
-TENANT_MASTER_KEY=<≥ 32 字节, base64; 用于 t_tenant_credential AES-256-GCM>
+JWT_ACCESS_SECRET=<random string ≥ 32 chars>
+JWT_REFRESH_SECRET=<random string ≥ 32 chars>
+JWT_ACCESS_TTL=15m
+JWT_REFRESH_TTL=7d
 ```
 
-`TENANT_MASTER_KEY` 启动时强校验；不存在或长度不够直接拒绝启动。
+### Multi-tenant (5.x+)
 
-## 控制平面（仅 super-admin）
+Shared schema + `tenant_id` column model. Every authenticated request runs inside an `AsyncLocalStorage` scope set by `TenantContextInterceptor`; downstream service / repo / provider code reads `tenantId` from `TenantContextService`, never from `req`.
 
-| 端点                                                   | 用途                    |
-| ------------------------------------------------------ | ----------------------- |
-| `POST /api/admin/tenants`                              | 创建租户                |
-| `GET  /api/admin/tenants`                              | 列出租户                |
-| `GET  /api/admin/tenants/:id`                          | 租户详情                |
-| `POST /api/admin/tenants/:id/users`                    | 添加用户到租户          |
-| `DELETE /api/admin/tenants/:id/users/:userId`          | 移除用户                |
-| `POST /api/admin/tenants/:id/credentials`              | 添加凭证（即加密入库）  |
-| `GET  /api/admin/tenants/:id/credentials`              | 列出凭证（不含 secret） |
-| `PATCH /api/admin/tenants/:id/credentials/:cid/status` | 启用 / 禁用             |
-| `PATCH /api/admin/tenants/:id/credentials/:cid/secret` | 轮换 secret / cert      |
+- **Audit subscriber** stamps `tenant_id` on insert when missing; `created_by` is immutable on update.
+- **System tenant (id=0)** owns `is_super_admin` users — they can cross tenants and are guarded by `@SuperAdminOnly()`. Every super-admin call writes an audit log.
+- **Tenant switching**: `POST /api/auth/switch-tenant { tenant_id }` — verifies `t_tenant_user_relation` membership and reissues a token.
+- **Per-tenant rate limit (P22)**: throttler buckets are keyed `tenant:<id>:<ip>` when JWT-authenticated, falling back to `ip:<ip>` for anonymous routes.
 
-## Provider 配置
+**Required env**:
 
-每条凭证存于 `t_tenant_credential`：`secret_cipher` / `cert_cipher` AES-256-GCM 加密，`metadata` JSON 存非密配置。下表是各 provider 的字段约定：
+```env
+TENANT_MASTER_KEY=<≥ 32 bytes base64; for t_tenant_credential AES-256-GCM>
+```
 
-| Provider | `app_id`      | `secret`          | `cert`             | `metadata` 关键字段                                                                 |
-| -------- | ------------- | ----------------- | ------------------ | ----------------------------------------------------------------------------------- |
-| `wx_oa`  | 公众号 AppID  | 公众号 AppSecret  | -                  | `token`, `encoding_aes_key`                                                         |
-| `wx_mp`  | 小程序 AppID  | 小程序 AppSecret  | -                  | (无)                                                                                |
-| `wx_pay` | 商户号 mch_id | -                 | 商户私钥 PEM       | `api_v3_key`, `appid`, `notify_url?`, `refund_notify_url?`                          |
-| `alipay` | 支付宝 app_id | 商户私钥 PEM      | 支付宝平台公钥 PEM | `gateway?`, `sign_type?`, `key_type?`, `encrypt_key?`, `notify_url?`, `return_url?` |
-| `oss`    | bucket 名     | access_key_secret | access_key_id      | `region`, `endpoint?`, `internal?`, `domain?`, `secure?`, `timeout_ms?`             |
+`TENANT_MASTER_KEY` is hard-validated at startup — missing or too short rejects the boot.
 
-`cert_serial_no` 仅 wx_pay 使用（商户证书序列号）。
+### Providers (5.x+)
 
-## Provider 调用约定
-
-每个 provider 实现统一接口：
+Five tenant-scoped provider clients live under `src/providers/`. Each implements:
 
 ```ts
 interface Provider<TClient> {
@@ -112,198 +106,124 @@ interface Provider<TClient> {
 }
 ```
 
-- `getClient` 内部走 `TenantCredentialVault.get(tenantId, name, appId)` 取凭证（LRU + Redis 双层缓存，5min TTL，30s 负缓存），按 `(tenantId, app_id)` 缓存客户端实例。
-- 凭证更新 / 轮换会通过 `vault.invalidate` 击穿缓存。
-- 上游错误统一封 `ProviderError`（带 `provider` 标签 + `upstreamCode` + `retryable`），`CredentialMissingError` 是没配凭证时的特化。
+Credentials live in `t_tenant_credential` (AES-256-GCM, LRU + Redis double-cache, 5min TTL / 30s negative cache). `getClient` resolves cached if available; `vault.invalidate` is fired on credential rotation.
 
-## 何时需要写 controller / service
+| Provider | `app_id`     | `secret`                 | `cert`                   | `metadata` keys                                                                        |
+| -------- | ------------ | ------------------------ | ------------------------ | -------------------------------------------------------------------------------------- |
+| `wx_oa`  | 公众号 AppID | AppSecret                | —                        | `token`, `encoding_aes_key`                                                            |
+| `wx_mp`  | 小程序 AppID | AppSecret                | —                        | —                                                                                      |
+| `wx_pay` | mch_id       | —                        | merchant private key PEM | `api_v3_key`, `appid`, optional `notify_url` / `refund_notify_url`                     |
+| `alipay` | app_id       | merchant private key PEM | platform public key PEM  | optional `gateway`, `sign_type`, `key_type`, `encrypt_key`, `notify_url`, `return_url` |
+| `oss`    | bucket       | access_key_secret        | access_key_id            | `region`, optional `endpoint`, `internal`, `domain`, `secure`, `timeout_ms`            |
 
-业务代码常态下不需要直接接触 vault：
+Upstream errors are wrapped as `ProviderError` (carrying `provider`, `upstreamCode`, `retryable`); `CredentialMissingError` is the specialization for unconfigured credentials.
 
-```ts
-@Controller('alipay')
-export class AlipayController {
-  constructor(private readonly provider: AlipayProvider) {}
+**Control plane** (super-admin only): see `src/tenant/tenant.controller.ts` for create / list / get / invite / remove / credential CRUD endpoints under `/api/admin/tenants/*`.
 
-  @Post('precreate')
-  async precreate(@Body() body: PrecreateDto, @CurrentUser() user: AuthenticatedUser) {
-    const client = await this.provider.getClient(user.tenant_id, body.app_id);
-    return client.precreate(stripAppId(body));
-  }
-}
-```
+### HTTP adapter (Fastify, 6.x+)
 
-新增 provider 的标准流程见 [docs/CONTRIBUTING.md](./docs/CONTRIBUTING.md)。
+Migrated from Express → Fastify 4 in 7.x and bumped to NestJS 11 + Fastify 5 in 6.0.0. Drop-in for callers (same paths, same JSON, same cookie names). Internals differ:
 
-# HTTP 适配器 (7.x+)
+- `helmet` → `@fastify/helmet`
+- `cookie-parser` → `@fastify/cookie` (`reply.setCookie` / `clearCookie`)
+- `compression` → `@fastify/compress`
+- `body-parser` JSON is Fastify built-in; urlencoded via `@fastify/formbody`
+- `multer` → `@fastify/multipart` (consume via `req.parts()` async iterator)
+- Express `Request`/`Response` types → `FastifyRequest`/`FastifyReply`
 
-> 7.1.0 起，HTTP 适配器从 Express 切换到 **Fastify**（NestJS 10 + `@nestjs/platform-fastify` + Fastify 4）。基线 QPS 提升约 2-3×，几乎零业务代码改动。
+E2E tests must `await app.getHttpAdapter().getInstance().ready()` after `app.init()`.
 
-## 关键变更
+### API versioning (P21)
 
-- `NestFactory.create<NestExpressApplication>` → `NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter())`
-- 中间件栈整体替换为 Fastify 插件：
-  - `helmet` → `@fastify/helmet`
-  - `cookie-parser` → `@fastify/cookie`（reply API 是 `setCookie` / `clearCookie`，不是 Express 的 `cookie`）
-  - `compression` → `@fastify/compress`
-  - `body-parser` JSON 是 Fastify 内置；urlencoded 用 `@fastify/formbody`
-  - `multer` 文件上传 → `@fastify/multipart`（用 `req.parts()` async iterator）
-- Express `Request` / `Response` 类型 → Fastify `FastifyRequest` / `FastifyReply`
-- `LoggerMiddleware` 不再 patch `res.write`/`res.end`，改成在 raw socket 上挂 `finish` 事件，记一行紧凑摘要
-- e2e 测试创建 `NestFastifyApplication` 时需要 `await app.getHttpAdapter().getInstance().ready()` 后再发请求
+URI-style versioning is on. Every controller responds at **both** `/api/<resource>` and `/api/v1/<resource>` — zero breakage for existing clients, explicit pinning available for new ones. Future v2 controllers opt in via `@Version('2')`. See [docs/decisions/2026-05-12-api-versioning.md](./docs/decisions/2026-05-12-api-versioning.md).
 
-## 调用方注意
+### Health probes (P13)
 
-无破坏性改动：
+| Endpoint                | Use case                                  | Checks                                |
+| ----------------------- | ----------------------------------------- | ------------------------------------- |
+| `GET /api/health`       | Docker HEALTHCHECK, K8s `livenessProbe`   | Process up only                       |
+| `GET /api/health/ready` | K8s `readinessProbe`, service-mesh checks | DB ping (1.5s timeout) + Redis `PING` |
 
-- 所有路由 path 不变
-- 请求 / 响应的 JSON body 不变
-- Refresh token cookie 名 / 路径 / sameSite 全部沿用 `@config/auth` 配置
-- OSS 多文件上传字段名仍是 `files`（Fastify `@fastify/multipart` 自动识别）
+Liveness stays minimal on purpose so a downstream flap doesn't restart-loop the container. Readiness rolls a pod out of the load balancer when DB or Redis is unreachable.
 
-# 测试 (7.x+)
+### Observability (P20)
 
-> 7.0.0 起，jest 强制覆盖率门槛（lines/statements/functions ≥ 50%，branches ≥ 35%）。CI 覆盖率回退立刻 fail。
+Opt-in OpenTelemetry tracing. When `OTEL_EXPORTER_OTLP_ENDPOINT` is set the SDK auto-instruments HTTP / Fastify / ioredis / mysql2, plus `TenantSpanInterceptor` stamps `tenant.id` + `tenant.is_super_admin` on every active span. When the env var is unset everything stays zero-overhead. See [docs/decisions/2026-05-12-opentelemetry.md](./docs/decisions/2026-05-12-opentelemetry.md).
 
-## 三层测试套件
+### Tests (P18)
 
-| 层级        | 命令                             | 内容                                                            |
-| ----------- | -------------------------------- | --------------------------------------------------------------- |
-| Unit        | `pnpm test` (或 `pnpm test:cov`) | `src/**/*.spec.ts`，无外部依赖，含 `coverageThreshold` 阻塞门槛 |
-| E2E         | `pnpm test:e2e`                  | `test/e2e/*.e2e-spec.ts`，TestingModule + supertest + stub repo |
-| Integration | `pnpm test:integration`          | `test/**/*.integration.spec.ts`，**需要本地 mysql + redis**     |
+Three-tier suite + coverage gate (statements ≥ 60, branches ≥ 45, functions ≥ 55, lines ≥ 60). CI fails on regression.
 
-## 本地跑 Integration
+| Tier        | Command                          | Scope                                                             |
+| ----------- | -------------------------------- | ----------------------------------------------------------------- |
+| Unit        | `pnpm test` (or `pnpm test:cov`) | `src/**/*.spec.ts` — no external deps                             |
+| E2E         | `pnpm test:e2e`                  | `test/e2e/*.e2e-spec.ts` — TestingModule + supertest + stub repos |
+| Integration | `pnpm test:integration`          | `test/**/*.integration.spec.ts` — needs mysql + redis             |
 
-```bash
-docker compose -f docker-compose.test.yml up -d   # 起 mysql:8 + redis:7
-pnpm test:integration
-docker compose -f docker-compose.test.yml down -v
-```
+When adding a module, also add its `*.controller.spec.ts` (mock service) and `*.service.spec.ts` (mock repo) so coverage doesn't regress.
 
-## CI 流水线
+### Container + CI/CD (P6 / P25)
 
-- `.github/workflows/ci.yml`
-  - **ci job**：unit + e2e + build + 覆盖率门槛阻塞
-  - **integration-test job** (`needs: ci`)：GitHub Actions services 起 mysql + redis，跑 `pnpm test:integration`
-- `.github/workflows/docker.yml`：build + Trivy + SBOM（详见下文部署章节）
-- `.github/workflows/codeql.yml`：静态安全分析
+Multi-stage `Dockerfile` ending in Distroless `gcr.io/distroless/nodejs22-debian12:nonroot`. Container HEALTHCHECK runs `node healthcheck.js` against liveness.
 
-## 写新测试
+| Workflow             | Trigger                            | Job                                                                          |
+| -------------------- | ---------------------------------- | ---------------------------------------------------------------------------- |
+| `ci.yml`             | push/PR to main                    | Lint / Typecheck / Test / Build + Integration                                |
+| `codeql.yml`         | push/PR to main + weekly           | Static analysis                                                              |
+| `docker.yml`         | push to main, `v*` tag, related PR | Image build + Trivy HIGH/CRITICAL gate + SBOM (SPDX) + OpenAPI spec artifact |
+| `pr-checks.yml`      | PR                                 | semantic title + size label                                                  |
+| `release-please.yml` | push to main                       | Rolling release PR maintaining CHANGELOG + version bump + git tag            |
 
-- 单测放 `src/**/*.spec.ts`，与源码同目录
-- E2E 放 `test/e2e/*.e2e-spec.ts`，用 TestingModule + supertest + stub repo
-- Integration 放 `test/**/*.integration.spec.ts`；不被默认 `pnpm test` 跑，由 CI 单独 job 跑
-- 增加新模块时**同步**写 controller spec（mock service）+ service spec（mock repo），避免覆盖率回退
+Images publish to `ghcr.io/<owner>/<repo>`; tags include `main`, `sha-<short>`, `v1.2.3`, `1.2`, `latest`. Trivy SARIF auto-uploads to GitHub Code Scanning, SBOM kept 30 days. The CI `integration-test` job additionally exports `openapi.json` as an artifact (see [docs/decisions/2026-05-12-openapi-codegen.md](./docs/decisions/2026-05-12-openapi-codegen.md)).
 
-# 部署 (6.x+)
+### Release management (P23)
 
-> 6.0.0 起，部署从 pm2 + 单阶段 keymetrics 镜像切换为多阶段 Distroless 镜像 + GitHub Actions 自动发布到 ghcr.io。
+`release-please` watches main for conventional-commit messages and maintains a rolling **"chore(main): release X.Y.Z"** PR. Merging it cuts the `vX.Y.Z` git tag, creates a GitHub Release, and lands the generated section of `CHANGELOG.md`. See [docs/decisions/2026-05-12-release-please.md](./docs/decisions/2026-05-12-release-please.md).
 
-## 镜像构建
+Bump rules follow our existing commitlint config:
 
-`Dockerfile` 是多阶段构建：
+| Commit type                                                   | Bump  |
+| ------------------------------------------------------------- | ----- |
+| `feat:`                                                       | minor |
+| `fix:` / `perf:` / `refactor:` / `docs:` / `test:` / `chore:` | patch |
+| Any with `!` suffix or `BREAKING CHANGE:` footer              | major |
 
-| 阶段        | base                                          | 作用                                                     |
-| ----------- | --------------------------------------------- | -------------------------------------------------------- |
-| `deps`      | `node:22-bookworm-slim`                       | 装全量依赖（含 dev）                                     |
-| `build`     | `node:22-bookworm-slim`                       | 跑 `pnpm build`，产物到 `api/`                           |
-| `prod-deps` | `node:22-bookworm-slim`                       | 重新装 prod-only 依赖                                    |
-| `runtime`   | `gcr.io/distroless/nodejs22-debian12:nonroot` | 拷贝 `api/` + `node_modules` + healthcheck，非 root 运行 |
+---
 
-本地构建：
+## Reference
+
+### NPM scripts (selected)
 
 ```bash
-docker build -t easy-front-nest-service:local .
-docker run --rm -p 8000:8000 \
-  -e APP_PORT=8000 \
-  -e NODE_ENV=production \
-  --env-file .env.production.local \
-  easy-front-nest-service:local
+pnpm start:dev          # nest start --watch, NODE_ENV=development
+pnpm build              # SWC compile into api/
+pnpm test               # unit, with coverage gate
+pnpm test:e2e           # supertest + TestingModule
+pnpm test:integration   # needs docker-compose.test.yml services
+pnpm typecheck          # tsc --noEmit (strict TS — P19)
+pnpm lint               # eslint --fix-able with `pnpm lint:fix`
+pnpm openapi:export     # writes openapi.json at repo root
+pnpm migration:generate # TypeORM migration codegen
+pnpm migration:run      # apply pending migrations
 ```
 
-## 健康检查
+### Architecture decision records
 
-容器内置 `HEALTHCHECK`（每 30s 一次），通过运行 `node healthcheck.js` 访问 `GET /api/health`：
+Living docs for "why" decisions. Read these for context on non-obvious choices:
 
-- 200 → 健康
-- 非 200 / 网络错误 → 不健康（Docker / K8s 重启）
+- [bun-evaluation](./docs/decisions/2026-05-11-bun-evaluation.md) — why bun is deferred
+- [opentelemetry](./docs/decisions/2026-05-12-opentelemetry.md) — OTel opt-in design
+- [api-versioning](./docs/decisions/2026-05-12-api-versioning.md) — URI versioning with `VERSION_NEUTRAL` + `'1'`
+- [release-please](./docs/decisions/2026-05-12-release-please.md) — semver automation
+- [openapi-codegen](./docs/decisions/2026-05-12-openapi-codegen.md) — OpenAPI artifact (not typed client)
+- [i18n-deferred](./docs/decisions/2026-05-12-i18n-deferred.md) — why i18n is intentionally not done
 
-K8s 直接用同一 endpoint 配 `livenessProbe` 即可：
+### Optional response cipher
 
-```yaml
-livenessProbe:
-  httpGet: { path: /api/health, port: 8000 }
-  periodSeconds: 30
-  failureThreshold: 3
-```
+Some routes can ship encrypted payloads — see [internal wiki](https://rw3ew7jh3sr.feishu.cn/wiki/ZrgEwRg9Iia8ntkQEc9cxJnjnyb) for the legacy enable flow.
 
-## CI/CD
+---
 
-| Workflow                          | 触发                               | 用途                                              |
-| --------------------------------- | ---------------------------------- | ------------------------------------------------- |
-| `.github/workflows/ci.yml`        | push/PR to main                    | Lint / Typecheck / Test / Build                   |
-| `.github/workflows/codeql.yml`    | push/PR to main, weekly            | 静态安全分析                                      |
-| `.github/workflows/docker.yml`    | push to main, tag `v*`, related PR | 构建镜像 + Trivy HIGH/CRITICAL 阻塞 + SBOM (SPDX) |
-| `.github/workflows/pr-checks.yml` | PR                                 | semantic title + size label                       |
+## Contributing
 
-镜像默认推到 `ghcr.io/<owner>/<repo>`，tag 形如 `main`, `sha-<short>`, `v1.2.3`, `1.2`, `latest`。镜像扫描产物 (SARIF) 自动上传到 GitHub Code Scanning，SBOM 作为 artifact 保留 30 天。
-
-# 创建数据库
-
-**请先在.env 文件中配置数据库参数，并修改'db-generator/db_schema.sql'文件中的数据库名**
-
-```shell
-chmod +x ./db-generatoer/install.sh
-./db-generatoer/install.sh
-```
-
-# 同步数据库 model
-
-```shell
-npm run seq # and select `sync models from database`
-```
-
-# 根据 db model 自动创建 CRUD 接口
-
-```shell
-npm run seq # and select `auto generate crud for model`
-```
-
-# 关于 Sharp 内存泄漏的解决方案
-
-## 安装 jemalloc
-
-```shell
-yum -y install jemalloc
-```
-
-## 配置环境变量
-
-```shell
-# 编辑 /etc/environment
-LD_PRELOAD=/usr/lib64/libjemalloc.so.1
-```
-
-```shell
-export LD_PRELOAD="/usr/lib64/libjemalloc.so.1"
-
-echo /usr/lib64/libjemalloc.so.1 >> /etc/ld.so.preload
-```
-
-## 清除 pm2 中以运行的程序
-
-```shell
-pm2 kill
-pm2 resurrect
-```
-
-## 单例运行
-
-```shell
-LD_PRELOAD=/usr/lib64/libjemalloc.so.1 node index.js
-```
-
-## 接口加解密传输开启方式
-
-[地址](https://rw3ew7jh3sr.feishu.cn/wiki/ZrgEwRg9Iia8ntkQEc9cxJnjnyb?from=from_copylink)
+See [docs/CONTRIBUTING.md](./docs/CONTRIBUTING.md) for the development workflow, including how to add a new provider.
