@@ -1,5 +1,24 @@
 # Changelog
 
+## [6.1.1](https://github.com/LuLuCodes/easy-front-nest-service/compare/v6.1.0...v6.1.1) (2026-05-13)
+
+
+### Code Refactoring
+
+* **errors:** introduce BusinessException for service-layer throws (P29) ([#106](https://github.com/LuLuCodes/easy-front-nest-service/issues/106)) ([5f18adf](https://github.com/LuLuCodes/easy-front-nest-service/commit/5f18adfdb44a9da0c2fc160763db4b0263737d31))
+
+
+### Documentation
+
+* **i18n:** adr — decline i18n migration, document revisit triggers (P26) ([#101](https://github.com/LuLuCodes/easy-front-nest-service/issues/101)) ([c6e4c71](https://github.com/LuLuCodes/easy-front-nest-service/commit/c6e4c711a7690f4f6884dfb5a8387f64f7d9bbe1))
+* **readme:** rewrite to reflect P10–P26 architecture (P27b) ([#104](https://github.com/LuLuCodes/easy-front-nest-service/issues/104)) ([97230f1](https://github.com/LuLuCodes/easy-front-nest-service/commit/97230f17c5925e3f988793e2cf0c062493c719ce))
+
+
+### Miscellaneous Chores
+
+* **lint:** catch dto validator message / field-name drift (P28) ([#105](https://github.com/LuLuCodes/easy-front-nest-service/issues/105)) ([32c4fee](https://github.com/LuLuCodes/easy-front-nest-service/commit/32c4fee6a79bbeca06f7fccfa182e7c93a59d69b))
+* **security:** clear lodash cve-2026-4800 from trivy allowlist (P27a) ([#103](https://github.com/LuLuCodes/easy-front-nest-service/issues/103)) ([db51695](https://github.com/LuLuCodes/easy-front-nest-service/commit/db516959e893e33f7c80456387a2a6ae10ee4eaf))
+
 ## [6.1.0](https://github.com/LuLuCodes/easy-front-nest-service/compare/v6.0.0...v6.1.0) (2026-05-12)
 
 
