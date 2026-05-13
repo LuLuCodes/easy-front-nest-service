@@ -1,15 +1,32 @@
 import { OkResponse, ErrorResponse } from '@libs/util';
 import { ResponseCode } from '@config/global';
-import * as _ from 'lodash';
+
+type AsyncMethod = (this: unknown, ...args: unknown[]) => Promise<unknown>;
+
+type CacheClient = {
+  get(key: string): Promise<unknown>;
+  set(key: string, value: string, mode: string, ttl: number): Promise<unknown>;
+  del(key: string): Promise<unknown>;
+};
+
+type WithCache = { cacheService?: CacheClient };
+
+type CacheArgs = {
+  cache_key?: string;
+  del_cache_key?: string[];
+  cache_mode?: string;
+  cache_time?: number;
+};
 
 // 访问数据库，并缓存结果
 export const SaveCache =
-  (): MethodDecorator => (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
-    const originalMethod = descriptor.value;
-    descriptor.value = async function (...args: any[]) {
+  (): MethodDecorator =>
+  (_target: object, _propertyKey: string | symbol, descriptor: PropertyDescriptor) => {
+    const originalMethod = descriptor.value as AsyncMethod;
+    descriptor.value = async function (this: WithCache, ...args: unknown[]) {
       try {
         const result = await originalMethod.apply(this, args);
-        const arg = args[0];
+        const arg = args[0] as CacheArgs | undefined;
         if (arg && this.cacheService) {
           const { cache_key, del_cache_key } = arg;
           let { cache_mode, cache_time } = arg;
@@ -34,11 +51,12 @@ export const SaveCache =
 
 // 先从缓存中获取，获取不到则访问数据库，并将结果缓存
 export const UseCache =
-  (): MethodDecorator => (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
-    const originalMethod = descriptor.value;
-    descriptor.value = async function (...args: any[]) {
+  (): MethodDecorator =>
+  (_target: object, _propertyKey: string | symbol, descriptor: PropertyDescriptor) => {
+    const originalMethod = descriptor.value as AsyncMethod;
+    descriptor.value = async function (this: WithCache, ...args: unknown[]) {
       try {
-        const arg = args[0];
+        const arg = args[0] as CacheArgs | undefined;
         if (!this.cacheService || !arg) {
           const result = await originalMethod.apply(this, args);
           return OkResponse(result);
@@ -55,12 +73,12 @@ export const UseCache =
           const result = await originalMethod.apply(this, args);
           return OkResponse(result);
         }
-        let result = await this.cacheService.get(cache_key);
-        if (result) {
-          return OkResponse(JSON.parse(result));
+        const cached = await this.cacheService.get(cache_key);
+        if (cached) {
+          return OkResponse(JSON.parse(cached as string));
         }
 
-        result = await originalMethod.apply(this, args);
+        const result = await originalMethod.apply(this, args);
         cache_mode = cache_mode || 'EX';
         cache_time = cache_time || Math.floor(Math.random() * 20);
         await this.cacheService.set(cache_key, JSON.stringify(result), cache_mode, cache_time);
@@ -74,11 +92,12 @@ export const UseCache =
 
 // 清除缓存，并访问数据库
 export const ClearCache =
-  (): MethodDecorator => (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
-    const originalMethod = descriptor.value;
-    descriptor.value = async function (...args: any[]) {
+  (): MethodDecorator =>
+  (_target: object, _propertyKey: string | symbol, descriptor: PropertyDescriptor) => {
+    const originalMethod = descriptor.value as AsyncMethod;
+    descriptor.value = async function (this: WithCache, ...args: unknown[]) {
       try {
-        const arg = args[0];
+        const arg = args[0] as CacheArgs | undefined;
         if (this.cacheService && arg) {
           const { del_cache_key } = arg;
           if (del_cache_key) {
