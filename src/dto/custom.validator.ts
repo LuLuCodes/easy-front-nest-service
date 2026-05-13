@@ -1,8 +1,4 @@
-import {
-  registerDecorator,
-  ValidationOptions,
-  ValidationArguments,
-} from 'class-validator';
+import { registerDecorator, ValidationOptions, ValidationArguments } from 'class-validator';
 
 export function IsCustomDateString(validationOptions?: ValidationOptions) {
   return function (object: object, propertyName: string) {

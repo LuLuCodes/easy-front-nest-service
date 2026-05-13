@@ -25,13 +25,7 @@ export enum CacheKey {
 }
 
 export const ex_attributes = {
-  exclude: [
-    'deleted_at',
-    'created_at',
-    'updated_at',
-    'created_by',
-    'updated_by',
-  ],
+  exclude: ['deleted_at', 'created_at', 'updated_at', 'created_by', 'updated_by'],
 };
 
 export const ex_attributes2 = {

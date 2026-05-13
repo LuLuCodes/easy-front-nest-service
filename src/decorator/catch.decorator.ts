@@ -1,8 +1,7 @@
 import { OkResponse, ErrorResponse } from '@libs/util';
 import { ResponseCode } from '@config/global';
 export const CatchError =
-  (): MethodDecorator =>
-  (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
+  (): MethodDecorator => (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
     const originalMethod = descriptor.value;
     descriptor.value = async function (...args: any[]) {
       try {
