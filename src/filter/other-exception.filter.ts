@@ -10,6 +10,7 @@ import type { FastifyReply, FastifyRequest } from 'fastify';
 
 import { OtherErrorResponse } from '@libs/util';
 import { ResponseCode } from '@config/global';
+import { BusinessException } from '@common/exceptions/business-exception';
 
 @Catch()
 export class OtherExceptionsFilter implements ExceptionFilter {
@@ -36,10 +37,11 @@ export class OtherExceptionsFilter implements ExceptionFilter {
     const body = (request.body ?? {}) as Record<string, unknown>;
     const query = (request.query ?? {}) as Record<string, unknown>;
     const request_id = (body.request_id ?? query.request_id) as string | undefined;
-    const errorResponse = OtherErrorResponse(ResponseCode.SYS_ERROR, message);
+    const code = exception instanceof BusinessException ? exception.code : ResponseCode.SYS_ERROR;
+    const errorResponse = OtherErrorResponse(code, message);
     void response
       .status(200)
       .header('Content-Type', 'application/json; charset=utf-8')
-      .send({ ...errorResponse, request_id });
+      .send({ ...errorResponse, code, request_id });
   }
 }

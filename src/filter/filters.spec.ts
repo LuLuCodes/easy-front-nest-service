@@ -3,6 +3,8 @@ import { BadRequestException, HttpStatus } from '@nestjs/common';
 import { AllExceptionsFilter } from './any-exception.filter';
 import { HttpExceptionFilter } from './http-exception.filter';
 import { OtherExceptionsFilter } from './other-exception.filter';
+import { BusinessException } from '@common/exceptions/business-exception';
+import { ResponseCode } from '@config/global';
 
 function fakeHost(reqExtra: Record<string, unknown> = {}) {
   const response = {
@@ -63,6 +65,24 @@ describe('OtherExceptionsFilter', () => {
     const { response, host } = fakeHost();
     filter.catch(new BadRequestException('nope'), host as never);
     expect(response.status).toHaveBeenCalledWith(200);
+  });
+
+  it('renders BusinessException.code on the response envelope', () => {
+    const filter = new OtherExceptionsFilter();
+    const { response, host } = fakeHost();
+    filter.catch(new BusinessException('账号不存在', ResponseCode.PARM_ERROR), host as never);
+    expect(response.send).toHaveBeenCalledWith(
+      expect.objectContaining({ code: ResponseCode.PARM_ERROR, msg: '账号不存在' }),
+    );
+  });
+
+  it('falls back to SYS_ERROR code for plain Error', () => {
+    const filter = new OtherExceptionsFilter();
+    const { response, host } = fakeHost();
+    filter.catch(new Error('boom'), host as never);
+    expect(response.send).toHaveBeenCalledWith(
+      expect.objectContaining({ code: ResponseCode.SYS_ERROR }),
+    );
   });
 });
 
