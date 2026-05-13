@@ -3,17 +3,12 @@
 #
 # Format: one CVE per line. Comments allowed via leading `#`.
 
-# ─── lodash future-dated CVE referencing non-existent fix version ───────
-# Trivy reports fix in 4.18.0 which has not been published. Re-evaluate
-# when that version exists upstream.
-CVE-2026-4800
-
-# ─── glob / minimatch transitive (jest coverage path) ───────────────────
+# ─── glob / minimatch transitive (jest 29 coverage path) ────────────────
 # Forcing glob ^10.5 and minimatch ^9.0.7 breaks jest's coverage chain
 # (test-exclude@6 → babel-plugin-istanbul) because those versions ship as
 # ESM-only named exports while the consumer expects the legacy CommonJS
-# function shape. Revisit when jest 30 lands or test-exclude/babel
-# updates upstream.
+# function shape. Revisit when we bump to jest 30 (now GA) which uses
+# updated test-exclude / babel-plugin-istanbul.
 CVE-2025-64756    # glob 10.4.5
 CVE-2026-26996    # minimatch 9.0.5
 CVE-2026-27903    # minimatch 9.0.5
