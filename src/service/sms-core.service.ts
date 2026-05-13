@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import * as dayjs from 'dayjs';
 
 import { CacheService } from '@service/cache.service';
+import { BusinessException } from '@common/exceptions/business-exception';
 import { SmsLog } from '@entities/index';
 import { SMS_CHHANEL, SMS_STATUS, SMS_TYPE } from '@dto/EnumDTO';
 import { ISmsDictConf, SmsFactory } from '@libs/sms';
@@ -24,12 +25,12 @@ export class SmsCoreService {
   async sendCode(phones: string, sms_type: SMS_TYPE = SMS_TYPE.验证码): Promise<number> {
     const cache_key = `${SEND_KEY}_${phones.substring(0, 11)}_${sms_type}`;
     if (await this.cacheService.get(cache_key)) {
-      throw new Error('该手机号发送频率太快，请稍后再试');
+      throw new BusinessException('该手机号发送频率太快，请稍后再试');
     }
 
     const sms_dict_conf = await this.dictCacheService.getDictConf('短信配置');
     if (!sms_dict_conf?.length) {
-      throw new Error('短信未配置');
+      throw new BusinessException('短信未配置');
     }
     const sms_conf: ISmsDictConf = JSON.parse(sms_dict_conf[0].field_value);
 
@@ -48,11 +49,11 @@ export class SmsCoreService {
       app_secret: sms_conf.app_secret,
     });
     if (!smsFactory) {
-      throw new Error(`不支持的短信渠道：${sms_conf.渠道}`);
+      throw new BusinessException(`不支持的短信渠道：${sms_conf.渠道}`);
     }
     const template = sms_conf.模板?.[sms_type];
     if (!template) {
-      throw new Error(`未找到 ${sms_type} 的短信模板`);
+      throw new BusinessException(`未找到 ${sms_type} 的短信模板`);
     }
 
     const res = await smsFactory.send({
@@ -63,7 +64,7 @@ export class SmsCoreService {
       sign_name: sms_conf.签名,
     });
     if (!res.success) {
-      throw new Error(`${res.err_msg}`);
+      throw new BusinessException(`${res.err_msg}`);
     }
 
     const saved = await this.smsRepo.save(
@@ -83,7 +84,7 @@ export class SmsCoreService {
 
   async checkCode(phones: string, sms_type: SMS_TYPE, code: string): Promise<void> {
     if (!code) {
-      throw new Error('短信参数有误');
+      throw new BusinessException('短信参数有误');
     }
 
     const sms = await this.smsRepo.findOne({
@@ -96,14 +97,14 @@ export class SmsCoreService {
       order: { id: 'DESC' },
     });
     if (!sms) {
-      throw new Error('验证码不存在或已使用');
+      throw new BusinessException('验证码不存在或已使用');
     }
 
     if (sms.expire_time && dayjs() > dayjs(sms.expire_time)) {
-      throw new Error('验证码已过期');
+      throw new BusinessException('验证码已过期');
     }
     if (!sms.sms_param || sms.sms_param !== code) {
-      throw new Error('验证码不正确');
+      throw new BusinessException('验证码不正确');
     }
 
     await this.smsRepo.update(

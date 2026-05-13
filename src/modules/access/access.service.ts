@@ -4,6 +4,7 @@ import { DataSource, In, Like, Not, Repository } from 'typeorm';
 import * as _ from 'lodash';
 
 import { CacheService } from '@service/cache.service';
+import { BusinessException } from '@common/exceptions/business-exception';
 import {
   CreateOrUpdateRightDto,
   CreateOrUpdateRoleDto,
@@ -128,13 +129,13 @@ export class AccessService {
         where: { account_id, login_client, login_type },
       });
       if (!login_user) {
-        throw new Error('账号不存在，请检查');
+        throw new BusinessException('账号不存在，请检查');
       }
 
       if (login_type === LOGIN_TYPE.账号名密码登录) {
         const pwd = encryptPassword(account_pwd, login_user.pwd_salt!);
         if (pwd !== login_user.account_pwd) {
-          throw new Error('密码错误，请重新输入！');
+          throw new BusinessException('密码错误，请重新输入！');
         }
       }
 
@@ -143,10 +144,10 @@ export class AccessService {
         where: { id: login_user.user_id },
       });
       if (!user) {
-        throw new Error('账号不存在，请检查！');
+        throw new BusinessException('账号不存在，请检查！');
       }
       if (user.user_status !== USER_STATUS.正常) {
-        throw new Error('你的账号存在异常，无法登录！');
+        throw new BusinessException('你的账号存在异常，无法登录！');
       }
 
       await this.opLogService.createLogTask({
@@ -159,8 +160,6 @@ export class AccessService {
       });
 
       return { ...user, account_id: login_user.account_id };
-    } catch (error) {
-      throw new Error((error as Error).message);
     } finally {
       if (lock) {
         await RedisLock.unlock(lock);
@@ -198,12 +197,12 @@ export class AccessService {
         where: { id: user.id },
       });
       if (!op_user || op_user.login_client !== LOGIN_CLIENT.平台端) {
-        throw new Error('无权限');
+        throw new BusinessException('无权限');
       }
       const updated_by = user.id;
 
       if (await this.checkAccount(requestBody)) {
-        throw new Error(`登录账户[${account_id}]已存在`);
+        throw new BusinessException(`登录账户[${account_id}]已存在`);
       }
 
       const pwd_salt = makeSalt(2);
@@ -252,8 +251,6 @@ export class AccessService {
         await this.setUserRoleRelation({ role_id_list, user_id: created.id }, user);
       }
       return created;
-    } catch (error) {
-      throw new Error((error as Error).message);
     } finally {
       if (lock) {
         await RedisLock.unlock(lock);
@@ -277,7 +274,7 @@ export class AccessService {
         where: { user_id, login_client },
       });
       if (!login_user) {
-        throw new Error('不存在修改账号');
+        throw new BusinessException('不存在修改账号');
       }
       const updated_by = user.id;
 
@@ -301,8 +298,6 @@ export class AccessService {
         action_type: ACTION_TYPE.修改密码,
         action_desc: `修改账号${login_user.account_id}密码`,
       });
-    } catch (error) {
-      throw new Error((error as Error).message);
     } finally {
       if (lock) {
         await RedisLock.unlock(lock);
@@ -317,10 +312,10 @@ export class AccessService {
       where: { id: user_id },
     });
     if (!user) {
-      throw new Error('账号信息不存在，请检查！');
+      throw new BusinessException('账号信息不存在，请检查！');
     }
     if (user.user_status !== USER_STATUS.正常) {
-      throw new Error('你的账号存在异常，无法登录！');
+      throw new BusinessException('你的账号存在异常，无法登录！');
     }
     return user;
   }
@@ -338,7 +333,7 @@ export class AccessService {
         where: { id: user_id },
       });
       if (!user_info || user_info.user_status !== USER_STATUS.正常) {
-        throw new Error('当前用户不存在或不可编辑');
+        throw new BusinessException('当前用户不存在或不可编辑');
       }
 
       const update_data = _.omitBy({ nick, avatar, tag, note, updated_by: user_id }, _.isNil);
@@ -357,8 +352,6 @@ export class AccessService {
       if (role_id_list?.length) {
         await this.setUserRoleRelation({ role_id_list, user_id }, user);
       }
-    } catch (error) {
-      throw new Error((error as Error).message);
     } finally {
       if (lock) {
         await RedisLock.unlock(lock);
@@ -388,8 +381,6 @@ export class AccessService {
         action_type: ACTION_TYPE.设置用户状态,
         action_desc: `设置用户状态：${USER_STATUS[user_status]}`,
       });
-    } catch (error) {
-      throw new Error((error as Error).message);
     } finally {
       if (lock) {
         await RedisLock.unlock(lock);
@@ -599,7 +590,7 @@ export class AccessService {
       where: dup_where,
     });
     if (dup) {
-      throw new Error(`角色名[${role_name}]重复，请使用其他名称`);
+      throw new BusinessException(`角色名[${role_name}]重复，请使用其他名称`);
     }
 
     const is_update = (role_id ?? 0) > 0;
@@ -669,10 +660,10 @@ export class AccessService {
     });
     if (dup) {
       if (dup.right_name === right_name) {
-        throw new Error(`权限名[${right_name}]重复，请使用其他名称`);
+        throw new BusinessException(`权限名[${right_name}]重复，请使用其他名称`);
       }
       if (dup.right_code === right_code) {
-        throw new Error(`权限代码[${right_code}]重复，请使用其他名称`);
+        throw new BusinessException(`权限代码[${right_code}]重复，请使用其他名称`);
       }
     }
 
@@ -764,7 +755,7 @@ export class AccessService {
       where: { id: role_id },
     });
     if (!role) {
-      throw new Error('角色信息不存在，请检查！');
+      throw new BusinessException('角色信息不存在，请检查！');
     }
 
     const right_mapping = right_id_list.map((right_id) => ({
