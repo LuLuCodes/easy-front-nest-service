@@ -6,6 +6,7 @@ import {
   HttpStatus,
   Logger,
 } from '@nestjs/common';
+import { trace } from '@opentelemetry/api';
 import type { FastifyReply, FastifyRequest } from 'fastify';
 
 import { ErrorResponse } from '@libs/util';
@@ -36,10 +37,11 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const body = (request.body ?? {}) as Record<string, unknown>;
     const query = (request.query ?? {}) as Record<string, unknown>;
     const request_id = (body.request_id ?? query.request_id) as string | undefined;
+    const trace_id = trace.getActiveSpan()?.spanContext().traceId;
     const errorResponse = ErrorResponse(ResponseCode.SYS_ERROR, message);
     void response
       .status(200)
       .header('Content-Type', 'application/json; charset=utf-8')
-      .send({ ...errorResponse, request_id });
+      .send({ ...errorResponse, request_id, trace_id });
   }
 }

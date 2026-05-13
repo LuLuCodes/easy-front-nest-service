@@ -1,10 +1,22 @@
 import { BadRequestException, HttpStatus } from '@nestjs/common';
+import { trace } from '@opentelemetry/api';
 
 import { AllExceptionsFilter } from './any-exception.filter';
 import { HttpExceptionFilter } from './http-exception.filter';
 import { OtherExceptionsFilter } from './other-exception.filter';
 import { BusinessException } from '@common/exceptions/business-exception';
 import { ResponseCode } from '@config/global';
+
+function withFakeSpan(traceId: string, fn: () => void) {
+  const spy = jest
+    .spyOn(trace, 'getActiveSpan')
+    .mockReturnValue({ spanContext: () => ({ traceId }) } as never);
+  try {
+    fn();
+  } finally {
+    spy.mockRestore();
+  }
+}
 
 function fakeHost(reqExtra: Record<string, unknown> = {}) {
   const response = {
@@ -84,6 +96,22 @@ describe('OtherExceptionsFilter', () => {
       expect.objectContaining({ code: ResponseCode.SYS_ERROR }),
     );
   });
+
+  it('omits trace_id when no OTel SDK is active (graceful default)', () => {
+    const filter = new OtherExceptionsFilter();
+    const { response, host } = fakeHost();
+    filter.catch(new Error('boom'), host as never);
+    expect(response.send).toHaveBeenCalledWith(expect.objectContaining({ trace_id: undefined }));
+  });
+
+  it('includes the active OTel trace_id when a span is running', () => {
+    withFakeSpan('abc123', () => {
+      const filter = new OtherExceptionsFilter();
+      const { response, host } = fakeHost();
+      filter.catch(new Error('boom'), host as never);
+      expect(response.send).toHaveBeenCalledWith(expect.objectContaining({ trace_id: 'abc123' }));
+    });
+  });
 });
 
 describe('AllExceptionsFilter', () => {
@@ -101,5 +129,14 @@ describe('AllExceptionsFilter', () => {
     const { response, host } = fakeHost();
     expect(() => filter.catch(new Error('x'), host as never)).not.toThrow();
     expect(response.send).toHaveBeenCalled();
+  });
+
+  it('includes trace_id when an OTel span is active', () => {
+    withFakeSpan('deadbeef', () => {
+      const filter = new AllExceptionsFilter();
+      const { response, host } = fakeHost();
+      filter.catch(new Error('x'), host as never);
+      expect(response.send).toHaveBeenCalledWith(expect.objectContaining({ trace_id: 'deadbeef' }));
+    });
   });
 });

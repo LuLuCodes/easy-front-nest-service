@@ -33,6 +33,7 @@ import { AccessModule } from './modules/access/access.module';
 import { OpLogModule } from './modules/oplog/oplog.module';
 import { HealthModule } from './modules/health/health.module';
 import { TenantSpanInterceptor } from './observability/tenant-span.interceptor';
+import { MetricsModule } from './observability/metrics/metrics.module';
 
 import app_config from '@config/app';
 import auth_config from '@config/auth';
@@ -115,6 +116,7 @@ import while_list from '@config/white-list';
     BasicModule,
     OpLogModule,
     HealthModule,
+    MetricsModule,
   ],
   providers: [
     {
