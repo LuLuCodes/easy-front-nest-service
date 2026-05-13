@@ -1,6 +1,6 @@
 {
   "name": "easy-front-nest-service",
-  "version": "6.1.2",
+  "version": "6.2.0",
   "description": "基于 NestJS 的后端 API Service 框架",
   "author": "qian.qing@aliyun.com",
   "private": true,

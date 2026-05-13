@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.2.0](https://github.com/LuLuCodes/easy-front-nest-service/compare/v6.1.2...v6.2.0) (2026-05-13)
+
+
+### Features
+
+* **observability:** prometheus /metrics + trace_id in error envelopes (P32) ([#110](https://github.com/LuLuCodes/easy-front-nest-service/issues/110)) ([ab50c10](https://github.com/LuLuCodes/easy-front-nest-service/commit/ab50c106ee6654c389f6e56e227869f59e6d254b))
+
 ## [6.1.2](https://github.com/LuLuCodes/easy-front-nest-service/compare/v6.1.1...v6.1.2) (2026-05-13)
 
 
