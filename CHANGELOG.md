@@ -1,5 +1,16 @@
 # Changelog
 
+## [6.2.1](https://github.com/LuLuCodes/easy-front-nest-service/compare/v6.2.0...v6.2.1) (2026-05-14)
+
+
+### Miscellaneous Chores
+
+* **deps:** bump docker/login-action from 3 to 4 ([#117](https://github.com/LuLuCodes/easy-front-nest-service/issues/117)) ([53db48f](https://github.com/LuLuCodes/easy-front-nest-service/commit/53db48f94b66e17e4ba27712ac01a40ee4aae79b))
+* **deps:** bump docker/metadata-action from 5 to 6 ([#112](https://github.com/LuLuCodes/easy-front-nest-service/issues/112)) ([d9a1f35](https://github.com/LuLuCodes/easy-front-nest-service/commit/d9a1f35148ae690bf0d3ca2af6cbc3b71787eab5))
+* **deps:** bump docker/setup-qemu-action from 3 to 4 ([#114](https://github.com/LuLuCodes/easy-front-nest-service/issues/114)) ([1c8566b](https://github.com/LuLuCodes/easy-front-nest-service/commit/1c8566bd986ced42b918a47d21ea590f3ce7afc0))
+* **deps:** bump github/codeql-action from 3 to 4 ([#115](https://github.com/LuLuCodes/easy-front-nest-service/issues/115)) ([023c39e](https://github.com/LuLuCodes/easy-front-nest-service/commit/023c39ef235a2a4638f1afa7382c9440e2104431))
+* **deps:** bump googleapis/release-please-action from 4 to 5 ([#116](https://github.com/LuLuCodes/easy-front-nest-service/issues/116)) ([192bb0e](https://github.com/LuLuCodes/easy-front-nest-service/commit/192bb0e870a782fec95c1004d7ab1e5999d74620))
+
 ## [6.2.0](https://github.com/LuLuCodes/easy-front-nest-service/compare/v6.1.2...v6.2.0) (2026-05-13)
 
 
