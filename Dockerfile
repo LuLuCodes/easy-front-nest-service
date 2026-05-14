@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1.7
 
 # ─── Stage 1: install all deps (incl. dev) for build ────────────────────────
-FROM node:22-bookworm-slim AS deps
+FROM node:26-bookworm-slim AS deps
 WORKDIR /app
 # HUSKY=0 disables the `prepare: husky` script which depends on a dev
 # binary not present in --prod installs.
@@ -17,7 +17,7 @@ RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store,sharing=locked \
  && pnpm install --frozen-lockfile
 
 # ─── Stage 2: compile sources to api/ ───────────────────────────────────────
-FROM node:22-bookworm-slim AS build
+FROM node:26-bookworm-slim AS build
 WORKDIR /app
 ENV CI=true HUSKY=0 PNPM_HOME=/pnpm PATH=/pnpm:$PATH
 RUN corepack enable
@@ -27,7 +27,7 @@ COPY src ./src
 RUN pnpm build
 
 # ─── Stage 3: production-only node_modules (no devDependencies) ─────────────
-FROM node:22-bookworm-slim AS prod-deps
+FROM node:26-bookworm-slim AS prod-deps
 WORKDIR /app
 ENV CI=true HUSKY=0 PNPM_HOME=/pnpm PATH=/pnpm:$PATH
 RUN corepack enable
